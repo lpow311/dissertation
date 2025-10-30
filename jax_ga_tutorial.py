@@ -49,13 +49,14 @@ agent3_path1 = ["B", "A", "E"]
 
 
 class Chromosome:
-    def __init__(self, paths):
+    def __init__(self, paths: dict[str, list]):
+        # paths = {'agent1': [1, 2, 3]}
         self.paths = paths
         self.fitness = None
 
     def calculate_fitness(self) -> None:
         # Super basic assumption of 1 step = 1 time unit.
-        path_length = [len(path) for path in self.paths]
+        path_length = [len(path) for path in self.paths.values().path]  # TODO: don't think this will work but will get to this when it breaks...
         total_evac_time = max(path_length)
         self.fitness = total_evac_time
 
@@ -79,7 +80,7 @@ def crossover(parent1, parent2):
 def repair_path(path, graph):
     exits = graph.exits
 
-    current_location = path[-1]
+    current_location = path[-1] 
     if current_location in exits:
         return path
 
@@ -110,15 +111,46 @@ def mutation(chromosome, graph, mutation_rate: 0.3):
 
 class Agent:
     # Class to define agent properties e.g. behaviours/traits.
-    def __init__(self, name: str, city: nx.Graph):
+    def __init__(self, name: str, city: nx.Graph, path_seed: int):
+        self.path_seed = path_seed
         self.name = name
 
         self.start_points = city.starts
-        self.start_location = random.choice(self.start_points)
-        self.path = []
+        self.start_location = random.choice(random.PRNGKey(path_seed), self.start_points)
+        self.path = self.generate_random_path()
+        
+        self.path_history = []
+        
 
-    def random_path(self) -> list:
+    def generate_random_path(self) -> list:
+        # TODO: finish this.
         path = [self.start_location]
+        
+    def update_current_path(self, new_path) -> None:
+        self.path_history.append(self.path)
+        self.path = new_path
+        
+        
+
+# TODO: generate the population
+chromosome_list = []
+random_seed_count = 1
+for i in range(population_size):
+    paths = {}
+    for agent in range(num_agents):
+        agent = Agent(name=f'Agent{agent}_Population{i}', city=city, path_seed=random_seed_count)
+        paths[agent] =
+    
+        # TODO: need to ensure each agent has different random seed for each population.
+        random_seed_count += 1
+    
+    chromosome = Chromosome(paths=paths)
+    chromosome.calculate_fitness()  
+    chromosome_list.append(chromosome)  
+
+
+# TODO: Selection, Cross over, mutation loop.
+
 
 
 # chromosome = Chromosome(
