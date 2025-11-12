@@ -7,6 +7,7 @@ import pickle
 num_start_nodes = 10
 num_exit_nodes = 6
 num_connection_nodes = 30
+POTENTIAL_CONNECTIONS = 2
 
 # Create a directed graph
 G = nx.Graph()
@@ -33,7 +34,7 @@ for c, _ in connection_nodes:
     exit_nodes_names = [e for e, _ in exit_nodes]
     possible_targets = connection_node_names + exit_nodes_names
     possible_targets.remove(c)  # Avoid self-loop
-    targets = random.sample(possible_targets, k=random.randint(1, 3))
+    targets = random.sample(possible_targets, k=random.randint(1, POTENTIAL_CONNECTIONS))
     for t in targets:
         G.add_edge(c, t)
 
