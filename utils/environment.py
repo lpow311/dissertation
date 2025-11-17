@@ -1,0 +1,30 @@
+import pickle
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
+class Environment:
+    """
+    Creates a class object to store city information and load in the
+    created graph e.g. start and end points.
+    """
+
+    def __init__(self, city_name: str):
+        self.graph = self.create_graph(city_name)
+        self.starts, self.num_starts = self.extract_node_types(node_type='start')
+        self.exits, self.num_exits = self.extract_node_types(node_type='exit')
+
+    def create_graph(self, city_name: str) -> nx.Graph:
+        G = pickle.load(open(f'{city_name}.pickle', 'rb'))
+        return G
+    
+    def extract_node_types(self, node_type: str) -> list:
+        filtered_nodes = [n for n, attr in self.graph.nodes(data=True) if attr.get('type') == node_type]
+        num_nodes = len(filtered_nodes)
+        return filtered_nodes, num_nodes
+
+    def __str__(self):
+        nx.draw(
+            self.graph, with_labels=True, node_color="lightblue", node_size=800, font_weight="bold"
+        )
+        plt.show(block=True)

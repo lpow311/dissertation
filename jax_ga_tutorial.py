@@ -26,22 +26,6 @@ class Environment:
         filtered_nodes = [n for n, attr in self.graph.nodes(data=True) if attr.get('type') == node_type]
         return filtered_nodes
 
-    # def create_graph(self) -> nx.Graph:
-    #     # TODO: how are you creating more "cities"
-    #     G = nx.Graph()
-
-    #     edges = [
-    #         ("E", "A"),
-    #         ("C", "A"),
-    #         ("B", "A"),
-    #         ("C", "D"),
-    #         ("D", "B"),
-    #         ("D", "F"),
-    #         ("D", "G"),
-    #     ]
-    #     G.add_edges_from(edges)
-    #     return G
-
     def __str__(self):
         nx.draw(
             self.graph, with_labels=True, node_color="lightblue", node_size=800, font_weight="bold"
@@ -65,7 +49,7 @@ class Agent:
         
         # Test characteristic
         # TODO: what should the mutation rate even be?
-        self.panic = 0.1
+        self.panic = 0.01
         # TODO: might want to add stuff later so safer
         self.mutation_rate = self.panic 
 
@@ -225,7 +209,7 @@ class GeneticAlgorithm:
 city = Environment(city_name='small_city_graph')
 
 num_agents = 10
-population_size = 20
+population_size = 30
 
 # TODO: generate the population
 population = []
@@ -251,7 +235,10 @@ key = random.PRNGKey(12345)
 ga = GeneticAlgorithm(key=key)
 avg_score = []
 
-for evolution in range(100):
+
+evolution_key = random.PRNGKey(28)
+
+for evolution in range(1000):
     # Step 1 - select the parents
     parents = ga.selection(population=population)
     parent_pairs = list(zip(parents[::2], parents[1::2]))
@@ -259,8 +246,11 @@ for evolution in range(100):
     # Step 2 - create the children
     children = []
     for pair in parent_pairs:
-        parent_children = ga.crossover(parents=pair)
-        children += parent_children
+        evolution_key, sub_evolution_key = random.split(evolution_key)
+        crossover_prob = random.uniform(sub_evolution_key, shape=(), minval=0.0, maxval=1.0)
+        if crossover_prob < 0.9:
+            parent_children = ga.crossover(parents=pair)
+            children += parent_children
 
     # Step 3 - mutate 
     new_children = []
@@ -268,21 +258,23 @@ for evolution in range(100):
         replacement_child, mutation_occured = ga.mutation(chromosome=child, city=city)
         if mutation_occured:
             new_children.append(replacement_child)
-        
+            
     # Step 4 - select the population going forward e.g. all children or based on fitness score.
     population += [child for child in new_children + children]
+    
     # TODO: what do I want to track over the evolutions
-    [chromosome.calculate_fitness() for chromosome in population]
-    fitness = [chromosome.fitness for chromosome in population]
-    
-    
-    pairs = list(zip(population, fitness))
-    sorted_pairs = sorted(pairs, key=lambda x: x[1])
-    population = [key for key, _ in sorted_pairs[:population_size]]
-    
-    avg_score.append(np.mean(fitness))
-    print(f'Finished evolution # {evolution} with average fitness score: {np.mean(fitness)}\n')
+    for c in population:
+        c.calculate_fitness()
 
+    # keep only the fittest population
+    population = sorted(population, key=lambda c: c.fitness)[:population_size]
+
+    # now compute metrics on the survivors
+    avg = np.mean([c.fitness for c in population])
+    best = population[0].fitness
+    avg_score.append(avg)
+    print(f"Evolution {evolution:4d} | best: {best:.1f} | avg: {avg:.1f} | pop={len(population)}")
+        
 plt.plot(range(len(avg_score)), avg_score)
 plt.title('Average Fitness Score over each evolution')
 plt.xlabel('Evolution')
