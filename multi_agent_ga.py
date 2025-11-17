@@ -20,7 +20,7 @@ def simulate_evacuation(city: Environment, num_agents: int, population_size: int
     
     while not terminate:
         #3 Parent Selection
-        parents = ga.parent_selection(population=population)
+        parents = ga.parent_selection(population=population, num_parents=population_size)
     
         #4 Crossover
         

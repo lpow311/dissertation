@@ -6,7 +6,7 @@ from utils.parent_selection import ParentSelection
 class GeneticAlgorithm(ParentSelection):
     
     def __init__(self, exit_criteria: dict, pop_size: int, seed: int):
-        super(ParentSelection, self).__init__(population_size=pop_size)
+        ParentSelection.__init__(self, population_size=pop_size)
         
         self.exit_criteria = exit_criteria
         

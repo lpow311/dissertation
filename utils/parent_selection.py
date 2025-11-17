@@ -27,7 +27,7 @@ class ParentSelection:
             )
             parents.append(chromosome)
     
-        return parents    
+        return parents, key
     
     def extract_cumulative_chromosome(self, population: list, probabilities: list, pick_prob: float):
         cumulative = 0
