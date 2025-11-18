@@ -238,7 +238,7 @@ avg_score = []
 
 evolution_key = random.PRNGKey(28)
 
-for evolution in range(1000):
+for evolution in range(100):
     # Step 1 - select the parents
     parents = ga.selection(population=population)
     parent_pairs = list(zip(parents[::2], parents[1::2]))

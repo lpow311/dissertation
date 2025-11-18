@@ -3,6 +3,8 @@ from jax import random
 
 from utils.environment import Environment
 
+import numpy as np
+
 class Agent:
     
     def __init__(self, name: str, seed: int, city: Environment) -> None:
@@ -43,6 +45,8 @@ class Agent:
         return shortest_length
 
     def generate_random_path(self, chromosome_key: random.PRNGKey) -> list:
+        # TODO: might want to add some probability for knowing the city and giving more likely to pick the node
+        # on the shortest path.
         current_location = self.start_point
         path = [current_location]
         
@@ -61,14 +65,18 @@ class Agent:
             path.append(current_location)
         
         self.path = path
-        return path
+        return path, chromosome_key
     
     
 class Chromosome:
     
     def __init__(self, agents: dict, seed: int) -> None:
         self.seed = seed
-        self.key = random.PRNGKey(seed)
+        
+        if type(seed) == int:
+            self.key = random.PRNGKey(seed)
+        else:
+            self.key = seed
         
         self.agents = self.deep_copy_agents(agents=agents)
         self.num_agents =  len(self.agents)
@@ -79,6 +87,7 @@ class Chromosome:
         for agent_num, agent in agents.items():
             chromosome_agent_key = self.split_key()
             
+            # TODO: will need to understand how copy more information when got it.
             new_agent = Agent(agent.name, agent.seed, agent.city)
             new_agent.generate_random_path(chromosome_key=chromosome_agent_key)
             
@@ -101,10 +110,17 @@ class Chromosome:
             distance_score = agent.shortest_path_length / path_length
             
             # Needs to add to one for my brain...
-            score += (0.5*loop_score + 0.5*distance_score)
-        
-        self.fitness = score / self.num_agents
+            score += (0.2*loop_score + 0.8*distance_score)
 
+        self.fitness = score / self.num_agents
+        
+    def calculate_average_path(self) -> float:
+        lengths = []
+        for agent in self.agents.values():
+            path = agent.path
+            lengths.append(len(path))
+        
+        return np.mean(lengths)
 
 class PopulationCreation:
     
@@ -133,7 +149,7 @@ class PopulationCreation:
     def initialise_agents(self) -> dict:
         # TODO: when add agent behaviour we need to make sure it transfers.
         agents = {}
-        agent_seed_multiplier = 1234
+        agent_seed_multiplier = 1235
         
         for agent in range(self.num_agents):
             agents[agent] = Agent(
@@ -144,7 +160,3 @@ class PopulationCreation:
         
         return agents
     
-
-if __name__ == "__main__":
-    creator = PopulationCreation(pop_size=2, num_agents=2)
-    creator.create_initial_population()
