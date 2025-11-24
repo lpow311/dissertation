@@ -4,9 +4,9 @@ import plotly.graph_objects as go
 import pickle
 
 # Parameters
-num_start_nodes = 10
-num_exit_nodes = 6
-num_connection_nodes = 30
+num_start_nodes = 3
+num_exit_nodes = 3
+num_connection_nodes = 10
 POTENTIAL_CONNECTIONS = 2
 
 # Create a directed graph
@@ -15,7 +15,9 @@ G = nx.Graph()
 # Add start nodes, exit nodes, and connection nodes
 start_nodes = [(f"Start_{i}", {"type": "start"}) for i in range(1, num_start_nodes + 1)]
 exit_nodes = [(f"Exit_{i}", {"type": "exit"}) for i in range(1, num_exit_nodes + 1)]
-connection_nodes = [(f"Connection_{i}", {"type": "connection"}) for i in range(1, num_connection_nodes + 1)]
+connection_nodes = [
+    (f"Connection_{i}", {"type": "connection"}) for i in range(1, num_connection_nodes + 1)
+]
 
 G.add_nodes_from(start_nodes)
 G.add_nodes_from(exit_nodes)
@@ -63,10 +65,7 @@ for edge in G.edges():
     edge_y.extend([y0, y1, None])
 
 edge_trace = go.Scatter(
-    x=edge_x, y=edge_y,
-    line=dict(width=1, color='#888'),
-    hoverinfo='none',
-    mode='lines'
+    x=edge_x, y=edge_y, line=dict(width=1, color="#888"), hoverinfo="none", mode="lines"
 )
 
 node_x = []
@@ -79,31 +78,39 @@ for node in G.nodes():
     node_text.append(node)
 
 node_trace = go.Scatter(
-    x=node_x, y=node_y,
-    mode='markers+text',
+    x=node_x,
+    y=node_y,
+    mode="markers+text",
     text=node_text,
     textposition="top center",
-    hoverinfo='text',
+    hoverinfo="text",
     marker=dict(
         size=10,
-        color=['blue' if node.startswith('Start') else 'green' if node.startswith('Exit') else 'orange' for node in G.nodes()],
-        line_width=2
-    )
+        color=[
+            "blue" if node.startswith("Start") else "green" if node.startswith("Exit") else "orange"
+            for node in G.nodes()
+        ],
+        line_width=2,
+    ),
 )
 
-fig = go.Figure(data=[edge_trace, node_trace],
-                layout=go.Layout(
-                    # title='Network Graph with Start, Exit, and Connection Nodes',
-                    # titlefont_size=16,
-                    showlegend=False,
-                    hovermode='closest',
-                    margin=dict(b=20,l=5,r=5,t=40),
-                    xaxis=dict(showgrid=False, zeroline=False),
-                    yaxis=dict(showgrid=False, zeroline=False)
-                ))
+fig = go.Figure(
+    data=[edge_trace, node_trace],
+    layout=go.Layout(
+        # title='Network Graph with Start, Exit, and Connection Nodes',
+        # titlefont_size=16,
+        showlegend=False,
+        hovermode="closest",
+        margin=dict(b=20, l=5, r=5, t=40),
+        xaxis=dict(showgrid=False, zeroline=False),
+        yaxis=dict(showgrid=False, zeroline=False),
+    ),
+)
 
 # Save the plot as JSON and PNG
-pickle.dump(G, open('small_city_graph.pickle', 'wb'))
-fig.write_image("small_city_graph.png")
+pickle.dump(G, open("super_small_city_graph.pickle", "wb"))
+fig.write_image("super_small_city_graph.png")
 
-print("Graph created with 10 start nodes, 6 exit nodes, and 30 connection nodes. Visualization saved as network_graph.json and network_graph.png.")
+print(
+    f"Graph created with {num_start_nodes} start nodes, {num_exit_nodes} exit nodes, and {num_connection_nodes} connection nodes. Visualization saved as network_graph.json and network_graph.png."
+)
