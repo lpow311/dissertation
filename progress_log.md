@@ -13,15 +13,18 @@ In the `multi_agent_ga.py` file and the `utils` folder I have done the following
 
 Other additonal functionality includes:
 * `city_creation.py` - creates different city environments and saves them so they can be read in.
+* Plotting the results I've done but not 100% sure what I'm even trying to show yet.
 
 
 ### my recent thoughts are...
+* Need to add in some stuff to make it more "real" e.g. congestion  and route familiarity now that the basic version is working.
+* Need to make sure this is configurable so not overwritting basic version.
 
 
 ### pretty sure a long list of what needs doing....
 ##### General functionality:
 * Exit criteria
-* Agent route familiarity
+* Walking speed - the fastest person needs to be they can move to a node in 1 time step and then increase.
 * Agent characteristics e.g. walking speed
 * Congestion
 * What metric am I tracking - or multiple?
@@ -40,3 +43,10 @@ Other additonal functionality includes:
 
 ##### Survivor Selection 
 * Why would I be losing children and having to fill with parents? Is it because of the cross over probability?
+
+
+
+#### Human behaviours to add in:
+* City familiarity
+* Panic factor
+* altruism - which likely means I'll need to add some form of characteristic around requiring support so people see it to stop?
