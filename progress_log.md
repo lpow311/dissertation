@@ -13,9 +13,12 @@ In the `multi_agent_ga.py` file and the `utils` folder I have done the following
 
 Other additonal functionality includes:
 * `city_creation.py` - creates different city environments and saves them so they can be read in.
+* Plotting the results I've done but not 100% sure what I'm even trying to show yet.
 
 
 ### my recent thoughts are...
+* Need to add in some stuff to make it more "real" e.g. congestion  and route familiarity now that the basic version is working.
+* Need to make sure this is configurable so not overwritting basic version.
 
 
 ### pretty sure a long list of what needs doing....
