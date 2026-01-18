@@ -1,9 +1,16 @@
 from utils.environment import Environment
 from utils.agent import PopulationCreation
 from utils.ga import GeneticAlgorithm
+from utils.evaluation_metrics import Evaluation
 from utils.visualisation_heatmap import CityEvacuationHeatmap
 import numpy as np
 import matplotlib.pyplot as plt
+
+
+def print_log_line():
+    print(
+        "------------------------------------------------------------------------------------------------------"
+    )
 
 
 def simulate_evacuation(
@@ -11,11 +18,14 @@ def simulate_evacuation(
     num_agents: int,
     population_size: int,
     algorithm_seed: int,
+    simulation_params: dict,
     max_evolutions: int = 100,
 ):
     # 1 Generate the population
     creator = PopulationCreation(city=city, pop_size=population_size, num_agents=num_agents)
-    population = creator.create_initial_population()
+    population, human_traits = creator.create_initial_population(
+        simulation_params=simulation_params
+    )
 
     # 2 Set up
     exit_criteria = {"max_evolutions": max_evolutions}
@@ -29,7 +39,15 @@ def simulate_evacuation(
     evolution = 1
     terminate = ga.extract_termination_criteria(evolution=evolution)
 
-    avg_score = []
+    evaluation = Evaluation()
+
+    avg_walking_speed = np.mean(human_traits["walking_speeds"])
+
+    print_log_line()
+    print(
+        f" City: {city.city_name} | Population size: {len(population)} | Walking Speed: {avg_walking_speed:.2}"
+    )
+    print_log_line()
 
     while not terminate:
         # 3 Parent Selection
@@ -46,17 +64,7 @@ def simulate_evacuation(
             children=mutated_children, old_population=population, keep_best=True
         )
 
-        new_population_fitness = [c.fitness for c in population]
-        avg = np.mean(new_population_fitness)
-        best = np.max(new_population_fitness)
-        worst = np.min(new_population_fitness)
-        avg_score.append(avg)
-
-        avg_path_length = np.mean([c.calculate_average_path() for c in population])
-
-        print(
-            f"Evolution {evolution:4d} | best: {best:.3f} | avg: {avg:.3f} | min: {worst:.3f} | avg path length={avg_path_length:.3f} | pop={len(population)}"
-        )
+        evaluation.calculate_metrics(population, evolution)
 
         # 7 Termination
         evolution += 1
@@ -64,10 +72,11 @@ def simulate_evacuation(
 
     # TODO: might want to track best so far and use that at the end?
     final_solution = sorted(population, key=lambda c: c.fitness, reverse=True)[0]
-    visualiser = CityEvacuationHeatmap(solution=final_solution, city=city)
-    visualiser.animate_solution()
+    # TODO: think I broke this with congestion so ignoring it.
+    # visualiser = CityEvacuationHeatmap(solution=final_solution, city=city)
+    # visualiser.animate_solution()
 
-    plt.plot(range(len(avg_score)), avg_score)
+    plt.plot(range(len(evaluation.avg_score)), evaluation.avg_score)
     plt.title("Average Fitness Score over each evolution")
     plt.xlabel("Evolution")
     plt.ylabel("Average Fitness Score")
@@ -78,5 +87,10 @@ if __name__ == "__main__":
     city = Environment(city_name="super_small_city_graph")
 
     simulate_evacuation(
-        city=city, num_agents=10, population_size=50, algorithm_seed=29, max_evolutions=5
+        city=city,
+        num_agents=10,
+        population_size=50,
+        algorithm_seed=29,
+        max_evolutions=20,
+        simulation_params={"congestion": True, "human": False},
     )

@@ -10,16 +10,22 @@ class Environment:
     """
 
     def __init__(self, city_name: str):
+        self.city_name = city_name
+
         self.graph = self.create_graph(city_name)
-        self.starts, self.num_starts = self.extract_node_types(node_type='start')
-        self.exits, self.num_exits = self.extract_node_types(node_type='exit')
+        self.starts, self.num_starts = self.extract_node_types(node_type="start")
+        self.exits, self.num_exits = self.extract_node_types(node_type="exit")
+
+        self.congestion_amount = 5  # TODO: come back and pick something better for this...
 
     def create_graph(self, city_name: str) -> nx.Graph:
-        G = pickle.load(open(f'{city_name}.pickle', 'rb'))
+        G = pickle.load(open(f"{city_name}.pickle", "rb"))
         return G
-    
+
     def extract_node_types(self, node_type: str) -> list:
-        filtered_nodes = [n for n, attr in self.graph.nodes(data=True) if attr.get('type') == node_type]
+        filtered_nodes = [
+            n for n, attr in self.graph.nodes(data=True) if attr.get("type") == node_type
+        ]
         num_nodes = len(filtered_nodes)
         return filtered_nodes, num_nodes
 
