@@ -21,6 +21,9 @@ def simulate_evacuation(
     simulation_params: dict,
     max_evolutions: int = 100,
 ):
+    """
+    Main function to running the genetic algorithm.
+    """
     # 1 Generate the population
     creator = PopulationCreation(city=city, pop_size=population_size, num_agents=num_agents)
     population, human_traits = creator.create_initial_population(
@@ -92,5 +95,5 @@ if __name__ == "__main__":
         population_size=50,
         algorithm_seed=29,
         max_evolutions=20,
-        simulation_params={"congestion": True, "human": False},
+        simulation_params={"congestion": True, "walking": False, "panic": True},
     )

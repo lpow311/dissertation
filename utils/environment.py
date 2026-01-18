@@ -2,6 +2,8 @@ import pickle
 import networkx as nx
 import matplotlib.pyplot as plt
 
+from typing import Tuple
+
 
 class Environment:
     """
@@ -22,7 +24,7 @@ class Environment:
         G = pickle.load(open(f"{city_name}.pickle", "rb"))
         return G
 
-    def extract_node_types(self, node_type: str) -> list:
+    def extract_node_types(self, node_type: str) -> Tuple[list, int]:
         filtered_nodes = [
             n for n, attr in self.graph.nodes(data=True) if attr.get("type") == node_type
         ]

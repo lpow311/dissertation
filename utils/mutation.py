@@ -19,7 +19,11 @@ class Mutation:
                     key=mutation_sub_key, shape=(), minval=0, maxval=1
                 )
 
-                if agent_mutation_prob <= self.mutation_prob:
+                mutation_prob = self.mutation_prob
+                if child_chromosome.params["panic"]:
+                    mutation_prob += agent.characterists["panic"]
+
+                if agent_mutation_prob <= mutation_prob:
 
                     point1, point2, key = self.extract_path_points(agent=agent)
 

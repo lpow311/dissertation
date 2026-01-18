@@ -21,12 +21,6 @@ class Agent:
         self.path = None
 
         self.characteristics = characteristics
-        self.speed = characteristics["walking_spped"]
-        self.vunerability = characteristics["vunerability"]
-
-        self.familiarity = characteristics["familarity"]
-        self.altruism = characteristics["altruism"]
-        self.panic = characteristics["panic"]
 
         # TODO: this only works on static stuff for the minute e.g. no congestion.
         self.shortest_path_length = self.calculate_shortest_path()
@@ -55,8 +49,6 @@ class Agent:
         return shortest_length
 
     def generate_random_path(self, chromosome_key: random.PRNGKey) -> list:
-        # TODO: might want to add some probability for knowing the city and giving more likely to pick the node
-        # on the shortest path.
         current_location = self.start_point
         path = [current_location]
 
@@ -102,7 +94,6 @@ class Chromosome:
         for agent_num, agent in agents.items():
             chromosome_agent_key = self.split_key()
 
-            # TODO: will need to understand how copy more information when got it.
             new_agent = Agent(agent.name, agent.seed, agent.city, agent.characteristics)
             new_agent.generate_random_path(chromosome_key=chromosome_agent_key)
 
@@ -133,7 +124,7 @@ class Chromosome:
             congestion_delay = self.calculate_agent_congestion_delay(agent, node_occupancy)
             congestion_score.append(congestion_delay)
 
-            path_timesteps = len(path) * agent.speed if self.params["human"] else len(path)
+            path_timesteps = len(path) * agent.speed if self.params["walking"] else len(path)
             path_fitness = path_timesteps
             if self.params["congestion"]:
                 path_fitness += congestion_delay
@@ -187,8 +178,13 @@ class PopulationCreation:
         self.num_agents = num_agents
 
         self.city = city
+        self.human_traits = {"walking_speeds": [], "panic": []}
 
     def create_initial_population(self, simulation_params: dict) -> list:
+        """
+        Creates the initial population of chromosomes to be used, each has its
+        own unique seed for reproduction of "random" probabilities.
+        """
         agents, human_traits = self.initialise_agents(simulation_params)
 
         chromosome_seed_multipler = 6724
@@ -206,30 +202,27 @@ class PopulationCreation:
         return population, human_traits
 
     def initialise_agents(self, simulation_params: dict) -> dict:
+        """
+        Creates a set of agents to use in the modelling ensuring the agent
+        characteristics are the same across the different chromosomes.
+        """
         agents = {}
         agent_seed_multiplier = 1235
-
-        walking_speeds = [1, 2, 3]  # TODO: this is sooo basic but for now is fine.
-        human_traits = {"walking_speeds": []}
 
         for agent in range(self.num_agents):
             agent_seed = agent_seed_multiplier * agent
 
-            if simulation_params["human"]:
-                speed_idx = random.randint(
-                    random.PRNGKey(agent_seed), shape=(), minval=0, maxval=len(walking_speeds)
-                )
-                walking_speed = walking_speeds[speed_idx]
-            else:
-                walking_speed = 1
-            human_traits["walking_speeds"].append(walking_speed)
+            walking_speed = self.extract_walking_speed(
+                agent_seed=agent_seed, params=simulation_params
+            )
+            panic = self.extract_panic(agent_seed=agent_seed, params=simulation_params)
 
             default_characteristics = {
                 "walking_spped": walking_speed,  # How many time steps it takes to move 1 node.
                 "altruism": 0,  # Probability the agent will stop at a node to help others.
                 "vunerability": 0,  # Probability the agent will have to stop at a node due to an "issue"
                 "familarity": 0,  # Not sure what this is yet.
-                "panic": 0,  # mutation parameter addition rate, if the agent panics its more likely to pick a random path.
+                "panic": panic,  # mutation parameter addition rate, if the agent panics its more likely to pick a random path.
             }
 
             agents[agent] = Agent(
@@ -239,4 +232,29 @@ class PopulationCreation:
                 characteristics=default_characteristics,
             )
 
-        return agents, human_traits
+        return agents, self.human_traits
+
+    def extract_panic(self, agent_seed: int, params: dict) -> float:
+        if not params["panic"]:
+            self.human_traits["panic"].append(0)
+            return 0
+
+        panic = random.beta(random.PRNGKey(agent_seed), a=2.0, b=5.0, shape=())
+
+        self.human_traits["panic"] = panic
+        return panic
+
+    def extract_walking_speed(self, agent_seed: int, params: dict) -> int:
+        if not params["walking"]:
+            self.human_traits["walking_speeds"].append(1)
+            return 1
+
+        walking_speeds = [1, 2, 3]  # TODO: this is sooo basic but for now is fine.
+        speed_idx = random.randint(
+            random.PRNGKey(agent_seed), shape=(), minval=0, maxval=len(walking_speeds)
+        )
+        walking_speed = walking_speeds[speed_idx]
+
+        self.human_traits["walking_speeds"].append(walking_speed)
+
+        return walking_speed
