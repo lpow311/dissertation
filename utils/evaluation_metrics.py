@@ -20,7 +20,7 @@ class Evaluation:
         # TODO: altruism impact i.e. full time steps.
 
         print(
-            f"Evolution {evolution:4d} | best: {best:.3f} | avg: {avg:.3f} | worst: {worst:.3f} | avg path length={avg_path_length:.3f} | congestion={congestion_score:.3f}"
+            f"Evolution {evolution:4d} | best: {best:.3f} | avg: {avg:.3f} | worst: {worst:.3f} | avg path length: {avg_path_length:.3f} | congestion: {congestion_score:.3f}"
         )
 
     def fitness_metrics(self, population: list) -> tuple:
