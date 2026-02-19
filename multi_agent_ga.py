@@ -1,14 +1,27 @@
 from utils.environment import Environment
 from utils.agent import PopulationCreation
 from utils.ga import GeneticAlgorithm
-from utils.evaluation_metrics import Evaluation
+from utils.evaluation_metrics import Evaluation, FinalEvaluationMetrics
 from utils.visualisation_heatmap import CityEvacuationHeatmap
+from utils.greedy import Greedy
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 def print_log_line():
     print("-" * 150)
+
+
+def greedy_algorithm(num_agents: int, simulation_params: dict, city: Environment):
+    creator = PopulationCreation(city=city, pop_size=1, num_agents=num_agents)
+    population, human_traits = creator.create_initial_population(
+        simulation_params=simulation_params
+    )
+
+    greedy = Greedy(population=population)
+    solution = greedy.solve()
+
+    return solution
 
 
 def simulate_evacuation(
@@ -76,6 +89,8 @@ def simulate_evacuation(
     # TODO: think I broke this with congestion so ignoring it.
     # visualiser = CityEvacuationHeatmap(solution=final_solution, city=city)
     # visualiser.animate_solution()
+    final_eval = FinalEvaluationMetrics(solution=final_solution, params=simulation_params)
+    final_eval.score()
 
     plt.plot(range(len(evaluation.avg_score)), evaluation.avg_score)
     plt.title("Average Fitness Score over each evolution")
@@ -83,11 +98,16 @@ def simulate_evacuation(
     plt.ylabel("Average Fitness Score")
     plt.show()
 
-    return population, evaluation
+    return final_solution, evaluation
 
 
 if __name__ == "__main__":
     city = Environment(city_name="super_small_city_graph")
+
+    greedy_algorithm(
+        num_agents=10,
+        simulation_params={"congestion": True, "walking": False, "panic": True},
+    )
 
     simulate_evacuation(
         city=city,
