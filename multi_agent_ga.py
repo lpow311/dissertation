@@ -8,9 +8,7 @@ import matplotlib.pyplot as plt
 
 
 def print_log_line():
-    print(
-        "------------------------------------------------------------------------------------------------------"
-    )
+    print("-" * 150)
 
 
 def simulate_evacuation(
@@ -84,6 +82,8 @@ def simulate_evacuation(
     plt.xlabel("Evolution")
     plt.ylabel("Average Fitness Score")
     plt.show()
+
+    return population, evaluation
 
 
 if __name__ == "__main__":

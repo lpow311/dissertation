@@ -21,6 +21,7 @@ class Agent:
         self.path = None
 
         self.characteristics = characteristics
+        self.speed = characteristics["walking_speed"]
 
         # TODO: this only works on static stuff for the minute e.g. no congestion.
         self.shortest_path_length = self.calculate_shortest_path()
@@ -218,7 +219,7 @@ class PopulationCreation:
             panic = self.extract_panic(agent_seed=agent_seed, params=simulation_params)
 
             default_characteristics = {
-                "walking_spped": walking_speed,  # How many time steps it takes to move 1 node.
+                "walking_speed": walking_speed,  # How many time steps it takes to move 1 node.
                 "altruism": 0,  # Probability the agent will stop at a node to help others.
                 "vunerability": 0,  # Probability the agent will have to stop at a node due to an "issue"
                 "familarity": 0,  # Not sure what this is yet.

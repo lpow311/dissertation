@@ -21,7 +21,7 @@ class Mutation:
 
                 mutation_prob = self.mutation_prob
                 if child_chromosome.params["panic"]:
-                    mutation_prob += agent.characterists["panic"]
+                    mutation_prob += agent.characteristics["panic"]
 
                 if agent_mutation_prob <= mutation_prob:
 
