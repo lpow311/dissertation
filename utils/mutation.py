@@ -9,7 +9,7 @@ class Mutation:
 
         self.min_path_length = 3
 
-    def partial_path_mutation(self, children: Chromosome) -> list:
+    def partial_exit_path_mutation(self, children: Chromosome, epsilon: float = 0.2) -> list:
         mutated_children = []
         for child_chromosome in children:
             for agent_name, agent in child_chromosome.agents.items():
@@ -19,11 +19,44 @@ class Mutation:
                     key=mutation_sub_key, shape=(), minval=0, maxval=1
                 )
 
-                mutation_prob = self.mutation_prob
-                if child_chromosome.params["panic"]:
-                    mutation_prob += agent.characteristics["panic"]
+                print(f"Agent Prob: {agent_mutation_prob} vs {self.mutation_prob}")
+                if agent_mutation_prob <= self.mutation_prob:
+                    point, agent.key = self.pick_random_path_point(agent=agent)
+                    new_path = self.find_new_exit_path(path=agent.path, point=point)
 
-                if agent_mutation_prob <= mutation_prob:
+                    agent.path = new_path
+
+                    child_chromosome.agents[agent_name] = agent
+
+            mutated_children.append(child_chromosome)
+
+        return mutated_children
+
+    def pick_random_path_point(self, agent: Agent):
+        key, sub_key = random.split(agent.key)
+        point = random.randint(key=sub_key, shape=(), minval=1, maxval=len(agent.path) - 2)
+        return point, key
+
+    def find_new_exit_path(self, path: list, point: int):
+        current_location = point
+        new_path = path[:point]
+
+        # TODO: finish this.
+        return
+
+    ######################### PROBS DELETE THIS AT SOME POINT ##############################
+
+    def partial_subpath_mutation(self, children: Chromosome) -> list:
+        mutated_children = []
+        for child_chromosome in children:
+            for agent_name, agent in child_chromosome.agents.items():
+
+                agent.key, mutation_sub_key = random.split(agent.key)
+                agent_mutation_prob = random.uniform(
+                    key=mutation_sub_key, shape=(), minval=0, maxval=1
+                )
+
+                if agent_mutation_prob <= self.mutation_prob:
 
                     point1, point2, key = self.extract_path_points(agent=agent)
 
@@ -31,8 +64,9 @@ class Mutation:
                     sub_path, agent.key = self.find_new_subpath(
                         agent_path[point1], agent_path[point2], key, agent.city
                     )
-                    new_path = agent_path[:point1] + sub_path[:-1] + agent_path[point2:]
-                    child_chromosome.agents[agent_name].path = new_path
+                    agent.path = agent_path[:point1] + sub_path[:-1] + agent_path[point2:]
+
+                    child_chromosome.agents[agent_name] = agent
 
             mutated_children.append(child_chromosome)
 

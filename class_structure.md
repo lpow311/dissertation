@@ -86,7 +86,7 @@ classDiagram
     class Mutation {
         -mutation_prob: float = 0.1
         -min_path_length: int = 3
-        +partial_path_mutation()
+        +partial_subpath_mutation()
         +extract_path_points()
         +find_new_subpath()
     }
