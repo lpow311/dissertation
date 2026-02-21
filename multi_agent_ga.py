@@ -1,11 +1,11 @@
 from utils.environment import Environment
 from utils.agent import PopulationCreation
-from utils.ga import GeneticAlgorithm
+from utils.genetic_algorithm import GeneticAlgorithm
 from utils.evaluation_metrics import Evaluation, FinalEvaluationMetrics
-from utils.visualisation_heatmap import CityEvacuationHeatmap
 from utils.greedy import Greedy
 import numpy as np
 import matplotlib.pyplot as plt
+from jax.random import PRNGKey, split
 
 
 def print_log_line():
@@ -24,6 +24,15 @@ def greedy_algorithm(num_agents: int, simulation_params: dict, city: Environment
     return solution
 
 
+class KeyManager:
+    def __init__(self, seed: int = 42) -> PRNGKey:
+        self.key = PRNGKey(seed)
+
+    def next_key(self):
+        self.key, subkey = split(self.key)
+        return subkey
+
+
 def simulate_evacuation(
     city: Environment,
     num_agents: int,
@@ -36,7 +45,10 @@ def simulate_evacuation(
     Main function to running the genetic algorithm.
     """
     # 1 Generate the population
-    creator = PopulationCreation(city=city, pop_size=population_size, num_agents=num_agents)
+    key_manager = KeyManager(seed=algorithm_seed)
+    creator = PopulationCreation(
+        city=city, pop_size=population_size, num_agents=num_agents, key_manager=key_manager
+    )
     population, human_traits = creator.create_initial_population(
         simulation_params=simulation_params
     )
@@ -46,7 +58,7 @@ def simulate_evacuation(
     ga = GeneticAlgorithm(
         exit_criteria=exit_criteria,
         pop_size=population_size,
-        seed=algorithm_seed,
+        key_manager=key_manager,
         num_agents=num_agents,
     )
 
@@ -65,7 +77,7 @@ def simulate_evacuation(
 
     while not terminate:
         # 3 Parent Selection
-        parents = ga.parent_selection(population=population, num_parents=population_size)
+        parents = ga.parent_selection(population=population)
 
         # 4 Crossover
         children = ga.chromosome_crossover(parents=parents)
@@ -115,5 +127,5 @@ if __name__ == "__main__":
         population_size=50,
         algorithm_seed=29,
         max_evolutions=20,
-        simulation_params={"congestion": True, "walking": False, "panic": True},
+        simulation_params={"congestion": True, "walking": False, "fitness": "max"},
     )

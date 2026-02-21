@@ -20,8 +20,13 @@ class Environment:
 
         self.congestion_amount = 5  # TODO: come back and pick something better for this...
 
+        self.distances_to_exits = {
+            node: {exit: nx.shortest_path_length(self.graph, node, exit) for exit in self.exits}
+            for node in self.graph.nodes
+        }
+
     def create_graph(self, city_name: str) -> nx.Graph:
-        G = pickle.load(open(f"{city_name}.pickle", "rb"))
+        G = pickle.load(open(f"graphs/{city_name}.pickle", "rb"))
         return G
 
     def extract_node_types(self, node_type: str) -> Tuple[list, int]:

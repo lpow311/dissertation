@@ -1,5 +1,7 @@
 import networkx as nx
 from jax import random
+from jax.random import PRNGKey
+
 from collections import defaultdict
 
 from utils.environment import Environment
@@ -9,47 +11,60 @@ import numpy as np
 
 class Agent:
 
-    def __init__(self, name: str, seed: int, city: Environment, characteristics: dict) -> None:
+    def __init__(
+        self,
+        name: str,
+        city: Environment,
+        characteristics: dict,
+        key_manager,
+        start_point: str | None = None,
+        path: list | None = None,
+        shortest_path: list | None = None,
+        preferred_exits: list | None = None,
+    ) -> None:
         self.name = name
-
-        self.seed = seed
-        self.key = random.PRNGKey(seed)
-
         self.city = city
-        self.start_point = self.select_start_point()
-
-        self.path = None
+        self.key_manager = key_manager
 
         self.characteristics = characteristics
         self.speed = characteristics["walking_speed"]
 
-        # TODO: this only works on static stuff for the minute e.g. no congestion.
-        self.shortest_path_length = self.calculate_shortest_path()
+        if start_point is None:
+            self.start_point = self.select_start_point()
+        else:
+            self.start_point = start_point
+
+        if path is None:
+            self.path = self.generate_random_path()
+        else:
+            self.path = path
+
+        if shortest_path is None:
+            self.shortest_path_length = self.calculate_shortest_path()
+        else:
+            self.shortest_path_length = shortest_path
+
+        if preferred_exits is None:
+            # TODO: can update this later for local vs visitor.
+            self.preferred_exits = self.city.exits
+        else:
+            self.preferred_exits = preferred_exits
 
     def select_start_point(self) -> str | int:
         start_point_idx = random.randint(
-            key=self.split_key(), shape=(), minval=0, maxval=self.city.num_starts
+            key=self.key_manager.next_key(), shape=(), minval=0, maxval=self.city.num_starts
         )
         return self.city.starts[start_point_idx]
 
-    def split_key(self) -> random.PRNGKey:
-        self.key, sub_key = random.split(self.key)
-        return sub_key
-
     def calculate_shortest_path(self) -> int:
         exit_path_lengths = [
-            nx.shortest_path_length(
-                self.city.graph,
-                source=self.start_point,
-                target=exit_option,
-                # , weight='weight'
-            )
+            nx.shortest_path_length(self.city.graph, source=self.start_point, target=exit_option)
             for exit_option in self.city.exits
         ]
         shortest_length = min(exit_path_lengths)
         return shortest_length
 
-    def generate_random_path(self, chromosome_key: random.PRNGKey) -> list:
+    def generate_random_path(self) -> list:
         current_location = self.start_point
         path = [current_location]
 
@@ -58,7 +73,7 @@ class Agent:
         while current_location not in self.city.exits:
             neighbours = list(city_graph.neighbors(current_location))
 
-            chromosome_key, sub_key = random.split(chromosome_key)
+            sub_key = self.key_manager.next_key()
 
             # TODO: might want to stop it going back on itself...
             next_location_idx = random.randint(
@@ -67,44 +82,70 @@ class Agent:
             current_location = neighbours[next_location_idx]
             path.append(current_location)
 
-        self.path = path
-        return path, chromosome_key
+        path = self.__remove_loops_from_path(path=path)
+        return path
+
+    def update_path(self, path: list) -> None:
+        self.path = self.__remove_loops_from_path(path=path)
+
+    @staticmethod
+    def __remove_loops_from_path(path: list) -> list:
+        seen = {}
+        cleaned = []
+        for node in path:
+            if node in seen:
+                # loop detected - cut back to first occurrence
+                cut_idx = seen[node]
+                cleaned = cleaned[:cut_idx]
+                # Remove stale entries from seen for nodes no longer in cleaned
+                seen = {n: i for n, i in seen.items() if i < cut_idx}
+            seen[node] = len(cleaned)
+            cleaned.append(node)
+        return cleaned
+
+    def copy_agent(self, new_path: list | None):
+        if new_path is None:
+            new_path = self.path
+        else:
+            new_path = self.__remove_loops_from_path(path=new_path)
+
+        return Agent(
+            name=self.name,
+            city=self.city,
+            characteristics=self.characteristics,
+            key_manager=self.key_manager,
+            start_point=self.start_point,
+            path=new_path,
+            shortest_path=self.shortest_path_length,
+            preferred_exits=self.preferred_exits,
+        )
 
 
 class Chromosome:
 
     def __init__(
-        self, agents: dict, seed: int, params: dict = {"congestion": False, "human": False}
+        self,
+        agents: dict,
+        key_manager,
+        params: dict = {"congestion": False, "human": False, "fitness": "max"},
     ) -> None:
-        self.seed = seed
         self.params = params
-
-        if type(seed) == int:
-            self.key = random.PRNGKey(seed)
-        else:
-
-            self.key = seed
+        self.key_manager = key_manager
 
         self.agents = self.deep_copy_agents(agents=agents)
         self.num_agents = len(self.agents)
         self.fitness = None
+        self.fitness_calc = params["fitness"]
         self.congestion_score = None
 
     def deep_copy_agents(self, agents: dict) -> dict:
         agents_copy = {}
         for agent_num, agent in agents.items():
-            chromosome_agent_key = self.split_key()
 
-            new_agent = Agent(agent.name, agent.seed, agent.city, agent.characteristics)
-            new_agent.generate_random_path(chromosome_key=chromosome_agent_key)
-
+            new_agent = agent.copy_agent(new_path=None)
             agents_copy[agent_num] = new_agent
 
         return agents_copy
-
-    def split_key(self) -> random.PRNGKey:
-        self.key, sub_key = random.split(self.key)
-        return sub_key
 
     def calculate_fitness(self) -> None:
         """
@@ -118,7 +159,7 @@ class Chromosome:
         node_occupancy = self.calculate_node_congestion()
         congestion_score = []
 
-        score = 0
+        fitnesses = []
         for agent in self.agents.values():
             path = agent.path
 
@@ -130,20 +171,18 @@ class Chromosome:
             if self.params["congestion"]:
                 path_fitness += congestion_delay
 
-            unique_nodes = len(set(path))
-            loop_score = unique_nodes / len(path)
-            distance_score = agent.shortest_path_length / path_fitness
+            fitnesses.append(path_fitness)
 
-            # Needs to add to one for my brain...
-            score += 0.2 * loop_score + 0.8 * distance_score
-
-            # c1 = [3,4,5,6] = 18 / 4
-            # c2 = [1, 2, 3, 10] = 16 / 4
-        # TODO: look at this.
-        # Average path score
-        # min, max or median (look at distributions)!
-        self.fitness = score / self.num_agents
+        self.fitness = self.__calculate_chromosome_fitness(fitnesses)
         self.congestion_score = congestion_score
+
+    def __calculate_chromosome_fitness(self, fitnesses: list) -> float:
+        if self.fitness_calc == "mean":
+            return float(np.mean(fitnesses))
+        elif self.fitness_calc == "median":
+            return float(np.median(fitnesses))
+        else:
+            return float(np.max(fitnesses))
 
     def calculate_agent_congestion_delay(self, agent: Agent, occupancy: defaultdict) -> int:
         delay = 0
@@ -179,12 +218,14 @@ class Chromosome:
 
 class PopulationCreation:
 
-    def __init__(self, pop_size: int, num_agents: int, city: Environment):
+    def __init__(self, pop_size: int, num_agents: int, city: Environment, key_manager) -> None:
         self.pop_size = pop_size
         self.num_agents = num_agents
 
         self.city = city
         self.human_traits = {"walking_speeds": [], "panic": []}
+
+        self.key_manager = key_manager
 
     def create_initial_population(self, simulation_params: dict) -> list:
         """
@@ -193,13 +234,12 @@ class PopulationCreation:
         """
         agents, human_traits = self.initialise_agents(simulation_params)
 
-        chromosome_seed_multipler = 6724
         population = []
-        for chromosome_num in range(self.pop_size):
+        for _ in range(self.pop_size):
             chromosome = Chromosome(
                 agents=agents,
-                seed=chromosome_num * chromosome_seed_multipler,
                 params=simulation_params,
+                key_manager=self.key_manager,
             )
             chromosome.calculate_fitness()
 
@@ -213,52 +253,32 @@ class PopulationCreation:
         characteristics are the same across the different chromosomes.
         """
         agents = {}
-        agent_seed_multiplier = 1235
 
         for agent in range(self.num_agents):
-            agent_seed = agent_seed_multiplier * agent
-
             walking_speed = self.extract_walking_speed(
-                agent_seed=agent_seed, params=simulation_params
+                key=self.key_manager.next_key(), params=simulation_params
             )
-            panic = self.extract_panic(agent_seed=agent_seed, params=simulation_params)
 
             default_characteristics = {
                 "walking_speed": walking_speed,  # How many time steps it takes to move 1 node.
-                "altruism": 0,  # Probability the agent will stop at a node to help others.
-                "vunerability": 0,  # Probability the agent will have to stop at a node due to an "issue"
-                "familarity": 0,  # Not sure what this is yet.
-                "panic": panic,  # mutation parameter addition rate, if the agent panics its more likely to pick a random path.
             }
 
             agents[agent] = Agent(
                 name=f"Agent{agent}",
-                seed=agent_seed,
                 city=self.city,
                 characteristics=default_characteristics,
+                key_manager=self.key_manager,
             )
 
         return agents, self.human_traits
 
-    def extract_panic(self, agent_seed: int, params: dict) -> float:
-        if not params["panic"]:
-            self.human_traits["panic"].append(0)
-            return 0
-
-        panic = random.beta(random.PRNGKey(agent_seed), a=2.0, b=5.0, shape=())
-
-        self.human_traits["panic"] = panic
-        return panic
-
-    def extract_walking_speed(self, agent_seed: int, params: dict) -> int:
+    def extract_walking_speed(self, key: PRNGKey, params: dict) -> int:
         if not params["walking"]:
             self.human_traits["walking_speeds"].append(1)
             return 1
 
         walking_speeds = [1, 2, 3]  # TODO: this is sooo basic but for now is fine.
-        speed_idx = random.randint(
-            random.PRNGKey(agent_seed), shape=(), minval=0, maxval=len(walking_speeds)
-        )
+        speed_idx = random.randint(key, shape=(), minval=0, maxval=len(walking_speeds))
         walking_speed = walking_speeds[speed_idx]
 
         self.human_traits["walking_speeds"].append(walking_speed)

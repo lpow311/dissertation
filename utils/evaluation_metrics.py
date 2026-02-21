@@ -46,8 +46,8 @@ class Evaluation:
         population_fitness = [c.fitness for c in population]
 
         avg = np.mean(population_fitness)
-        best = np.max(population_fitness)
-        worst = np.min(population_fitness)
+        best = np.min(population_fitness)
+        worst = np.max(population_fitness)
 
         self.avg_score.append(avg)
 

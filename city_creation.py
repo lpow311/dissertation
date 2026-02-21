@@ -109,7 +109,7 @@ fig = go.Figure(
 
 # Save the plot as JSON and PNG
 pickle.dump(G, open("super_small_city_graph.pickle", "wb"))
-fig.write_image("super_small_city_graph.png")
+fig.write_image("images/super_small_city_graph.png")
 
 print(
     f"Graph created with {num_start_nodes} start nodes, {num_exit_nodes} exit nodes, and {num_connection_nodes} connection nodes. Visualization saved as network_graph.json and network_graph.png."
