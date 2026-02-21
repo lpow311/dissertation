@@ -136,7 +136,13 @@ class Chromosome:
 
             # Needs to add to one for my brain...
             score += 0.2 * loop_score + 0.8 * distance_score
-
+            
+            
+            # c1 = [3,4,5,6] = 18 / 4
+            # c2 = [1, 2, 3, 10] = 16 / 4
+        # TODO: look at this.
+        # Average path score
+        # min, max or median (look at distributions)!
         self.fitness = score / self.num_agents
         self.congestion_score = congestion_score
 
@@ -149,7 +155,7 @@ class Chromosome:
 
         return delay
 
-    def calculate_node_congestion(self) -> defaultdict:
+    def calculate_node_congestion(self) -> defaultdict:s
         """
         Weakly time-dependent (non-causal) congestion - It is not fully dynamic, and delays
         do not propagate forward.

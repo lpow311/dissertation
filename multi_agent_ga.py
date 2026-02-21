@@ -104,10 +104,10 @@ def simulate_evacuation(
 if __name__ == "__main__":
     city = Environment(city_name="super_small_city_graph")
 
-    greedy_algorithm(
-        num_agents=10,
-        simulation_params={"congestion": True, "walking": False, "panic": True},
-    )
+    # greedy_algorithm(
+    #     num_agents=10,
+    #     simulation_params={"congestion": True, "walking": False, "panic": True},
+    # )
 
     simulate_evacuation(
         city=city,
