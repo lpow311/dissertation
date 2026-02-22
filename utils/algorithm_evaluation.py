@@ -57,16 +57,16 @@ class AlgorithmComparison:
         plt.show()
 
     def exit_utilisation(self, city_name: str) -> None:
-        greedy_x, ga_x = {}
+        greedy_x, ga_x = {}, {}
 
         for i in range(len(self.greedy)):
             greedy_exits = [agent.path[-1] for agent in self.greedy[i].solution.values()]
             greedy_counter = Counter(greedy_exits)
-            greedy_x = self.__add_exits_to_dictionary(counter=greedy_counter, exit_dict=greedy_x)
+            greedy_x = self.add_exits_to_dictionary(counter=greedy_counter, exit_dict=greedy_x)
 
             ga_exits = [agent.path[-1] for agent in self.ga[i].solution.values()]
             ga_counter = Counter(ga_exits)
-            ga_x = self.__add_exits_to_dictionary(counter=ga_counter, exit_dict=ga_x)
+            ga_x = self.add_exits_to_dictionary(counter=ga_counter, exit_dict=ga_x)
 
         greedy_exit_use = {exit: float(np.mean(val)) for exit, val in greedy_x.items()}
         ga_exit_use = {exit: float(np.mean(val)) for exit, val in ga_x.items()}
@@ -74,7 +74,7 @@ class AlgorithmComparison:
         self.plot_exit_utilisation(ga_exit_use, greedy_exit_use, city_name)
 
     @staticmethod
-    def __add_exits_to_dictionary(counter: Counter, exit_dict: dict) -> dict:
+    def add_exits_to_dictionary(counter: Counter, exit_dict: dict) -> dict:
         for exit, count in counter.items():
             if exit not in exit_dict:
                 exit_dict[exit] = [count]
@@ -83,7 +83,7 @@ class AlgorithmComparison:
 
         return exit_dict
 
-    def plot_exit_utilisation(ga_exits: dict, greedy_exits: dict, city_name: str):
+    def plot_exit_utilisation(self, ga_exits: dict, greedy_exits: dict, city_name: str):
         exits = list(ga_exits.keys())
         ga_values = [ga_exits[exit] for exit in exits]
         greedy_values = [greedy_exits[exit] for exit in exits]
