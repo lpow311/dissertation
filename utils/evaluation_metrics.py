@@ -130,7 +130,7 @@ class FinalEvaluationMetrics:
         self.metrics = {}
         self.evolution_scores = None
 
-    def score(self) -> dict[str, float]:
+    def score(self, verbose: int = 1) -> dict[str, float]:
         agent_time, path_lengths, congestion_impact, congestion_delayed = (
             self.calculate_agent_times()
         )
@@ -147,7 +147,8 @@ class FinalEvaluationMetrics:
             f"Exit utilisation: {exit_utilisation:.2f}",
             f"Avg Path Efficiency: {path_efficiency:.2f}",
         ]
-        self.print_final_results(results=string_components)
+        if verbose:
+            self.print_final_results(results=string_components)
 
         self.metrics = {
             "Avg path length": np.mean(path_lengths),
@@ -200,10 +201,15 @@ class FinalEvaluationMetrics:
 
         for agent in self.solution.values():
             # Shortest path to the exit the agent actually took
-            shortest = shortest_path_length(
-                agent.city.graph, source=agent.start_point, target=agent.path[-1]
+            # +1 <= this function does edge count whereas path length is node count.
+            shortest = (
+                shortest_path_length(
+                    agent.city.graph, source=agent.start_point, target=agent.path[-1]
+                )
+                + 1
             )
-            path_efficiency.append(len(agent.path) / shortest)
+            path_length = len(agent.path)
+            path_efficiency.append(path_length / shortest)
 
         return np.mean(path_efficiency)
 

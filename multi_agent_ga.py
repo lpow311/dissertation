@@ -1,11 +1,14 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from jax.random import PRNGKey, split
+from tqdm import tqdm
+
 from utils.environment import Environment
 from utils.agent import PopulationCreation
 from utils.genetic_algorithm import GeneticAlgorithm
 from utils.evaluation_metrics import Evaluation, FinalEvaluationMetrics
 from utils.greedy import Greedy
-import numpy as np
-import matplotlib.pyplot as plt
-from jax.random import PRNGKey, split
+from utils.algorithm_evaluation import AlgorithmComparison
 
 
 def print_log_line():
@@ -22,7 +25,11 @@ class KeyManager:
 
 
 def simulate_greedy_evacuation(
-    num_agents: int, simulation_params: dict, city: Environment, algorithm_seed: int
+    num_agents: int,
+    simulation_params: dict,
+    city: Environment,
+    algorithm_seed: int,
+    verbose: bool = True,
 ) -> None:
     key_manager = KeyManager(seed=algorithm_seed)
     creator = PopulationCreation(
@@ -42,7 +49,7 @@ def simulate_greedy_evacuation(
         solution=chromosome,
         params=simulation_params,
     )
-    final_eval.score()
+    final_eval.score(verbose=verbose)
 
     return solution, final_eval
 
@@ -107,7 +114,7 @@ def simulate_ga_evacuation(
 
     final_solution = sorted(population, key=lambda c: c.fitness)[0]
     final_eval = FinalEvaluationMetrics(solution=final_solution, params=simulation_params)
-    final_eval.score()
+    final_eval.score(verbose=verbose)
     final_eval.add_evolution_scores(evaluation.avg_score)
 
     return final_solution, final_eval
@@ -115,21 +122,39 @@ def simulate_ga_evacuation(
 
 if __name__ == "__main__":
     city = Environment(city_name="super_small_city_graph")
-    algorithm_seed = 29
 
-    greedy_algorithm(
-        num_agents=10,
-        simulation_params={"congestion": True, "walking": False, "fitness": "max"},
-        algorithm_seed=algorithm_seed,
-        city=city,
-    )
+    num_agents = 50
+    simulation_params = {"congestion": True, "walking": False, "fitness": "max"}
+    n_experiments = 10
 
-    simulate_evacuation(
-        city=city,
-        num_agents=30,
-        population_size=50,
-        algorithm_seed=algorithm_seed,
-        max_evolutions=21,
-        simulation_params={"congestion": True, "walking": False, "fitness": "max"},
-        verbose=10,
-    )
+    rng = np.random.default_rng(42)
+    algorithm_seeds = rng.integers(0, 10**6, size=n_experiments)
+
+    greedy_outputs = []
+    ga_outputs = []
+    for seed_idx in tqdm(range(n_experiments)):
+
+        _, greedy_evaluation = simulate_greedy_evacuation(
+            num_agents=num_agents,
+            simulation_params=simulation_params,
+            algorithm_seed=algorithm_seeds[seed_idx],
+            city=city,
+            verbose=False,
+        )
+        greedy_outputs.append(greedy_evaluation)
+
+        _, ga_evaluation = simulate_ga_evacuation(
+            city=city,
+            num_agents=num_agents,
+            population_size=50,
+            algorithm_seed=algorithm_seeds[seed_idx],
+            max_evolutions=50,
+            simulation_params={"congestion": True, "walking": False, "fitness": "max"},
+            verbose=0,
+        )
+        ga_outputs.append(ga_evaluation)
+
+    comparison = AlgorithmComparison(greedy_outputs=greedy_outputs, ga_outputs=ga_outputs)
+    results = comparison.statistical_tests(verbose=True)
+
+    print("pause")

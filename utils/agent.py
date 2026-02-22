@@ -61,7 +61,8 @@ class Agent:
             nx.shortest_path_length(self.city.graph, source=self.start_point, target=exit_option)
             for exit_option in self.city.exits
         ]
-        shortest_length = min(exit_path_lengths)
+        # This calculates edges whereas I manually do node count.
+        shortest_length = min(exit_path_lengths) + 1
         return shortest_length
 
     def generate_random_path(self) -> list:

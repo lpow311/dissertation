@@ -1,4 +1,5 @@
 import pickle
+import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -24,11 +25,11 @@ class Environment:
         self.congestion_amount = 5  # TODO: come back and pick something better for this...
 
         self.distances_to_exits = {
-            node: {exit: nx.shortest_path_length(self.graph, node, exit) for exit in self.exits}
+            node: {exit: nx.shortest_path_length(self.graph, node, exit) + 1 for exit in self.exits}
             for node in self.graph.nodes
         }
 
-        self.bottleneck_score = self.calculate_bottleneck_score()
+        self.bottleneck_score = self.calculate_bottleneck_scores()
 
     def create_graph(self, city_name: str) -> nx.Graph:
         G = pickle.load(open(f"graphs/{city_name}.pickle", "rb"))
@@ -50,9 +51,28 @@ class Environment:
     def summarise_city(self) -> None:
         formatted_name = self.city_name.replace("_", " ").capitalize()
         print(
-            f"{formatted_name} has {self.num_starts} starting points and {self.num_exits} exit points with a bottleneck score of {self.bottleneck_score}"
+            f"{formatted_name} has {self.num_starts} starting points and {self.num_exits} exit points with a bottleneck score of {self.bottleneck_score['max']:.3f}"
         )
         display(Image(f"images/{self.city_name}.png"))
 
-    def calculate_bottleneck_score(self) -> float:
-        return 1
+    def calculate_bottleneck_scores(self) -> dict:
+        """
+        - Max betweenness — identifies if there's one critical node everything flows through
+        - Mean betweenness — overall bottleneck pressure across the network
+        - Std betweenness — high std means uneven network, some nodes much more critical than others
+        - Bottleneck nodes — specific nodes more than one std above mean, useful for visualisation
+        """
+        betweenness = nx.betweenness_centrality(self.graph)
+
+        values = list(betweenness.values())
+
+        return {
+            "max": max(values),  # single worst bottleneck
+            "mean": np.mean(values),  # average bottleneck pressure
+            "std": np.std(values),  # how unevenly distributed
+            "bottleneck_nodes": {  # nodes above threshold
+                node: score
+                for node, score in betweenness.items()
+                if score > np.mean(values) + np.std(values)
+            },
+        }
