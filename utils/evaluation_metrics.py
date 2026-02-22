@@ -1,6 +1,6 @@
 import numpy as np
-from collections import defaultdict
 from utils.agent import Agent
+from networkx import shortest_path_length
 
 
 class Evaluation:
@@ -31,15 +31,19 @@ class Evaluation:
         exit_mean, exit_best, exit_worst = self.exit_utilisation_metric(population)
         self.scores["exit_utilisation"] = [exit_mean, exit_best, exit_worst]
 
-        # TODO: altruism impact i.e. full time steps.
-
         string_components = [
             f"Evolution {evolution:4d}",
             f"best fit: {best:.3f} | avg fit: {avg:.3f} | worst fit: {worst:.3f}",
             f"avg path: {avg_path_length:.3f}",
             f"congestion: {congestion_score:.3f}",
-            f"exit utilisation: {exit_mean:.3f}",
+            f"exit use: {exit_mean:.3f}",
         ]
+
+        # Population diversity
+        if evolution % 10 == 0 or evolution == 1:
+            pop_diversity = self.diversity_metric(population=population)
+            string_components.append(f"diveristy: {pop_diversity:.3f}")
+
         print(" | ".join(string_components))
 
     def fitness_metrics(self, population: list) -> tuple:
@@ -91,74 +95,67 @@ class Evaluation:
 
         return gini
 
+    def diversity_metric(self, population: list) -> float:
+        similarities = []
+
+        for i in range(len(population)):
+            for j in range(i + 1, len(population)):
+                chromosome1, chromosome2 = population[i], population[j]
+
+                agent_similarities = []
+                for agent_num in range(chromosome1.num_agents):
+                    path1 = set(chromosome1.agents[agent_num].path)
+                    path2 = set(chromosome2.agents[agent_num].path)
+
+                    intersection = len(path1.intersection(path2))
+                    union = len(path1.union(path2))
+
+                    jaccard = intersection / union if union > 0 else 1
+                    agent_similarities.append(jaccard)
+
+                similarities.append(np.mean(agent_similarities))
+
+        return 1 - np.mean(similarities) if similarities else 0
+
 
 class FinalEvaluationMetrics:
 
     def __init__(self, solution: dict, params: dict, chromosome: bool = True) -> None:
         if chromosome:
             self.solution = solution.agents
+            self.chromosome = solution
         else:
             self.solution = solution
+            self.chromosome = None
+
         self.params = params
 
     def score(self) -> None:
-        agent_time, congestion_delays, path_lengths = self.calculate_agent_times()
+        agent_time, path_lengths, congestion_impact, congestion_delayed = (
+            self.calculate_agent_times()
+        )
 
         exit_utilisation = self.exit_utilisation_metric()
+        path_efficiency = self.path_efficiency_metric()
 
         string_components = [
-            f"Average path length: {np.mean(path_lengths):.3f}",
-            f"Total path length: {np.max(path_lengths):.3f}",
-            f"Average duration: {np.mean(agent_time):.3f}",
-            f"Congestion delays: {np.mean(congestion_delays):.3f}",
-            f"Exit utilisation: {exit_utilisation:.3f}",
+            f"Avg path length: {np.mean(path_lengths):.2f}",
+            f"Total time: {np.max(agent_time):.2f}",
+            f"Average time: {np.mean(agent_time):.2f}",
+            f"Congestion index: {np.mean(congestion_delayed)*100:.0f}%",
+            f"Avg Congestion delay: {np.mean(congestion_impact):.2f}",
+            f"Exit utilisation: {exit_utilisation:.2f}",
+            f"Avg Path Efficiency: {path_efficiency:.2f}",
         ]
         print(" | ".join(string_components))
 
     def calculate_agent_times(self) -> tuple:
-        node_occupancy = self.calculate_node_congestion()
-        agent_time = []
-        congestion_delays = []
-        path_lengths = []
+        path_lengths = self.chromosome.path_lengths
+        agent_time = self.chromosome.path_times
+        congestion_impact = self.chromosome.congestion_score
+        congestion_delayed = [i > 0 for i in congestion_impact]
 
-        for agent in self.solution.values():
-            path = agent.path
-            congestion_delay = self.calculate_agent_congestion_delay(agent, node_occupancy)
-            congestion_delays.append(congestion_delay)
-
-            path_lengths.append(len(path))
-            path_timesteps = len(path) * agent.speed if self.params["walking"] else len(path)
-            path_fitness = path_timesteps
-            if self.params["congestion"]:
-                path_fitness += congestion_delay
-
-            agent_time.append(path_fitness)
-
-        return agent_time, congestion_delays, path_lengths
-
-    @staticmethod
-    def calculate_agent_congestion_delay(agent: Agent, occupancy: defaultdict) -> int:
-        delay = 0
-        for t, node in enumerate(agent.path):
-            capacity = agent.city.congestion_amount
-            if occupancy[t][node] > capacity:
-                delay += occupancy[t][node] - capacity
-
-        return delay
-
-    def calculate_node_congestion(self) -> defaultdict:
-        """
-        Weakly time-dependent (non-causal) congestion - It is not fully dynamic, and delays
-        do not propagate forward.
-        i.e. So if an agent is delayed at time t, the model still assumes it arrives at t+1 next.
-        """
-        occupancy = defaultdict(lambda: defaultdict(int))
-
-        for agent in self.solution.values():
-            for t, node in enumerate(agent.path):
-                occupancy[t][node] += 1
-
-        return occupancy
+        return agent_time, path_lengths, congestion_impact, congestion_delayed
 
     def exit_utilisation_metric(self):
         chromosome_exits = {}
@@ -173,3 +170,15 @@ class FinalEvaluationMetrics:
         utilisation_score = Evaluation.gini_coefficient(counts=list(chromosome_exits.values()))
 
         return utilisation_score
+
+    def path_efficiency_metric(self):
+        path_efficiency = []
+
+        for agent in self.solution.values():
+            # Shortest path to the exit the agent actually took
+            shortest = shortest_path_length(
+                agent.city.graph, source=agent.start_point, target=agent.path[-1]
+            )
+            path_efficiency.append(len(agent.path) / shortest)
+
+        return np.mean(path_efficiency)

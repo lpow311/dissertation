@@ -97,7 +97,7 @@ def simulate_evacuation(
         terminate = ga.extract_termination_criteria(evolution=evolution)
 
     # TODO: might want to track best so far and use that at the end?
-    final_solution = sorted(population, key=lambda c: c.fitness, reverse=True)[0]
+    final_solution = sorted(population, key=lambda c: c.fitness)[0]
     # TODO: think I broke this with congestion so ignoring it.
     # visualiser = CityEvacuationHeatmap(solution=final_solution, city=city)
     # visualiser.animate_solution()
@@ -123,9 +123,9 @@ if __name__ == "__main__":
 
     simulate_evacuation(
         city=city,
-        num_agents=10,
+        num_agents=30,
         population_size=50,
         algorithm_seed=29,
-        max_evolutions=20,
+        max_evolutions=21,
         simulation_params={"congestion": True, "walking": False, "fitness": "max"},
     )

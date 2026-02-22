@@ -194,13 +194,13 @@ class GeneticAlgorithm:
         [c.calculate_fitness() for c in children]
 
         if keep_best:
-            [c.calculate_fitness() for c in old_population]
+            # [c.calculate_fitness() for c in old_population]
             sorted_old = sorted(old_population, key=lambda c: c.fitness)
             n_elite = max(1, int(0.05 * len(old_population)))
             elite = sorted_old[:n_elite]
 
             sorted_children = sorted(children, key=lambda c: c.fitness)
-            remaining_slots = len(children) - n_elite
+            remaining_slots = len(old_population) - n_elite
 
             new_population = elite + sorted_children[:remaining_slots]
         else:

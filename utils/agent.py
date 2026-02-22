@@ -136,7 +136,10 @@ class Chromosome:
         self.num_agents = len(self.agents)
         self.fitness = None
         self.fitness_calc = params["fitness"]
-        self.congestion_score = None
+
+        self.congestion_score = []
+        self.path_lengths = []
+        self.path_times = []
 
     def deep_copy_agents(self, agents: dict) -> dict:
         agents_copy = {}
@@ -158,15 +161,17 @@ class Chromosome:
         """
         node_occupancy = self.calculate_node_congestion()
         congestion_score = []
+        path_lengths = []
 
         fitnesses = []
         for agent in self.agents.values():
-            path = agent.path
+            length = len(agent.path)
+            path_lengths.append(length)
 
             congestion_delay = self.calculate_agent_congestion_delay(agent, node_occupancy)
             congestion_score.append(congestion_delay)
 
-            path_timesteps = len(path) * agent.speed if self.params["walking"] else len(path)
+            path_timesteps = length * agent.speed if self.params["walking"] else length
             path_fitness = path_timesteps
             if self.params["congestion"]:
                 path_fitness += congestion_delay
@@ -174,7 +179,11 @@ class Chromosome:
             fitnesses.append(path_fitness)
 
         self.fitness = self.__calculate_chromosome_fitness(fitnesses)
+
+        # Store for use later
+        self.path_lengths = path_lengths
         self.congestion_score = congestion_score
+        self.path_times = fitnesses
 
     def __calculate_chromosome_fitness(self, fitnesses: list) -> float:
         if self.fitness_calc == "mean":
