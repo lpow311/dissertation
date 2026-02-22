@@ -1,12 +1,15 @@
 import networkx as nx
-from utils.agent import Agent
+from utils.agent import Agent, Chromosome
 
 
 class Greedy:
 
-    def __init__(self, population: list) -> None:
+    def __init__(self, population: list, simulation_params: dict, key_manager) -> None:
         self.population = population
         self.agents = population[0].agents
+
+        self.params = simulation_params
+        self.key_manager = key_manager
 
     def solve(self) -> dict[int, Agent]:
         for i, agent in self.agents.items():
@@ -16,6 +19,14 @@ class Greedy:
             )
 
         return self.agents
+
+    def turn_into_chromosome_for_evaluation(self) -> None:
+        chromosome = Chromosome(
+            agents=self.agents, params=self.params, key_manager=self.key_manager
+        )
+        chromosome.calculate_fitness()
+
+        return chromosome
 
     def agent_shortest_paths(self, city: nx.Graph, start_node: str):
         best_path = None

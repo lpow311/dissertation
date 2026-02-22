@@ -15,9 +15,12 @@ class Evaluation:
             "altruism": 0,
         }
 
-    def calculate_metrics(self, population: list, evolution: int) -> None:
+    def calculate_metrics(self, population: list, evolution: int, verbose: int = 1) -> None:
         avg, best, worst = self.fitness_metrics(population=population)
         self.scores["fitness"] = [avg, best, worst]
+
+        if not ((verbose > 0) and (evolution % verbose == 0 or evolution == 1)):
+            return None
 
         # Path Length Metrics
         avg_path_length = np.mean([c.calculate_average_path() for c in population])
@@ -31,18 +34,17 @@ class Evaluation:
         exit_mean, exit_best, exit_worst = self.exit_utilisation_metric(population)
         self.scores["exit_utilisation"] = [exit_mean, exit_best, exit_worst]
 
+        # Population diversity
+        pop_diversity = self.diversity_metric(population=population)
+
         string_components = [
             f"Evolution {evolution:4d}",
             f"best fit: {best:.3f} | avg fit: {avg:.3f} | worst fit: {worst:.3f}",
             f"avg path: {avg_path_length:.3f}",
             f"congestion: {congestion_score:.3f}",
             f"exit use: {exit_mean:.3f}",
+            f"diveristy: {pop_diversity:.3f}",
         ]
-
-        # Population diversity
-        if evolution % 10 == 0 or evolution == 1:
-            pop_diversity = self.diversity_metric(population=population)
-            string_components.append(f"diveristy: {pop_diversity:.3f}")
 
         print(" | ".join(string_components))
 
@@ -120,17 +122,15 @@ class Evaluation:
 
 class FinalEvaluationMetrics:
 
-    def __init__(self, solution: dict, params: dict, chromosome: bool = True) -> None:
-        if chromosome:
-            self.solution = solution.agents
-            self.chromosome = solution
-        else:
-            self.solution = solution
-            self.chromosome = None
+    def __init__(self, solution: dict, params: dict) -> None:
+        self.solution = solution.agents
+        self.chromosome = solution
 
         self.params = params
+        self.metrics = {}
+        self.evolution_scores = None
 
-    def score(self) -> None:
+    def score(self) -> dict[str, float]:
         agent_time, path_lengths, congestion_impact, congestion_delayed = (
             self.calculate_agent_times()
         )
@@ -147,7 +147,31 @@ class FinalEvaluationMetrics:
             f"Exit utilisation: {exit_utilisation:.2f}",
             f"Avg Path Efficiency: {path_efficiency:.2f}",
         ]
-        print(" | ".join(string_components))
+        self.print_final_results(results=string_components)
+
+        self.metrics = {
+            "Avg path length": np.mean(path_lengths),
+            "Total time": np.max(agent_time),
+            "Average time": np.mean(agent_time),
+            "Congestion index": np.mean(congestion_delayed),
+            "Avg Congestion delay": np.mean(congestion_impact),
+            "Exit utilisation": exit_utilisation,
+            "Avg Path Efficiency": path_efficiency,
+        }
+        return self.metrics
+
+    def print_final_results(self, results: list) -> None:
+        result_string = " | ".join(results)
+        header = (
+            "\n"
+            + "=" * int(len(result_string) / 2)
+            + " FINAL RESULTS "
+            + "=" * int(len(result_string) / 2)
+        )
+        footer = "=" * int(len(header))
+
+        for string in [header, result_string, footer]:
+            print(string)
 
     def calculate_agent_times(self) -> tuple:
         path_lengths = self.chromosome.path_lengths
@@ -182,3 +206,6 @@ class FinalEvaluationMetrics:
             path_efficiency.append(len(agent.path) / shortest)
 
         return np.mean(path_efficiency)
+
+    def add_evolution_scores(self, scores: list) -> None:
+        self.evolution_scores = scores

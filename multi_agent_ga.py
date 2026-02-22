@@ -12,18 +12,6 @@ def print_log_line():
     print("-" * 150)
 
 
-def greedy_algorithm(num_agents: int, simulation_params: dict, city: Environment):
-    creator = PopulationCreation(city=city, pop_size=1, num_agents=num_agents)
-    population, human_traits = creator.create_initial_population(
-        simulation_params=simulation_params
-    )
-
-    greedy = Greedy(population=population)
-    solution = greedy.solve()
-
-    return solution
-
-
 class KeyManager:
     def __init__(self, seed: int = 42) -> PRNGKey:
         self.key = PRNGKey(seed)
@@ -33,13 +21,40 @@ class KeyManager:
         return subkey
 
 
-def simulate_evacuation(
+def simulate_greedy_evacuation(
+    num_agents: int, simulation_params: dict, city: Environment, algorithm_seed: int
+) -> None:
+    key_manager = KeyManager(seed=algorithm_seed)
+    creator = PopulationCreation(
+        city=city, pop_size=1, num_agents=num_agents, key_manager=key_manager
+    )
+    population, human_traits = creator.create_initial_population(
+        simulation_params=simulation_params
+    )
+
+    greedy = Greedy(
+        population=population, simulation_params=simulation_params, key_manager=key_manager
+    )
+    solution = greedy.solve()
+    chromosome = greedy.turn_into_chromosome_for_evaluation()
+
+    final_eval = FinalEvaluationMetrics(
+        solution=chromosome,
+        params=simulation_params,
+    )
+    final_eval.score()
+
+    return solution, final_eval
+
+
+def simulate_ga_evacuation(
     city: Environment,
     num_agents: int,
     population_size: int,
     algorithm_seed: int,
     simulation_params: dict,
     max_evolutions: int = 100,
+    verbose: int = 0,
 ):
     """
     Main function to running the genetic algorithm.
@@ -69,63 +84,52 @@ def simulate_evacuation(
 
     avg_walking_speed = np.mean(human_traits["walking_speeds"])
 
-    print_log_line()
-    print(
-        f" City: {city.city_name} | Population size: {len(population)} | Walking Speed: {avg_walking_speed:.2}"
-    )
-    print_log_line()
+    if verbose:
+        print_log_line()
+        print(
+            f" City: {city.city_name} | Population size: {len(population)} | Walking Speed: {avg_walking_speed:.2}"
+        )
+        print_log_line()
 
     while not terminate:
-        # 3 Parent Selection
         parents = ga.parent_selection(population=population)
-
-        # 4 Crossover
         children = ga.chromosome_crossover(parents=parents)
-
-        # 5 Mutation
         mutated_children = ga.agent_mutation(children=children)
-
-        # 6 Survivor Selection
         population = ga.survivor_selection(
             children=mutated_children, old_population=population, keep_best=True
         )
 
-        evaluation.calculate_metrics(population, evolution)
+        evaluation.calculate_metrics(population, evolution, verbose)
 
         # 7 Termination
         evolution += 1
         terminate = ga.extract_termination_criteria(evolution=evolution)
 
-    # TODO: might want to track best so far and use that at the end?
     final_solution = sorted(population, key=lambda c: c.fitness)[0]
-    # TODO: think I broke this with congestion so ignoring it.
-    # visualiser = CityEvacuationHeatmap(solution=final_solution, city=city)
-    # visualiser.animate_solution()
     final_eval = FinalEvaluationMetrics(solution=final_solution, params=simulation_params)
     final_eval.score()
+    final_eval.add_evolution_scores(evaluation.avg_score)
 
-    plt.plot(range(len(evaluation.avg_score)), evaluation.avg_score)
-    plt.title("Average Fitness Score over each evolution")
-    plt.xlabel("Evolution")
-    plt.ylabel("Average Fitness Score")
-    plt.show()
-
-    return final_solution, evaluation
+    return final_solution, final_eval
 
 
 if __name__ == "__main__":
     city = Environment(city_name="super_small_city_graph")
+    algorithm_seed = 29
 
-    # greedy_algorithm(
-    #     num_agents=10,
-    #     simulation_params={"congestion": True, "walking": False, "panic": True},
-    # )
+    greedy_algorithm(
+        num_agents=10,
+        simulation_params={"congestion": True, "walking": False, "fitness": "max"},
+        algorithm_seed=algorithm_seed,
+        city=city,
+    )
 
     simulate_evacuation(
         city=city,
         num_agents=30,
         population_size=50,
-        algorithm_seed=29,
+        algorithm_seed=algorithm_seed,
         max_evolutions=21,
         simulation_params={"congestion": True, "walking": False, "fitness": "max"},
+        verbose=10,
     )

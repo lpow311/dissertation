@@ -2,6 +2,9 @@ import pickle
 import networkx as nx
 import matplotlib.pyplot as plt
 
+from IPython.display import Image, display
+
+
 from typing import Tuple
 
 
@@ -25,6 +28,8 @@ class Environment:
             for node in self.graph.nodes
         }
 
+        self.bottleneck_score = self.calculate_bottleneck_score()
+
     def create_graph(self, city_name: str) -> nx.Graph:
         G = pickle.load(open(f"graphs/{city_name}.pickle", "rb"))
         return G
@@ -41,3 +46,13 @@ class Environment:
             self.graph, with_labels=True, node_color="lightblue", node_size=800, font_weight="bold"
         )
         plt.show(block=True)
+
+    def summarise_city(self) -> None:
+        formatted_name = self.city_name.replace("_", " ").capitalize()
+        print(
+            f"{formatted_name} has {self.num_starts} starting points and {self.num_exits} exit points with a bottleneck score of {self.bottleneck_score}"
+        )
+        display(Image(f"images/{self.city_name}.png"))
+
+    def calculate_bottleneck_score(self) -> float:
+        return 1

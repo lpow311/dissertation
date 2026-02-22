@@ -144,7 +144,6 @@ class Chromosome:
     def deep_copy_agents(self, agents: dict) -> dict:
         agents_copy = {}
         for agent_num, agent in agents.items():
-
             new_agent = agent.copy_agent(new_path=None)
             agents_copy[agent_num] = new_agent
 
