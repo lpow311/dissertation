@@ -76,3 +76,15 @@ class Environment:
                 if score > np.mean(values) + np.std(values)
             },
         }
+
+    def start_node_metrics(self) -> dict:
+        # TODO
+        avg_exit_distance = {}
+
+        for start in self.starts:
+            distances_to_exits = {
+                exit: nx.shortest_path_length(self.graph, start, exit) for exit in self.exits
+            }
+            avg_exit_distance[start] = np.mean(list(distances_to_exits.values()))
+
+        return avg_exit_distance

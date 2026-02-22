@@ -124,9 +124,9 @@ if __name__ == "__main__":
     city_name = "super_small_city_graph"
     city = Environment(city_name=city_name)
 
-    num_agents = 10
+    num_agents = 30
     simulation_params = {"congestion": True, "walking": False, "fitness": "max"}
-    n_experiments = 10
+    n_experiments = 5
 
     rng = np.random.default_rng(42)
     algorithm_seeds = rng.integers(0, 10**6, size=n_experiments)
@@ -157,5 +157,7 @@ if __name__ == "__main__":
 
     comparison = AlgorithmComparison(greedy_outputs=greedy_outputs, ga_outputs=ga_outputs)
     results = comparison.statistical_tests(verbose=True)
+    poa = comparison.price_of_anarchy(verbose=True, city=city)
 
     comparison.exit_utilisation(city_name=city_name)
+    comparison.exit_time_by_start_location()
