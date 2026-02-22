@@ -121,9 +121,10 @@ def simulate_ga_evacuation(
 
 
 if __name__ == "__main__":
-    city = Environment(city_name="super_small_city_graph")
+    city_name = "super_small_city_graph"
+    city = Environment(city_name=city_name)
 
-    num_agents = 50
+    num_agents = 10
     simulation_params = {"congestion": True, "walking": False, "fitness": "max"}
     n_experiments = 10
 
@@ -146,9 +147,9 @@ if __name__ == "__main__":
         _, ga_evaluation = simulate_ga_evacuation(
             city=city,
             num_agents=num_agents,
-            population_size=50,
+            population_size=20,
             algorithm_seed=algorithm_seeds[seed_idx],
-            max_evolutions=50,
+            max_evolutions=20,
             simulation_params={"congestion": True, "walking": False, "fitness": "max"},
             verbose=0,
         )
@@ -157,4 +158,4 @@ if __name__ == "__main__":
     comparison = AlgorithmComparison(greedy_outputs=greedy_outputs, ga_outputs=ga_outputs)
     results = comparison.statistical_tests(verbose=True)
 
-    print("pause")
+    comparison.exit_utilisation(city_name=city_name)

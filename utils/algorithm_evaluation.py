@@ -83,10 +83,13 @@ class AlgorithmComparison:
 
         return exit_dict
 
-    def plot_exit_utilisation(self, ga_exits: dict, greedy_exits: dict, city_name: str):
-        exits = list(ga_exits.keys())
-        ga_values = [ga_exits[exit] for exit in exits]
-        greedy_values = [greedy_exits[exit] for exit in exits]
+    def plot_exit_utilisation(self, ga_exits: dict, greedy_exits: dict, city_name: str) -> None:
+        exits = list(set(list(ga_exits.keys()) + list(greedy_exits.keys())))
+
+        ga_values, greedy_values = [], []
+        for exit in exits:
+            ga_values.append(ga_exits[exit] if exit in ga_exits else 0)
+            greedy_values.append(greedy_exits[exit] if exit in greedy_exits else 0)
 
         x = np.arange(len(exits))
         width = 0.35
@@ -98,7 +101,7 @@ class AlgorithmComparison:
 
         ax.set_xlabel("Exit")
         ax.set_ylabel("Average Number of Agents")
-        ax.set_title(f"Exit Utilisation Distribution — {city_name}")
+        ax.set_title(f"Exit Utilisation Distribution — {city_name.replace('_', ' ').capitalize()}")
         ax.set_xticks(x)
         ax.set_xticklabels(exits)
         ax.legend()
@@ -124,5 +127,4 @@ class AlgorithmComparison:
             )
 
         plt.tight_layout()
-        plt.savefig(f"exit_distribution_{city_name}.png", dpi=150)
         plt.show()
