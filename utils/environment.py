@@ -18,9 +18,10 @@ class Environment:
     def __init__(self, city_name: str):
         self.city_name = city_name
 
-        self.graph = self.create_graph(city_name)
-        self.starts, self.num_starts = self.extract_node_types(node_type="start")
-        self.exits, self.num_exits = self.extract_node_types(node_type="exit")
+        self.pickle_obj = self.create_graph(city_name)
+        self.graph = self.pickle_obj["graph"]
+        self.starts, self.num_starts = self.pickle_obj["starts"], len(self.pickle_obj["starts"])
+        self.exits, self.num_exits = self.pickle_obj["exits"], len(self.pickle_obj["exits"])
 
         self.congestion_amount = 5  # TODO: come back and pick something better for this...
 

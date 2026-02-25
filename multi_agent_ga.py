@@ -121,7 +121,7 @@ def simulate_ga_evacuation(
 
 
 if __name__ == "__main__":
-    city_name = "super_small_city_graph"
+    city_name = "bottleneck_severe_small"
     city = Environment(city_name=city_name)
 
     num_agents = 30
