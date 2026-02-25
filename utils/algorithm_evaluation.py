@@ -2,6 +2,9 @@ from scipy import stats
 from collections import Counter
 import matplotlib.pyplot as plt
 import numpy as np
+import networkx as nx
+from collections import defaultdict
+
 
 plt.style.use("seaborn-v0_8")
 
@@ -39,12 +42,6 @@ class AlgorithmComparison:
                 )
 
         return results
-
-    def visual_comparison(self):
-        # Box plots showing spread not just mean.
-        # Bar chart of Exit utilisation
-        # Convergence of GA across generations (best or average).
-        pass
 
     def ga_convergence_plots(self) -> None:
         for experiment in self.ga:
@@ -127,4 +124,96 @@ class AlgorithmComparison:
             )
 
         plt.tight_layout()
+        plt.show()
+
+    def price_of_anarchy(self, verbose: bool = True) -> float:
+        poa_values = []
+
+        for ga_experiment, greedy_experiment in zip(self.ga, self.greedy):
+            greedy_time = greedy_experiment.metrics["Total time"]
+            ga_time = ga_experiment.metrics["Total time"]
+
+            poa = greedy_time / ga_time
+            poa_values.append(poa)
+
+        mean_poa = np.mean(poa_values)
+        std_poa = np.std(poa_values)
+
+        if verbose:
+            print(f"Price of Anarchy: {mean_poa:.3f} ± {std_poa:.3f}")
+
+        return mean_poa, std_poa
+
+    def plot_exit_time_by_start_location(self) -> None:
+        avg_ga_starts, avg_greedy_starts = self.calculate_start_location_exit_times()
+        self.plot_avg_time_by_start(ga_times=avg_ga_starts, greedy_times=avg_greedy_starts)
+
+    def calculate_start_location_exit_times(self) -> tuple:
+        start_time_greedy, start_time_ga = defaultdict(list), defaultdict(list)
+        for ga_exp, greedy_exp in zip(self.ga, self.greedy):
+            greedy_times = greedy_exp.chromosome.path_times
+            ga_times = ga_exp.chromosome.path_times
+
+            starts = [agent.start_point for agent in ga_exp.chromosome.agents.values()]
+            greedy_avg_times = self.calculate_average_times(starts=starts, times=greedy_times)
+            ga_avg_times = self.calculate_average_times(starts=starts, times=ga_times)
+
+            for start in starts:
+                start_time_greedy[start].append(greedy_avg_times[start])
+                start_time_ga[start].append(ga_avg_times[start])
+
+        overall_avg_greedy = {start: np.mean(times) for start, times in start_time_greedy.items()}
+        overall_avg_ga = {start: np.mean(times) for start, times in start_time_ga.items()}
+
+        return overall_avg_ga, overall_avg_greedy
+
+    def calculate_average_times(self, starts: list, times: list) -> dict:
+        location_times = defaultdict(list)
+        for location, time in zip(starts, times):
+            location_times[location].append(time)
+
+        avg_times = {location: np.mean(times) for location, times in location_times.items()}
+        return avg_times
+
+    def plot_avg_time_by_start(self, ga_times: dict, greedy_times: dict):
+        locations = list(ga_times.keys())
+        ga_values = [ga_times[loc] for loc in locations]
+        greedy_values = [greedy_times[loc] for loc in locations]
+
+        x = np.arange(len(locations))
+        width = 0.35
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        ga_bars = ax.bar(x - width / 2, ga_values, width, label="GA", color="steelblue")
+        greedy_bars = ax.bar(x + width / 2, greedy_values, width, label="Greedy", color="coral")
+
+        ax.set_xlabel("Start Location")
+        ax.set_ylabel("Average Evacuation Time")
+        ax.set_title("Average Evacuation Time by Start Location — GA vs Greedy")
+        ax.set_xticks(x)
+        ax.set_xticklabels(locations)
+        ax.legend()
+
+        for bar in ga_bars:
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                f"{bar.get_height():.2f}",
+                ha="center",
+                va="bottom",
+                fontsize=9,
+            )
+        for bar in greedy_bars:
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                f"{bar.get_height():.2f}",
+                ha="center",
+                va="bottom",
+                fontsize=9,
+            )
+
+        plt.tight_layout()
+        plt.savefig("avg_time_by_start.png", dpi=150)
         plt.show()

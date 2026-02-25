@@ -79,7 +79,6 @@ class Environment:
         }
 
     def start_node_metrics(self) -> dict:
-        # TODO
         avg_exit_distance = {}
 
         for start in self.starts:
