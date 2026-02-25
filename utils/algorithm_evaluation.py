@@ -215,5 +215,4 @@ class AlgorithmComparison:
             )
 
         plt.tight_layout()
-        plt.savefig("avg_time_by_start.png", dpi=150)
         plt.show()
