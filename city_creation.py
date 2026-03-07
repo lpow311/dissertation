@@ -17,10 +17,10 @@ IMAGE_SAVE_PATH = "images/"
 CITY_NAME = "open_small"
 SEED = 42
 
-NUM_NODES_PER_ROOM = 3  # how many nodes in each room (not including start or exit nodes).
+NUM_NODES_PER_ROOM = 4  # how many nodes in each room (not including start or exit nodes).
 INTERNAL_DENSITY = 2  # how connected the nodes are to each other within a room.
-EXIT_CONNECTIONS = 2  # how many nodes the start nodes connect to.
-START_CONNECTIONS = 2  # how many nodes the exit nodes connect to.
+EXIT_CONNECTIONS = 3  # how many nodes the start nodes connect to.
+START_CONNECTIONS = 3  # how many nodes the exit nodes connect to.
 
 BOTTLENECK_CORRIDORS = 1  # number of edges directly between start and exit room.
 OPEN_CORRIDORS = 3  # number of edges between start/exit and transit rooms.
@@ -268,10 +268,13 @@ def visualise_city(G: nx.Graph, title: str = "City", save_path: str = None):
         marker=dict(size=10, color=node_colors, line_width=2),
     )
 
+    # betweeness = bottleneck_score(G=G)
+
     fig = go.Figure(
         data=[edge_trace, node_trace],
         layout=go.Layout(
             title=title,
+            # title=f"{title} - max bottleneck: {betweeness['max']:.3f}",
             showlegend=False,
             hovermode="closest",
             shapes=shapes,
@@ -286,6 +289,51 @@ def visualise_city(G: nx.Graph, title: str = "City", save_path: str = None):
         fig.write_image(save_path)
 
     fig.show()
+
+
+def bottleneck_score_betweeness(G: nx.Graph) -> dict:
+    betweenness = nx.betweenness_centrality(G)
+
+    values = list(betweenness.values())
+
+    return {
+        "max": max(values),  # single worst bottleneck
+        "mean": np.mean(values),  # average bottleneck pressure
+        "std": np.std(values),  # how unevenly distributed
+        "bottleneck_nodes": {  # nodes above threshold
+            node: score
+            for node, score in betweenness.items()
+            if score > np.mean(values) + np.std(values)
+        },
+    }
+
+
+def bottleneck_score_avg_path(G, starts, exits):
+    node_connectivities = []
+
+    for s in starts:
+        for e in exits:
+            try:
+                node_connectivities.append(nx.node_connectivity(G, s, e))
+            except nx.NetworkXError:
+                node_connectivities.append(0)
+
+    return {
+        "mean_node_connectivity": np.mean(node_connectivities),
+        "min_node_connectivity": np.min(node_connectivities),
+    }
+
+
+def bottleneck_score_min_cut(G, starts, exits):
+    cuts = []
+    for s in starts:
+        for e in exits:
+            cut = nx.minimum_edge_cut(G, s, e)
+            cuts.append(len(cut))
+    return {
+        "mean_cut": np.mean(cuts),
+        "min_cut": np.min(cuts),  # worst case bottleneck
+    }
 
 
 # =============================================================================

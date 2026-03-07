@@ -46,8 +46,7 @@ def simulate_greedy_evacuation(
     chromosome = greedy.turn_into_chromosome_for_evaluation()
 
     final_eval = FinalEvaluationMetrics(
-        solution=chromosome,
-        params=simulation_params,
+        solution=chromosome, params=simulation_params, algorithm="GREEDY"
     )
     final_eval.score(verbose=verbose)
 
@@ -113,7 +112,9 @@ def simulate_ga_evacuation(
         terminate = ga.extract_termination_criteria(evolution=evolution)
 
     final_solution = sorted(population, key=lambda c: c.fitness)[0]
-    final_eval = FinalEvaluationMetrics(solution=final_solution, params=simulation_params)
+    final_eval = FinalEvaluationMetrics(
+        solution=final_solution, params=simulation_params, algorithm="GA"
+    )
     final_eval.score(verbose=verbose)
     final_eval.add_evolution_scores(evaluation.avg_score)
 

@@ -33,7 +33,10 @@ class Environment:
         self.bottleneck_score = self.calculate_bottleneck_scores()
 
     def create_graph(self, city_name: str) -> nx.Graph:
-        G = pickle.load(open(f"graphs/{city_name}.pickle", "rb"))
+        try:
+            G = pickle.load(open(f"graphs/{city_name}.pickle", "rb"))
+        except:
+            G = pickle.load(open(f"graphs/{city_name}.pkl", "rb"))
         return G
 
     def extract_node_types(self, node_type: str) -> Tuple[list, int]:

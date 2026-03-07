@@ -122,13 +122,15 @@ class Evaluation:
 
 class FinalEvaluationMetrics:
 
-    def __init__(self, solution: dict, params: dict) -> None:
+    def __init__(self, solution: dict, params: dict, algorithm: str) -> None:
         self.solution = solution.agents
         self.chromosome = solution
 
         self.params = params
         self.metrics = {}
         self.evolution_scores = None
+
+        self.algorithm = algorithm
 
     def score(self, verbose: int = 1) -> dict[str, float]:
         agent_time, path_lengths, congestion_impact, congestion_delayed = (
@@ -142,11 +144,15 @@ class FinalEvaluationMetrics:
             f"Avg path length: {np.mean(path_lengths):.2f}",
             f"Total time: {np.max(agent_time):.2f}",
             f"Average time: {np.mean(agent_time):.2f}",
-            f"Congestion index: {np.mean(congestion_delayed)*100:.0f}%",
-            f"Avg Congestion delay: {np.mean(congestion_impact):.2f}",
             f"Exit utilisation: {exit_utilisation:.2f}",
             f"Avg Path Efficiency: {path_efficiency:.2f}",
         ]
+        if self.params["congestion"]:
+            string_components += [
+                f"Congestion index: {np.mean(congestion_delayed)*100:.0f}%",
+                f"Avg Congestion delay: {np.mean(congestion_impact):.2f}",
+            ]
+
         if verbose:
             self.print_final_results(results=string_components)
 
@@ -166,7 +172,7 @@ class FinalEvaluationMetrics:
         header = (
             "\n"
             + "=" * int(len(result_string) / 2)
-            + " FINAL RESULTS "
+            + f" {self.algorithm} FINAL RESULTS "
             + "=" * int(len(result_string) / 2)
         )
         footer = "=" * int(len(header))
