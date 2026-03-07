@@ -36,7 +36,6 @@ class CityCreation:
         metrics = {
             "mean_path_length": self.mean_path_lengths(),
             "max_betweeness": self.maximum_node_betweeness(),
-            "articulation_points": self.articulation_points(),
             "edge_density": nx.density(self.city),
             "critical_edge": self.critical_edge_use(),
         }
@@ -46,16 +45,16 @@ class CityCreation:
         return metrics
 
     def critical_edge_use(self) -> tuple:
-        edge_bc = nx.edge_betweenness_centrality(self.city)
+        edge_bc = nx.edge_betweenness_centrality_subset(
+            self.city, sources=self.starts, targets=self.exits, normalized=True
+        )
         top_edge = max(edge_bc, key=edge_bc.get)
         return (top_edge, edge_bc[top_edge])
 
-    def articulation_points(self) -> tuple:
-        ap = list(nx.articulation_points(self.city))
-        return (len(ap), ap)
-
     def maximum_node_betweeness(self) -> float:
-        betweenness = nx.betweenness_centrality(self.city)
+        betweenness = nx.betweenness_centrality_subset(
+            self.city, sources=self.starts, targets=self.exits, normalized=True
+        )
         return max(betweenness.values())
 
     def mean_path_lengths(self) -> float:
@@ -118,7 +117,6 @@ class CityCreation:
         metric_list = [
             f"Avg Path Length     → {self.metrics['mean_path_length']:.3}",
             f"Max Betweeness      → {self.metrics['max_betweeness']:.3}",
-            f"Articulation Points → {self.metrics['articulation_points'][0]} ({self.metrics['articulation_points'][1]})",
             f"Edge Density        → {self.metrics['edge_density']:.3}",
             f"Critical Edge       → {self.metrics['critical_edge'][0]} ({self.metrics['critical_edge'][1]:.3})",
         ]
