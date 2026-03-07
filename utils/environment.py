@@ -19,7 +19,7 @@ class Environment:
         self.city_name = city_name
 
         self.pickle_obj = self.create_graph(city_name)
-        self.graph = self.pickle_obj["graph"]
+        self.graph = self.pickle_obj["G"]
         self.starts, self.num_starts = self.pickle_obj["starts"], len(self.pickle_obj["starts"])
         self.exits, self.num_exits = self.pickle_obj["exits"], len(self.pickle_obj["exits"])
 
