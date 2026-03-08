@@ -76,7 +76,6 @@ class Agent:
 
             sub_key = self.key_manager.next_key()
 
-            # TODO: might want to stop it going back on itself...
             next_location_idx = random.randint(
                 key=sub_key, shape=(), minval=0, maxval=len(neighbours)
             )

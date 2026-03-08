@@ -13,16 +13,24 @@ class CityCreation:
         self.starts = ["S1", "S2", "S3", "S4"]
         self.exits = ["E1", "E2", "E3", "E4"]
 
+        self.pos = {}
+
         self.metrics = metrics
 
     def save_graph_pickle(self):
         path = f"graphs/{self.city_name.lower().replace(' ', '_')}.pkl"
-        city = {"G": self.city, "starts": self.starts, "exits": self.exits, "metrics": self.metrics}
+        city = {
+            "G": self.city,
+            "starts": self.starts,
+            "exits": self.exits,
+            "metrics": self.metrics,
+            "pos": self.pos,
+        }
         with open(path, "wb") as f:
             pickle.dump(city, f)
 
     @staticmethod
-    def read_graph_pickle(name: str) -> dict:
+    def read_graph_pickle(name: str) -> tuple:
         with open(f"graphs/{name}.pkl", "rb") as f:
             city = pickle.load(f)
 
@@ -30,7 +38,8 @@ class CityCreation:
         exits = city["exits"]
         starts = city["starts"]
         metrics = city["metrics"]
-        return G, exits, starts, metrics
+        pos = city["pos"]
+        return G, exits, starts, metrics, pos
 
     def calculate_city_metrics(self) -> dict:
         metrics = {
@@ -82,6 +91,8 @@ class CityCreation:
 
         if pos is None:
             pos = nx.spring_layout(self.city, seed=42)
+
+        self.pos = pos
 
         path_edges = self.shortest_path_edges() if show_paths else set()
 

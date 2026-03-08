@@ -22,6 +22,7 @@ class Environment:
         self.graph = self.pickle_obj["G"]
         self.starts, self.num_starts = self.pickle_obj["starts"], len(self.pickle_obj["starts"])
         self.exits, self.num_exits = self.pickle_obj["exits"], len(self.pickle_obj["exits"])
+        self.pos = self.pickle_obj["pos"]
 
         self.congestion_amount = 5  # TODO: come back and pick something better for this...
 

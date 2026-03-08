@@ -12,11 +12,10 @@ class Greedy:
         self.params = simulation_params
         self.key_manager = key_manager
 
-    def solve(self) -> dict[int, Agent]:
+    def solve(self, pick_first: bool = False) -> dict[int, Agent]:
         for i, agent in self.agents.items():
             self.agents[i].path = self.agent_shortest_paths(
-                agent.city,
-                agent.start_point,
+                agent.city, agent.start_point, pick_first
             )
 
         return self.agents
@@ -29,7 +28,7 @@ class Greedy:
 
         return chromosome
 
-    def agent_shortest_paths(self, city: nx.Graph, start_node: str):
+    def agent_shortest_paths(self, city: nx.Graph, start_node: str, pick_first: bool):
         # Find minimum distance across all exits
         min_length = float("inf")
 
@@ -49,7 +48,10 @@ class Greedy:
             except nx.NetworkXNoPath:
                 continue
 
-        path_idx = random.randint(
-            key=self.key_manager.next_key(), shape=(), minval=0, maxval=len(all_paths)
-        )
-        return all_paths[path_idx]
+        if pick_first:
+            return all_paths[0]
+        else:
+            path_idx = random.randint(
+                key=self.key_manager.next_key(), shape=(), minval=0, maxval=len(all_paths)
+            )
+            return all_paths[path_idx]
