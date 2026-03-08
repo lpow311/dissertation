@@ -164,19 +164,21 @@ class GeneticAlgorithm:
     def epsilon_greedy_path_selection(self, agent: Agent, start: str, end: str) -> list:
         path = [start]
         current_node = start
-        visited = {start}
+
+        # Block all exits except the target one
+        visited = {start} | (set(agent.city.exits) - {end})
+
         graph = agent.city.graph
 
-        while current_node not in agent.city.exits:
-            neigbours = list(graph.neighbors(current_node))
+        while current_node != end:  # stop at specified exit only
+            neighbours = list(graph.neighbors(current_node))
+            unvisited = [n for n in neighbours if n not in visited]
 
-            unvisited = [n for n in neigbours if n not in visited]
             if not unvisited:
-                unvisited = neigbours
+                unvisited = neighbours
 
             prob = self.generate_uniform_probability()
             if prob < self.epsilon:
-                # pick greedy neighbour
                 best_node = min(unvisited, key=lambda n: agent.city.distances_to_exits[n][end])
                 current_node = best_node
             else:

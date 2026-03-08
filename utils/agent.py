@@ -128,11 +128,12 @@ class Chromosome:
         agents: dict,
         key_manager,
         params: dict = {"congestion": False, "human": False, "fitness": "max"},
+        initialisation: bool = False,
     ) -> None:
         self.params = params
         self.key_manager = key_manager
 
-        self.agents = self.deep_copy_agents(agents=agents)
+        self.agents = self.deep_copy_agents(agents=agents, initialisation=initialisation)
         self.num_agents = len(self.agents)
         self.fitness = None
         self.fitness_calc = params["fitness"]
@@ -141,10 +142,13 @@ class Chromosome:
         self.path_lengths = []
         self.path_times = []
 
-    def deep_copy_agents(self, agents: dict) -> dict:
+    def deep_copy_agents(self, agents: dict, initialisation: bool) -> dict:
         agents_copy = {}
         for agent_num, agent in agents.items():
             new_agent = agent.copy_agent(new_path=None)
+            if initialisation:
+                new_agent.path = new_agent.generate_random_path()
+
             agents_copy[agent_num] = new_agent
 
         return agents_copy
@@ -248,6 +252,7 @@ class PopulationCreation:
                 agents=agents,
                 params=simulation_params,
                 key_manager=self.key_manager,
+                initialisation=True,
             )
             chromosome.calculate_fitness()
 
