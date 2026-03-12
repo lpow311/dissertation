@@ -214,6 +214,7 @@ class GeneticAlgorithm:
             remaining_slots = len(old_population) - n_elite
 
             new_population = elite + sorted_children[:remaining_slots]
+
         elif method == "elite":
             both_populations = old_population + children
             sorted_all = sorted(both_populations, key=lambda c: c.fitness)
@@ -221,6 +222,7 @@ class GeneticAlgorithm:
 
         elif method == "children":
             new_population = [c for c in children]
+
         else:
             raise ValueError(f"{method} is not valid please pick another one..")
 
@@ -228,19 +230,25 @@ class GeneticAlgorithm:
 
     def analyse_survivor_selection(self, parent: list, child: list, new: list) -> dict:
         parent_ids = {id(c) for c in parent}
-        child_ids = {id(c) for c in child}
 
-        parent_count = sum(1 for c in new if id(c) in parent_ids)
+        child_ids = {id(c) for c in child} - parent_ids
+        passthrough_ids = {id(c) for c in child} & parent_ids  # intersection = passthroughs
+
+        parent_count = sum(1 for c in new if id(c) in parent_ids and id(c) not in passthrough_ids)
         child_count = sum(1 for c in new if id(c) in child_ids)
-
-        n_passthrough = self.population_size - parent_count - child_count
+        passthrough_count = sum(1 for c in new if id(c) in passthrough_ids)
 
         best_parent = sorted(parent, key=lambda c: c.fitness)[0]
         best_child = sorted(child, key=lambda c: c.fitness)[0]
 
-        results = {
-            "parent": (parent_count, best_parent),
-            "child": (child_count, best_child),
-            "passthrough": n_passthrough,
+        assert parent_count + child_count + passthrough_count == len(
+            new
+        ), f"Counts don't add up: {parent_count} + {child_count} + {passthrough_count} != {len(new)}"
+
+        return {
+            "parent_count": parent_count,
+            "parent_fitness": best_parent.fitness,
+            "child_count": child_count,
+            "child_fitness": best_child.fitness,
+            "passthrough": passthrough_count,
         }
-        return results
