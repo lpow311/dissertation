@@ -4,10 +4,19 @@ import networkx as nx
 
 from utils.agent import Chromosome, Agent
 
+hyper_params = {"crossover": 0.8, "mutation": 0.05, "epsilon": 0.2}
+
 
 class GeneticAlgorithm:
 
-    def __init__(self, exit_criteria: dict, pop_size: int, key_manager, num_agents: int) -> None:
+    def __init__(
+        self,
+        exit_criteria: dict,
+        pop_size: int,
+        key_manager,
+        num_agents: int,
+        hyperparams: dict = hyper_params,
+    ) -> None:
 
         self.exit_criteria = exit_criteria
         self.population_size = pop_size
@@ -16,9 +25,9 @@ class GeneticAlgorithm:
         self.key_manager = key_manager
 
         ####
-        self.crossover_probability = 0.8  # 0.6 and 0.9
-        self.mutation_probability = 0.05
-        self.epsilon = 0.2
+        self.crossover_probability = hyperparams["crossover"]
+        self.mutation_probability = hyperparams["mutation"]
+        self.epsilon = hyperparams["epsilon"]
 
     def generate_uniform_probability(self) -> float:
         return random.uniform(key=self.key_manager.next_key(), shape=(), minval=0, maxval=1)
@@ -192,10 +201,10 @@ class GeneticAlgorithm:
 
     ################# SELECTION #################
 
-    def survivor_selection(self, children: list, old_population: list, keep_best: bool) -> list:
+    def survivor_selection(self, children: list, old_population: list, method: str) -> list:
         [c.calculate_fitness() for c in children]
 
-        if keep_best:
+        if method == "elite_percentage":
             # [c.calculate_fitness() for c in old_population]
             sorted_old = sorted(old_population, key=lambda c: c.fitness)
             n_elite = max(1, int(0.05 * len(old_population)))
@@ -205,7 +214,33 @@ class GeneticAlgorithm:
             remaining_slots = len(old_population) - n_elite
 
             new_population = elite + sorted_children[:remaining_slots]
-        else:
+        elif method == "elite":
+            both_populations = old_population + children
+            sorted_all = sorted(both_populations, key=lambda c: c.fitness)
+            new_population = sorted_all[: self.population_size]
+
+        elif method == "children":
             new_population = [c for c in children]
+        else:
+            raise ValueError(f"{method} is not valid please pick another one..")
 
         return new_population
+
+    def analyse_survivor_selection(self, parent: list, child: list, new: list) -> dict:
+        parent_ids = {id(c) for c in parent}
+        child_ids = {id(c) for c in child}
+
+        parent_count = sum(1 for c in new if id(c) in parent_ids)
+        child_count = sum(1 for c in new if id(c) in child_ids)
+
+        n_passthrough = self.population_size - parent_count - child_count
+
+        best_parent = sorted(parent, key=lambda c: c.fitness)[0]
+        best_child = sorted(child, key=lambda c: c.fitness)[0]
+
+        results = {
+            "parent": (parent_count, best_parent),
+            "child": (child_count, best_child),
+            "passthrough": n_passthrough,
+        }
+        return results

@@ -102,7 +102,7 @@ def simulate_ga_evacuation(
         children = ga.chromosome_crossover(parents=parents)
         mutated_children = ga.agent_mutation(children=children)
         population = ga.survivor_selection(
-            children=mutated_children, old_population=population, keep_best=True
+            children=mutated_children, old_population=population, method="elite_percentage"
         )
 
         evaluation.calculate_metrics(population, evolution, verbose)
