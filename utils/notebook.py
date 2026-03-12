@@ -43,7 +43,7 @@ def ga_tuning_function(city, n_experiments, num_agents, params, population_size,
         terminate = ga.extract_termination_criteria(evolution=evolution)
 
         all_generation_stats = {
-            evolution: {} for evolution in range(1, hyperparams["max_evolutions"] + 1)
+            evolution: {} for evolution in range(1, hyperparams["max_evolutions"])
         }
 
         loop_start = perf_counter()
