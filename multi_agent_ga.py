@@ -98,7 +98,7 @@ def simulate_ga_evacuation(
         print_log_line()
 
     while not terminate:
-        parents = ga.parent_selection(population=population)
+        parents = ga.parent_selection(population=population, method="tournament")
         children = ga.chromosome_crossover(parents=parents)
         mutated_children = ga.agent_mutation(children=children)
         population = ga.survivor_selection(

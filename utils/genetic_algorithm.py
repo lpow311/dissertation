@@ -28,11 +28,12 @@ class GeneticAlgorithm:
         self.crossover_probability = hyperparams["crossover"]
         self.mutation_probability = hyperparams["mutation"]
         self.epsilon = hyperparams["epsilon"]
+        self.tournament_size = hyperparams["tournament_size"]
 
     def generate_uniform_probability(self) -> float:
         return random.uniform(key=self.key_manager.next_key(), shape=(), minval=0, maxval=1)
 
-    def __generate_integer(self, max_val: int, min_val: int = 0) -> int:
+    def generate_integer(self, max_val: int, min_val: int = 0) -> int:
         return random.randint(
             key=self.key_manager.next_key(), shape=(), minval=min_val, maxval=max_val
         )
@@ -45,10 +46,37 @@ class GeneticAlgorithm:
 
     ################# PARENT SELECTION #################
 
-    def parent_selection(self, population: list) -> list:
+    def parent_selection(self, population: list, method: str = "roulette") -> list:
         # TODO: currently allows for duplication in parent selection
-        roulette_parents = self.__roulette_selection(population=population)
-        return roulette_parents
+        if method == "roulette":
+            parents = self.__roulette_selection(population=population)
+        elif method == "tournament":
+            parents = self.tournament_selection(population=population)
+
+        return parents
+
+    def tournament_selection(self, population: list) -> list:
+        fitness = [chromosome.fitness for chromosome in population]
+
+        parents = []
+        for _ in range(self.population_size):
+            chromo_idxs = [
+                self.generate_integer(self.population_size) for _ in range(self.tournament_size)
+            ]
+
+            tournament = [fitness[i] for i in chromo_idxs]
+            min_fitness = min(tournament)
+            tied = [i for i, fit in enumerate(tournament) if fit == min_fitness]
+
+            if len(tied) > 1:
+                min_idx = tournament.index(min_fitness)
+            else:
+                tie_idx = self.generate_integer(len(tied))
+                min_idx = tied[tie_idx]
+
+            parents.append(population[min_idx])
+
+        return parents
 
     def __roulette_selection(self, population: list) -> list:
         fitness = [chromosome.fitness for chromosome in population]
@@ -120,7 +148,7 @@ class GeneticAlgorithm:
             if not overlap:
                 child1_path, child2_path = parent1_path, parent2_path
             else:
-                overlap_node_idx = self.__generate_integer(max_val=len(overlap))
+                overlap_node_idx = self.generate_integer(max_val=len(overlap))
                 overlap_node = list(overlap)[overlap_node_idx]
 
                 idx_parent1 = parent1_path.index(overlap_node)
@@ -156,7 +184,7 @@ class GeneticAlgorithm:
 
         # Pick the point on the path they switch at.
         path = agent.path
-        partial_point = self.__generate_integer(min_val=1, max_val=len(path) - 1)
+        partial_point = self.generate_integer(min_val=1, max_val=len(path) - 1)
         mutation_node = path[partial_point]
 
         end_path = self.epsilon_greedy_path_selection(agent, mutation_node, new_exit)
@@ -167,7 +195,7 @@ class GeneticAlgorithm:
 
     def __select_exit(self, agent: Agent) -> str:
         exits = agent.preferred_exits
-        exit_idx = self.__generate_integer(max_val=len(exits))
+        exit_idx = self.generate_integer(max_val=len(exits))
         return exits[exit_idx]
 
     def epsilon_greedy_path_selection(self, agent: Agent, start: str, end: str) -> list:
@@ -191,7 +219,7 @@ class GeneticAlgorithm:
                 best_node = min(unvisited, key=lambda n: agent.city.distances_to_exits[n][end])
                 current_node = best_node
             else:
-                neighbour_idx = self.__generate_integer(max_val=len(unvisited))
+                neighbour_idx = self.generate_integer(max_val=len(unvisited))
                 current_node = unvisited[neighbour_idx]
 
             path.append(current_node)
@@ -207,7 +235,7 @@ class GeneticAlgorithm:
         if method == "elite_percentage":
             # [c.calculate_fitness() for c in old_population]
             sorted_old = sorted(old_population, key=lambda c: c.fitness)
-            n_elite = max(1, int(0.05 * len(old_population)))
+            n_elite = max(5, int(0.1 * len(old_population)))
             elite = sorted_old[:n_elite]
 
             sorted_children = sorted(children, key=lambda c: c.fitness)

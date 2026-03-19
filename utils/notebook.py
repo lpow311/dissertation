@@ -5,6 +5,7 @@ from time import perf_counter
 from multi_agent_ga import KeyManager
 from utils.agent import PopulationCreation
 from utils.genetic_algorithm import GeneticAlgorithm
+from utils.greedy import Greedy
 
 
 def ga_tuning_function(city, n_experiments, num_agents, params, population_size, hyperparams: dict):
@@ -17,24 +18,24 @@ def ga_tuning_function(city, n_experiments, num_agents, params, population_size,
 
     # Run it.
     all_solutions, all_stats, all_times = [], [], []
+    population_creation_seed = []
 
     for seed_idx in tqdm(range(n_experiments)):
         start_time = perf_counter()
-        # This ensures the agents all start from the same place so can compare how the random route selection varies (hopefully)
-        key_manager = KeyManager(seed=1234)
+        seed = algorithm_seeds[seed_idx]
+        key_manager = KeyManager(seed=seed)
+
         creator = PopulationCreation(
             city=city, pop_size=population_size, num_agents=num_agents, key_manager=key_manager
         )
         population, human_traits = creator.create_initial_population(simulation_params=params)
         creation_time = perf_counter()
+        population_creation_seed.append(key_manager.key)
 
-        seed = algorithm_seeds[seed_idx]
-
-        ga_key_manager = KeyManager(seed=seed)
         ga = GeneticAlgorithm(
             exit_criteria={"max_evolutions": hyperparams["max_evolutions"]},
             pop_size=population_size,
-            key_manager=ga_key_manager,
+            key_manager=key_manager,
             num_agents=num_agents,
             hyperparams=hyperparams,
         )
@@ -46,13 +47,15 @@ def ga_tuning_function(city, n_experiments, num_agents, params, population_size,
             evolution: {} for evolution in range(1, hyperparams["max_evolutions"])
         }
 
+        parent_method = "roulette" if hyperparams["tournament_size"] is None else "tournament"
+
         loop_start = perf_counter()
         steps = {step: [] for step in ["parent", "crossover", "mutation", "survivor"]}
         while not terminate:
             evolution_start = perf_counter()
 
             # PARENT SELECTION
-            parents = ga.parent_selection(population=population)
+            parents = ga.parent_selection(population=population, method=parent_method)
             parent_time = perf_counter()
 
             # CROSSOVER
@@ -115,4 +118,49 @@ def ga_tuning_function(city, n_experiments, num_agents, params, population_size,
 
         all_times.append(experiment_times)
 
-    return all_solutions, all_stats, all_times
+    return all_solutions, all_stats, all_times, population_creation_seed
+
+
+def greedy_function(city, n_experiments, num_agents, params):
+    """
+    I would like to say this is absolutely horrific code but I need to get all this info
+    out so this feels the easiest to run it once although messy...
+    """
+    rng = np.random.default_rng(123)
+    algorithm_seeds = rng.integers(0, 10**6, size=n_experiments)
+
+    # Run it.
+    all_solutions, all_times = [], []
+    population_creation_seed = []
+
+    for seed_idx in tqdm(range(n_experiments)):
+        start_time = perf_counter()
+
+        seed = algorithm_seeds[seed_idx]
+        key_manager = KeyManager(seed=seed)
+
+        creator = PopulationCreation(
+            city=city, pop_size=1, num_agents=num_agents, key_manager=key_manager
+        )
+        population, human_traits = creator.create_initial_population(simulation_params=params)
+        population_creation_seed.append(key_manager.key)
+
+        creation_time = perf_counter()
+
+        greedy = Greedy(population=population, simulation_params=params, key_manager=key_manager)
+        solution = greedy.solve()
+        final_solution = greedy.turn_into_chromosome_for_evaluation()
+
+        end_time = perf_counter()
+
+        all_solutions.append(final_solution)
+
+        experiment_times = {
+            "total": end_time - start_time,
+            "population_creation": creation_time - start_time,
+            "greedy": end_time - creation_time,
+        }
+
+        all_times.append(experiment_times)
+
+    return all_solutions, all_times, population_creation_seed

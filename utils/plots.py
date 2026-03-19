@@ -119,16 +119,15 @@ def extract_metric(evolution_stats, metric_key, component):
     for seed_stats in evolution_stats:
         seed_values = []
         for evolution_num, results in seed_stats.items():
-            if evolution_num < 20:
-                if component is not None:
-                    seed_values.append(results[component][metric_key])
-                else:
-                    seed_values.append(results[metric_key])
+            if component is not None:
+                seed_values.append(results[component][metric_key])
+            else:
+                seed_values.append(results[metric_key])
         all_seeds.append(seed_values)
     return np.array(all_seeds)  # shape: (n_seeds, n_generations)
 
 
-def plot_parent_selection_stats(evolution_stats, city_name: str):
+def plot_parent_selection_stats(evolution_stats, city_name: str, method: str = "Roulette"):
     cv_all = extract_metric(evolution_stats, "cv", "parent_selection")
     dominance_all = extract_metric(evolution_stats, "dominance", "parent_selection")
     best_share_all = extract_metric(evolution_stats, "best_share", "parent_selection")
@@ -179,7 +178,7 @@ def plot_parent_selection_stats(evolution_stats, city_name: str):
 
     formatted = city_name.replace("_", " ").capitalize()
     fig.suptitle(
-        f"Roulette Suitability for {formatted} — {len(evolution_stats)} Seeds",
+        f"{method} Suitability for {formatted} — {len(evolution_stats)} Seeds",
         fontsize=14,
         fontweight="bold",
     )
@@ -244,7 +243,7 @@ def plot_survivor_selection(evolution_stats, city_name: str):
 
 
 def plot_covergence(evolution_stats_per_city):
-    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+    fig, axes = plt.subplots(1, len(evolution_stats_per_city), figsize=(18, 6))
 
     for ax, (city_name, evolution_stats) in zip(axes, evolution_stats_per_city.items()):
         fitnesses = extract_metric(evolution_stats, "fitnesses", None)
@@ -275,5 +274,117 @@ def plot_covergence(evolution_stats_per_city):
         ax.spines[["top", "right"]].set_visible(False)
 
     fig.suptitle("Fitness Convergence Across Cities", fontsize=14, fontweight="bold")
+    plt.tight_layout()
+    plt.show()
+
+
+def extract_step(step, timing_stats):
+    return np.array([exp["ga_components"][step] for exp in timing_stats])
+
+
+def plot_fitness_vs_time(evolution_stats, timing_stats, title=""):
+    import pandas as pd
+
+    # ── Extract fitness ──────────────────────────────────────────────────────
+    fitnesses = extract_metric(evolution_stats, "fitnesses", None)
+    best = np.array([[min(f) for f in seed] for seed in fitnesses])
+    best_mean = np.mean(best, axis=0)
+
+    parent_t = extract_step("parent", timing_stats)
+    crossover_t = extract_step("crossover", timing_stats)
+    mutation_t = extract_step("mutation", timing_stats)
+    survivor_t = extract_step("survivor", timing_stats)
+
+    total_per_gen = parent_t + crossover_t + mutation_t + survivor_t
+
+    parent_mean = np.mean(parent_t, axis=0)
+    crossover_mean = np.mean(crossover_t, axis=0)
+    mutation_mean = np.mean(mutation_t, axis=0)
+    survivor_mean = np.mean(survivor_t, axis=0)
+    total_mean = np.mean(total_per_gen, axis=0)
+
+    # ── Fitness improvement (flipped so positive = better) ───────────────────
+    fitness_improvement = -np.diff(best_mean)  # positive = improvement
+    fitness_improvement = np.insert(fitness_improvement, 0, 0)
+    smoothed_improvement = (
+        pd.Series(fitness_improvement).rolling(window=10, center=True, min_periods=1).mean()
+    )
+
+    n_gen = min(best_mean.shape[0], total_mean.shape[0])
+    evolutions = np.arange(n_gen)
+
+    fig, axes = plt.subplots(1, 2, figsize=(18, 6))
+
+    # ── Plot A: Time per component ───────────────────────────────────────────
+    ax = axes[0]
+    ax.bar(evolutions, parent_mean[:n_gen], label="Parent Selection", color="#3498db")
+    ax.bar(
+        evolutions,
+        crossover_mean[:n_gen],
+        bottom=parent_mean[:n_gen],
+        label="Crossover",
+        color="#6bbc8d",
+    )
+    ax.bar(
+        evolutions,
+        mutation_mean[:n_gen],
+        bottom=parent_mean[:n_gen] + crossover_mean[:n_gen],
+        label="Mutation",
+        color="#e8a838",
+    )
+    ax.bar(
+        evolutions,
+        survivor_mean[:n_gen],
+        bottom=parent_mean[:n_gen] + crossover_mean[:n_gen] + mutation_mean[:n_gen],
+        label="Survivor",
+        color="#da5f70",
+    )
+
+    ax.set_title("Time Per Component Per Generation", fontsize=12, fontweight="bold")
+    ax.set_xlabel("Generation")
+    ax.set_ylabel("Time (s)")
+    ax.legend(fontsize=8)
+    ax.spines[["top", "right"]].set_visible(False)
+
+    # ── Plot B: Smoothed fitness improvement vs time cost ────────────────────
+    ax1 = axes[1]
+    ax2 = ax1.twinx()
+
+    ax1.plot(
+        evolutions,
+        smoothed_improvement[:n_gen],
+        color="#6bbc8d",
+        linewidth=2,
+        marker="o",
+        markersize=3,
+        label="Fitness Improvement (smoothed)",
+    )
+    ax1.axhline(0, color="#6bbc8d", linestyle="--", linewidth=1, alpha=0.5)
+    ax1.set_xlabel("Generation")
+    ax1.set_ylabel("Fitness Improvement (smoothed)", color="#6bbc8d")
+    ax1.tick_params(axis="y", labelcolor="#6bbc8d")
+
+    ax2.plot(
+        evolutions,
+        total_mean[:n_gen],
+        color="#e8a838",
+        linewidth=2,
+        marker="s",
+        markersize=3,
+        label="Time Cost (s)",
+    )
+    ax2.set_ylabel("Time Cost Per Generation (s)", color="#e8a838")
+    ax2.set_ylim(0, max(total_mean) * 1.2)
+    ax2.tick_params(axis="y", labelcolor="#e8a838")
+
+    # Fix phantom legend entries
+    lines = [l for l in ax1.get_lines() + ax2.get_lines() if not l.get_label().startswith("_")]
+    labels = [l.get_label() for l in lines]
+    ax1.legend(lines, labels, loc="upper right", fontsize=8)
+
+    ax1.set_title("Fitness Improvement vs Time Cost", fontsize=12, fontweight="bold")
+    ax1.spines[["top"]].set_visible(False)
+
+    fig.suptitle(title, fontsize=14, fontweight="bold")
     plt.tight_layout()
     plt.show()
