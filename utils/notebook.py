@@ -3,7 +3,7 @@ from tqdm import tqdm
 from time import perf_counter
 
 from multi_agent_ga import KeyManager
-from utils.agent import PopulationCreation
+from utils.agent import PopulationCreation, generate_agent_options
 from utils.genetic_algorithm import GeneticAlgorithm
 from utils.greedy import Greedy
 
@@ -25,9 +25,19 @@ def ga_tuning_function(city, n_experiments, num_agents, params, population_size,
         seed = algorithm_seeds[seed_idx]
         key_manager = KeyManager(seed=seed)
 
+        attributes = {
+            "starts": generate_agent_options(city.starts, num_agents, seed),
+            "walking_speed": generate_agent_options([1, 2, 3], num_agents, seed),
+        }
+
         creator = PopulationCreation(
-            city=city, pop_size=population_size, num_agents=num_agents, key_manager=key_manager
+            city=city,
+            pop_size=population_size,
+            num_agents=num_agents,
+            key_manager=key_manager,
+            attributes=attributes,
         )
+
         population, human_traits = creator.create_initial_population(simulation_params=params)
         creation_time = perf_counter()
         population_creation_seed.append(key_manager.key)
@@ -139,8 +149,17 @@ def greedy_function(city, n_experiments, num_agents, params):
         seed = algorithm_seeds[seed_idx]
         key_manager = KeyManager(seed=seed)
 
+        attributes = {
+            "starts": generate_agent_options(city.starts, num_agents, seed),
+            "walking_speed": generate_agent_options([1, 2, 3], num_agents, seed),
+        }
+
         creator = PopulationCreation(
-            city=city, pop_size=1, num_agents=num_agents, key_manager=key_manager
+            city=city,
+            pop_size=1,
+            num_agents=num_agents,
+            key_manager=key_manager,
+            attributes=attributes,
         )
         population, human_traits = creator.create_initial_population(simulation_params=params)
         population_creation_seed.append(key_manager.key)

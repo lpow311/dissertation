@@ -1,12 +1,12 @@
 import networkx as nx
 from jax import random
 from jax.random import PRNGKey
+import numpy as np
+
 
 from collections import defaultdict
 
 from utils.environment import Environment
-
-import numpy as np
 
 
 class Agent:
@@ -155,38 +155,126 @@ class Chromosome:
 
     def calculate_fitness(self) -> None:
         """
-        Evacuation time = Path Length * Walking Speed + Congestion Delays
-        Loop Score = How unique the path journey is (i.e. avoid going in loops)
-        Fitness = Loop- and distance-weighted inverse evacuation time
-
-        “How close agents’ realised travel times are to their theoretical shortest paths,
-        accounting for inefficiencies such as looping and congestion.”
+        Calculates the path fitness for each of the agents and then
+        calculates the chrosomosome fitness based off the parameter
+        input i.e. max, mean, median, ...
         """
-        node_occupancy = self.calculate_node_congestion()
-        congestion_score = []
-        path_lengths = []
+        # TODO: haven't considered walking speed....
+        agent_times = self.get_timesteps()
 
-        fitnesses = []
-        for agent in self.agents.values():
-            length = len(agent.path)
-            path_lengths.append(length)
+        # path time will be the equivalent of fitness as if not congestion
+        # then it just considers path length (ignoring the walking speed as need to sort...)
+        self.path_time = [len(path) for path in agent_times.values()]
+        self.path_lengths = [len(set(path)) for path in agent_times.values()]
+        self.congestion_score = list(np.array(self.path_time) - np.array(self.path_lengths))
 
-            congestion_delay = self.calculate_agent_congestion_delay(agent, node_occupancy)
-            congestion_score.append(congestion_delay)
+        self.fitness = self.__calculate_chromosome_fitness(self.path_time)
 
-            path_timesteps = length * agent.speed if self.params["walking"] else length
-            path_fitness = path_timesteps
-            if self.params["congestion"]:
-                path_fitness += congestion_delay
+    def get_timesteps(self) -> dict:
+        """
+        Congestion delays now propagate forward...
+        """
+        city_nodes = self.agents[0].city.graph.nodes
+        if self.params["congestion"]:
+            capacity = self.agents[0].city.congestion_amount
+        else:
+            return {a: agent.path for a, agent in self.agents.items()}
 
-            fitnesses.append(path_fitness)
+        completed_count = 0
 
-        self.fitness = self.__calculate_chromosome_fitness(fitnesses)
+        times, delays, current = self.setup_timesteps()
+        node_queue = {n: [] for n in city_nodes}
+        while completed_count < self.num_agents:
+            nodes = self.get_agent_positions(city_nodes, current)
+            completed_count = sum([len(a) for n, a in nodes.items() if "E" in n])
 
-        # Store for use later
-        self.path_lengths = path_lengths
-        self.congestion_score = congestion_score
-        self.path_times = fitnesses
+            for node, agents in nodes.items():
+                # not bothered about exit nodes.
+                if ("E" in node) or (len(agents) == 0):
+                    continue
+
+                elif len(agents) > capacity:
+                    delayed_agents = node_queue[node]
+                    queue_length = len(node_queue[node])
+
+                    if 0 < queue_length <= capacity:
+                        # fill from the previous round.
+                        first_agents = delayed_agents
+                        leftover = capacity - queue_length
+
+                        # fill the left over spots.
+                        arriving_agents = list(set(agents) - set(delayed_agents))
+                        first_agents += self.sample_without_replacement(
+                            self.key_manager.next_key(), arriving_agents, leftover
+                        )
+
+                    elif queue_length == 0:
+                        first_agents = self.sample_without_replacement(
+                            self.key_manager.next_key(), agents, capacity
+                        )
+                    else:
+                        first_agents = self.sample_without_replacement(
+                            self.key_manager.next_key(), delayed_agents, capacity
+                        )
+
+                    # remove from queue so know not to do next time or times after
+                    moved_on_agents = set(delayed_agents).intersection(set(first_agents))
+                    for agent in moved_on_agents:
+                        node_queue[node].remove(agent)
+
+                    stuck_agents = list(set(agents) - set(first_agents))
+                    for agent in first_agents:
+                        times[agent].append(node)
+                        current[agent] += 1
+                        delays[agent] = False  # don't think i need delayed.
+
+                    for agent in stuck_agents:
+                        times[agent].append(node)
+                        delays[agent] = True
+                        node_queue[node].append(agent)
+
+                else:
+                    for agent in agents:
+                        times[agent].append(node)
+                        current[agent] += 1
+
+                        if delays[agent]:
+                            node_queue[node].remove(agent)
+                            delays[agent] = False
+
+        times = self.add_exits_to_paths(nodes=nodes, times=times)
+
+        return times
+
+    def add_exits_to_paths(self, nodes: dict, times: dict) -> dict:
+        exit_nodes = {n: a for n, a in nodes.items() if "E" in n}
+        for node, agents in exit_nodes.items():
+            for agent in agents:
+                times[agent].append(node)
+
+        return times
+
+    @staticmethod
+    def sample_without_replacement(key, items: list, num_samples: int) -> list:
+        indices = random.choice(key, a=len(items), shape=(num_samples,), replace=False)
+        return [items[i] for i in indices]
+
+    def setup_timesteps(self) -> tuple:
+        times, delays, current = {}, {}, {}
+        for a, agent in self.agents.items():
+            times[a] = [str(agent.path[0])]
+            delays[a] = False
+            current[a] = 1
+
+        return times, delays, current
+
+    def get_agent_positions(self, city_nodes: list, current: dict) -> dict:
+        nodes = {n: [] for n in city_nodes}
+        for a, pos in current.items():
+            node = self.agents[a].path[pos]
+            nodes[node].append(a)
+
+        return nodes
 
     def __calculate_chromosome_fitness(self, fitnesses: list) -> float:
         if self.fitness_calc == "mean":
@@ -195,29 +283,6 @@ class Chromosome:
             return float(np.median(fitnesses))
         else:
             return float(np.max(fitnesses))
-
-    def calculate_agent_congestion_delay(self, agent: Agent, occupancy: defaultdict) -> int:
-        delay = 0
-        for t, node in enumerate(agent.path):
-            capacity = agent.city.congestion_amount
-            if occupancy[t][node] > capacity:
-                delay += occupancy[t][node] - capacity
-
-        return delay
-
-    def calculate_node_congestion(self) -> defaultdict:
-        """
-        Weakly time-dependent (non-causal) congestion - It is not fully dynamic, and delays
-        do not propagate forward.
-        i.e. So if an agent is delayed at time t, the model still assumes it arrives at t+1 next.
-        """
-        occupancy = defaultdict(lambda: defaultdict(int))
-
-        for agent in self.agents.values():
-            for t, node in enumerate(agent.path):
-                occupancy[t][node] += 1
-
-        return occupancy
 
     def calculate_average_path(self) -> float:
         lengths = []
@@ -230,12 +295,19 @@ class Chromosome:
 
 class PopulationCreation:
 
-    def __init__(self, pop_size: int, num_agents: int, city: Environment, key_manager) -> None:
+    def __init__(
+        self,
+        pop_size: int,
+        num_agents: int,
+        city: Environment,
+        attributes: dict[str, list],
+        key_manager,
+    ) -> None:
         self.pop_size = pop_size
         self.num_agents = num_agents
 
         self.city = city
-        self.human_traits = {"walking_speeds": [], "panic": []}
+        self.attributes = attributes
 
         self.key_manager = key_manager
 
@@ -244,7 +316,7 @@ class PopulationCreation:
         Creates the initial population of chromosomes to be used, each has its
         own unique seed for reproduction of "random" probabilities.
         """
-        agents, human_traits = self.initialise_agents(simulation_params)
+        agents = self.initialise_agents(simulation_params)
 
         population = []
         for _ in range(self.pop_size):
@@ -258,7 +330,7 @@ class PopulationCreation:
 
             population.append(chromosome)
 
-        return population, human_traits
+        return population, self.attributes
 
     def initialise_agents(self, simulation_params: dict) -> dict:
         """
@@ -268,9 +340,8 @@ class PopulationCreation:
         agents = {}
 
         for agent in range(self.num_agents):
-            walking_speed = self.extract_walking_speed(
-                key=self.key_manager.next_key(), params=simulation_params
-            )
+            walking_speed = self.attributes["walking_speed"][agent]
+            start_point = self.attributes["starts"][agent]
 
             default_characteristics = {
                 "walking_speed": walking_speed,  # How many time steps it takes to move 1 node.
@@ -281,19 +352,12 @@ class PopulationCreation:
                 city=self.city,
                 characteristics=default_characteristics,
                 key_manager=self.key_manager,
+                start_point=start_point,
             )
 
-        return agents, self.human_traits
+        return agents
 
-    def extract_walking_speed(self, key: PRNGKey, params: dict) -> int:
-        if not params["walking"]:
-            self.human_traits["walking_speeds"].append(1)
-            return 1
 
-        walking_speeds = [1, 2, 3]  # TODO: this is sooo basic but for now is fine.
-        speed_idx = random.randint(key, shape=(), minval=0, maxval=len(walking_speeds))
-        walking_speed = walking_speeds[speed_idx]
-
-        self.human_traits["walking_speeds"].append(walking_speed)
-
-        return walking_speed
+def generate_agent_options(options: list, num_agents: int, seed: int) -> list:
+    rng = np.random.default_rng(seed)
+    return list(rng.choice(options, size=num_agents, replace=True))
