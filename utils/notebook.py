@@ -27,7 +27,7 @@ def ga_tuning_function(city, n_experiments, num_agents, params, population_size,
 
         attributes = {
             "starts": generate_agent_options(city.starts, num_agents, seed),
-            "walking_speed": generate_agent_options([1, 2, 3], num_agents, seed),
+            "walking": generate_agent_options([1, 2, 3], num_agents, seed),
         }
 
         creator = PopulationCreation(
@@ -151,7 +151,7 @@ def greedy_function(city, n_experiments, num_agents, params):
 
         attributes = {
             "starts": generate_agent_options(city.starts, num_agents, seed),
-            "walking_speed": generate_agent_options([1, 2, 3], num_agents, seed),
+            "walking": generate_agent_options([1, 2, 3], num_agents, seed),
         }
 
         creator = PopulationCreation(

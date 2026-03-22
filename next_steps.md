@@ -1,12 +1,10 @@
 # Dissertation Code Todo List
 
 ## Core Simulation
-- [ ] Walking speed — apply speed to `get_timesteps` so each edge traversal costs `speed` timesteps
 - [ ] Delayed starts — prepend start node X times to agent path at initialisation based on delay parameter
-- [ ] Validate congestion model produces expected results after start node fix
 
 ## Human Behaviour Characteristics
-- [ ] **Walking speed** — test speeds [1, 2, 3], check if GA naturally routes slow agents to closer exits
+- [ ] **Walking speed** — test speeds [1, 2, 3], check if GA naturally routes slow agents to closer exits.
 - [ ] **Delayed starts** — test delay distributions [none, low variance, high variance]
 - [ ] **Compliance/anxiety** — at initialisation roll each agent against compliance rate, freeze non-compliant agents on greedy path, skip in crossover/mutation but include in congestion calculation, test rates [0.0, 0.25, 0.5, 0.75, 1.0]
 - [ ] **Familiarity** — restrict `preferred_exits` at initialisation, test [all exits, 2 exits, 1 exit]
