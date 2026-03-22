@@ -34,7 +34,7 @@ def simulate_greedy_evacuation(
 
     attributes = {
         "starts": generate_agent_options(city.starts, num_agents, seed),
-        "walking_speed": generate_agent_options([1, 2, 3], num_agents, seed),
+        "walking": generate_agent_options([1, 2, 3], num_agents, seed),
     }
 
     key_manager = KeyManager(seed=seed)
@@ -78,7 +78,7 @@ def simulate_ga_evacuation(
     # 1 Generate the population
     attributes = {
         "starts": generate_agent_options(city.starts, num_agents, seed),
-        "walking_speed": generate_agent_options([1, 2, 3], num_agents, seed),
+        "walking": generate_agent_options([1, 2, 3], num_agents, seed),
     }
 
     key_manager = KeyManager(seed=seed)
@@ -108,7 +108,7 @@ def simulate_ga_evacuation(
 
     evaluation = Evaluation()
 
-    avg_walking_speed = np.mean(human_traits["walking_speed"])
+    avg_walking_speed = np.mean(human_traits["walking"])
 
     if verbose:
         print_log_line()
@@ -157,7 +157,7 @@ def simulate_ga_evacuation(
 if __name__ == "__main__":
     n_experiments = 5
     num_agents = 20
-    params = {"congestion": True, "walking": False, "fitness": "max-median", "alpha": 0.75}
+    params = {"congestion": False, "walking": False, "fitness": "max-median", "alpha": 0.75}
 
     grid_city = Environment("grid_city")
     grid_city.congestion_amount = 2
@@ -168,7 +168,7 @@ if __name__ == "__main__":
     hyperparams = {
         "crossover": 0.8,
         "mutation": 0.1,
-        "epsilon": 0.2,
+        "epsilon": 0.8,
         "max_evolutions": 50,
         "survivor_method": "elite_percentage",
         "tournament_size": None,

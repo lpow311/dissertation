@@ -27,7 +27,7 @@ class Agent:
         self.key_manager = key_manager
 
         self.characteristics = characteristics
-        self.speed = characteristics["walking_speed"]
+        self.speed = characteristics["walking"]
 
         if start_point is None:
             self.start_point = self.select_start_point()
@@ -140,7 +140,7 @@ class Chromosome:
 
         self.congestion_score = []
         self.path_lengths = []
-        self.path_times = []
+        self.path_time = []
 
         self.agent_time_paths = {}
 
@@ -160,26 +160,35 @@ class Chromosome:
         Calculates the path fitness for each of the agents and then
         calculates the chrosomosome fitness based off the parameter
         input i.e. max, mean, median, ...
+
+        As long as you note in your dissertation that congestion delay
+        includes both true congestion and speed-induced blocking it's
+        a legitimate simplification.
         """
-        # TODO: haven't considered walking speed....
-        agent_times = self.get_timesteps()
+        agent_times, congestion_delays = self.get_timesteps()
         self.agent_time_paths = agent_times
 
-        # path time will be the equivalent of fitness as if not congestion
-        # then it just considers path length (ignoring the walking speed as need to sort...)
         self.path_time = [len(path) for path in agent_times.values()]
         self.path_lengths = [len(set(path)) for path in agent_times.values()]
-        self.congestion_score = list(np.array(self.path_time) - np.array(self.path_lengths))
+
+        self.congestion_score = [congestion_delays[a] for a in agent_times]
+        self.walking_delay = list(
+            np.array(self.path_time) - np.array(self.path_lengths) - np.array(self.congestion_score)
+        )
 
         self.fitness = self.calculate_chromosome_fitness(self.path_time)
 
     def get_timesteps(self) -> dict:
         city_nodes = self.agents[0].city.graph.nodes
-        if not self.params["congestion"]:
-            return {a: agent.path for a, agent in self.agents.items()}
+        capacity = (
+            self.agents[0].city.congestion_amount
+            if self.params["congestion"]
+            else (self.num_agents + 10)
+        )
 
-        capacity = self.agents[0].city.congestion_amount
-        times, delays, current = self.setup_timesteps()
+        speeds = {a: int(v.characteristics["walking"]) for a, v in self.agents.items()}
+        times, delays, current, walking, congestion = self.setup_timesteps()
+
         node_queue = {n: [] for n in city_nodes}
 
         while True:
@@ -227,7 +236,10 @@ class Chromosome:
 
                     for agent in first_agents:
                         times[agent].append(node)
-                        current[agent] += 1
+                        walking[agent] += 1
+                        if walking[agent] > speeds[agent]:
+                            current[agent] += 1
+                            walking[agent] = 1
                         delays[agent] = False
                         if agent in node_queue[node]:
                             node_queue[node].remove(agent)
@@ -235,13 +247,17 @@ class Chromosome:
                     for agent in stuck_agents:
                         times[agent].append(node)
                         delays[agent] = True
+                        congestion[agent] += 1
                         if agent not in node_queue[node]:  # prevent duplicate queue entries
                             node_queue[node].append(agent)
 
                 else:
                     for agent in agents:
                         times[agent].append(node)
-                        current[agent] += 1
+                        walking[agent] += 1
+                        if walking[agent] > speeds[agent]:
+                            current[agent] += 1
+                            walking[agent] = 1
                         delays[agent] = False
                         if agent in node_queue[node]:
                             node_queue[node].remove(agent)
@@ -249,29 +265,23 @@ class Chromosome:
             if all(current[a] >= len(self.agents[a].path) for a in current):
                 break
 
-        return times
+        return times, congestion
 
-    def add_exits_to_paths(self, nodes: dict, times: dict) -> dict:
-        exit_nodes = {n: a for n, a in nodes.items() if "E" in n}
-        for node, agents in exit_nodes.items():
-            for agent in agents:
-                times[agent].append(node)
+    def setup_timesteps(self) -> tuple:
+        times, delays, current, walking, congestion = {}, {}, {}, {}, {}
+        for a in self.agents:
+            times[a] = []
+            delays[a] = False
+            current[a] = 0
+            walking[a] = 1
+            congestion[a] = 0
 
-        return times
+        return times, delays, current, walking, congestion
 
     @staticmethod
     def sample_without_replacement(key, items: list, num_samples: int) -> list:
         indices = random.choice(key, a=len(items), shape=(num_samples,), replace=False)
         return [items[i] for i in indices]
-
-    def setup_timesteps(self) -> tuple:
-        times, delays, current = {}, {}, {}
-        for a in self.agents:
-            times[a] = []
-            delays[a] = False
-            current[a] = 0
-
-        return times, delays, current
 
     def get_agent_positions(self, city_nodes: list, current: dict) -> dict:
         nodes = {n: [] for n in city_nodes}
@@ -354,11 +364,11 @@ class PopulationCreation:
         agents = {}
 
         for agent in range(self.num_agents):
-            walking_speed = self.attributes["walking_speed"][agent]
+            walking_speed = self.attributes["walking"][agent] if simulation_params["walking"] else 1
             start_point = self.attributes["starts"][agent]
 
             default_characteristics = {
-                "walking_speed": walking_speed,  # How many time steps it takes to move 1 node.
+                "walking": walking_speed,  # How many time steps it takes to move 1 node.
             }
 
             agents[agent] = Agent(
