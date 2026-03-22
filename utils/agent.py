@@ -82,14 +82,14 @@ class Agent:
             current_location = neighbours[next_location_idx]
             path.append(current_location)
 
-        path = self.__remove_loops_from_path(path=path)
+        path = self.remove_loops_from_path(path=path)
         return path
 
     def update_path(self, path: list) -> None:
-        self.path = self.__remove_loops_from_path(path=path)
+        self.path = self.remove_loops_from_path(path=path)
 
     @staticmethod
-    def __remove_loops_from_path(path: list) -> list:
+    def remove_loops_from_path(path: list) -> list:
         seen = {}
         cleaned = []
         for node in path:
@@ -107,7 +107,7 @@ class Agent:
         if new_path is None:
             new_path = self.path
         else:
-            new_path = self.__remove_loops_from_path(path=new_path)
+            new_path = self.remove_loops_from_path(path=new_path)
 
         return Agent(
             name=self.name,
@@ -142,6 +142,8 @@ class Chromosome:
         self.path_lengths = []
         self.path_times = []
 
+        self.agent_time_paths = {}
+
     def deep_copy_agents(self, agents: dict, initialisation: bool) -> dict:
         agents_copy = {}
         for agent_num, agent in agents.items():
@@ -161,6 +163,7 @@ class Chromosome:
         """
         # TODO: haven't considered walking speed....
         agent_times = self.get_timesteps()
+        self.agent_time_paths = agent_times
 
         # path time will be the equivalent of fitness as if not congestion
         # then it just considers path length (ignoring the walking speed as need to sort...)
@@ -168,81 +171,93 @@ class Chromosome:
         self.path_lengths = [len(set(path)) for path in agent_times.values()]
         self.congestion_score = list(np.array(self.path_time) - np.array(self.path_lengths))
 
-        self.fitness = self.__calculate_chromosome_fitness(self.path_time)
+        # Total evacuation time (your original intent)
+        evacuation_time = float(np.max(self.path_time))
+
+        # Mean time as tiebreaker/gradient signal
+        mean_time = float(np.mean(self.path_time))
+
+        # Primary: minimise evacuation time, secondary: minimise mean time
+        alpha = self.params.get("alpha", 1)
+        self.fitness = alpha * evacuation_time + (1 - alpha) * mean_time
+
+        # self.fitness = self.calculate_chromosome_fitness(self.path_time)
 
     def get_timesteps(self) -> dict:
-        """
-        Congestion delays now propagate forward...
-        """
         city_nodes = self.agents[0].city.graph.nodes
-        if self.params["congestion"]:
-            capacity = self.agents[0].city.congestion_amount
-        else:
+        if not self.params["congestion"]:
             return {a: agent.path for a, agent in self.agents.items()}
 
-        completed_count = 0
-
+        capacity = self.agents[0].city.congestion_amount
         times, delays, current = self.setup_timesteps()
         node_queue = {n: [] for n in city_nodes}
-        while completed_count < self.num_agents:
-            nodes = self.get_agent_positions(city_nodes, current)
-            completed_count = sum([len(a) for n, a in nodes.items() if "E" in n])
 
-            for node, agents in nodes.items():
-                # not bothered about exit nodes.
-                if ("E" in node) or (len(agents) == 0):
+        while True:
+            nodes = self.get_agent_positions(city_nodes, current)
+            nodes_with_agents = {node: agents for node, agents in nodes.items() if agents}
+
+            if not nodes_with_agents:
+                break
+
+            for node, agents in nodes_with_agents.items():
+                # Exit nodes are never congested — pass all agents through immediately
+                if "E" in node:
+                    for agent in agents:
+                        times[agent].append(node)
+                        current[agent] += 1
+                        delays[agent] = False
+                        if agent in node_queue[node]:
+                            node_queue[node].remove(agent)
                     continue
 
-                elif len(agents) > capacity:
-                    delayed_agents = node_queue[node]
-                    queue_length = len(node_queue[node])
+                if len(agents) > capacity:
+                    queue = node_queue[node]
 
-                    if 0 < queue_length <= capacity:
-                        # fill from the previous round.
-                        first_agents = delayed_agents
-                        leftover = capacity - queue_length
+                    # Queued agents always have priority; fill remaining slots randomly
+                    if queue:
+                        priority_agents = list(queue)
+                        remaining_slots = capacity - len(priority_agents)
+                        arriving_agents = [a for a in agents if a not in queue]
 
-                        # fill the left over spots.
-                        arriving_agents = list(set(agents) - set(delayed_agents))
-                        first_agents += self.sample_without_replacement(
-                            self.key_manager.next_key(), arriving_agents, leftover
-                        )
-
-                    elif queue_length == 0:
+                        if remaining_slots > 0 and arriving_agents:
+                            extra = self.sample_without_replacement(
+                                self.key_manager.next_key(),
+                                arriving_agents,
+                                min(remaining_slots, len(arriving_agents)),
+                            )
+                            first_agents = priority_agents + extra
+                        else:
+                            first_agents = priority_agents[:capacity]
+                    else:
                         first_agents = self.sample_without_replacement(
                             self.key_manager.next_key(), agents, capacity
                         )
-                    else:
-                        first_agents = self.sample_without_replacement(
-                            self.key_manager.next_key(), delayed_agents, capacity
-                        )
 
-                    # remove from queue so know not to do next time or times after
-                    moved_on_agents = set(delayed_agents).intersection(set(first_agents))
-                    for agent in moved_on_agents:
-                        node_queue[node].remove(agent)
+                    stuck_agents = [a for a in agents if a not in first_agents]
 
-                    stuck_agents = list(set(agents) - set(first_agents))
                     for agent in first_agents:
                         times[agent].append(node)
                         current[agent] += 1
-                        delays[agent] = False  # don't think i need delayed.
+                        delays[agent] = False
+                        if agent in node_queue[node]:
+                            node_queue[node].remove(agent)
 
                     for agent in stuck_agents:
                         times[agent].append(node)
                         delays[agent] = True
-                        node_queue[node].append(agent)
+                        if agent not in node_queue[node]:  # prevent duplicate queue entries
+                            node_queue[node].append(agent)
 
                 else:
                     for agent in agents:
                         times[agent].append(node)
                         current[agent] += 1
-
-                        if delays[agent]:
+                        delays[agent] = False
+                        if agent in node_queue[node]:
                             node_queue[node].remove(agent)
-                            delays[agent] = False
 
-        times = self.add_exits_to_paths(nodes=nodes, times=times)
+            if all(current[a] >= len(self.agents[a].path) for a in current):
+                break
 
         return times
 
@@ -271,12 +286,13 @@ class Chromosome:
     def get_agent_positions(self, city_nodes: list, current: dict) -> dict:
         nodes = {n: [] for n in city_nodes}
         for a, pos in current.items():
-            node = self.agents[a].path[pos]
-            nodes[node].append(a)
+            if pos < len(self.agents[a].path):
+                node = self.agents[a].path[pos]
+                nodes[node].append(a)
 
         return nodes
 
-    def __calculate_chromosome_fitness(self, fitnesses: list) -> float:
+    def calculate_chromosome_fitness(self, fitnesses: list) -> float:
         if self.fitness_calc == "mean":
             return float(np.mean(fitnesses))
         elif self.fitness_calc == "median":

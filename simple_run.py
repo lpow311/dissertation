@@ -6,7 +6,7 @@ import pickle
 for city_name in ["grid_city", "bottleneck_city", "moderate_city"]:
     city = Environment(city_name=city_name)
     n_experiments = 20
-    num_agents = 10
+    num_agents = 20
     params = {"congestion": True, "walking": False, "fitness": "max"}
     population_size = 20
 

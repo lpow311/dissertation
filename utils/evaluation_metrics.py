@@ -182,7 +182,7 @@ class FinalEvaluationMetrics:
 
     def calculate_agent_times(self) -> tuple:
         path_lengths = self.chromosome.path_lengths
-        agent_time = self.chromosome.path_times
+        agent_time = self.chromosome.path_time
         congestion_impact = self.chromosome.congestion_score
         congestion_delayed = [i > 0 for i in congestion_impact]
 

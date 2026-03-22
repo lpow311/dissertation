@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 from time import perf_counter
 
-from multi_agent_ga import KeyManager
+from main import KeyManager
 from utils.agent import PopulationCreation, generate_agent_options
 from utils.genetic_algorithm import GeneticAlgorithm
 from utils.greedy import Greedy

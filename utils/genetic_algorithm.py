@@ -49,7 +49,7 @@ class GeneticAlgorithm:
     def parent_selection(self, population: list, method: str = "roulette") -> list:
         # TODO: currently allows for duplication in parent selection
         if method == "roulette":
-            parents = self.__roulette_selection(population=population)
+            parents = self.roulette_selection(population=population)
         elif method == "tournament":
             parents = self.tournament_selection(population=population)
 
@@ -74,11 +74,11 @@ class GeneticAlgorithm:
                 tie_idx = self.generate_integer(len(tied))
                 min_idx = tied[tie_idx]
 
-            parents.append(population[min_idx])
+            parents.append(population[chromo_idxs[min_idx]])
 
         return parents
 
-    def __roulette_selection(self, population: list) -> list:
+    def roulette_selection(self, population: list) -> list:
         fitness = [chromosome.fitness for chromosome in population]
 
         inverted_fitness = [1 / f for f in fitness]
@@ -89,14 +89,14 @@ class GeneticAlgorithm:
         for _ in range(len(population)):
             pick_prob = self.generate_uniform_probability()
 
-            parent = self.__extract_cumulative_chromosome(
+            parent = self.extract_cumulative_chromosome(
                 population=population, probabilities=probabilities, prob=pick_prob
             )
             parents.append(parent)
 
         return parents
 
-    def __extract_cumulative_chromosome(self, population: list, probabilities: list, prob: float):
+    def extract_cumulative_chromosome(self, population: list, probabilities: list, prob: float):
         cumulative = 0
         for chromosome, probability in zip(population, probabilities):
             cumulative += probability
@@ -106,7 +106,7 @@ class GeneticAlgorithm:
     ################# CROSSOVER #################
 
     def chromosome_crossover(self, parents: list) -> list:
-        parent_pairs = self.__extract_parent_pairs(parents=parents)
+        parent_pairs = self.extract_parent_pairs(parents=parents)
         params = parents[0].params
 
         children = []
@@ -114,28 +114,30 @@ class GeneticAlgorithm:
             prob = self.generate_uniform_probability()
 
             if prob <= self.crossover_probability:
-                child1_agents, child2_agents = self.__single_point_crossover(
+                child1_agents, child2_agents = self.single_point_crossover(
                     parent1=parents[parent1], parent2=parents[parent2]
                 )
-                children.append(
-                    Chromosome(agents=child1_agents, key_manager=self.key_manager, params=params)
-                )
-                children.append(
-                    Chromosome(agents=child2_agents, key_manager=self.key_manager, params=params)
-                )
             else:
-                children.append(parents[parent1])
-                children.append(parents[parent2])
+                # just copy the parent agents across.
+                child1_agents = parents[parent1].agents
+                child2_agents = parents[parent2].agents
+
+            children.append(
+                Chromosome(agents=child1_agents, key_manager=self.key_manager, params=params)
+            )
+            children.append(
+                Chromosome(agents=child2_agents, key_manager=self.key_manager, params=params)
+            )
 
         return children
 
-    def __extract_parent_pairs(self, parents: list) -> list:
+    def extract_parent_pairs(self, parents: list) -> list:
         subkey = self.key_manager.next_key()
         shuffled = random.permutation(subkey, jnp.array(range(len(parents))))
         pairs = list(zip(shuffled[0::2], shuffled[1::2]))
         return pairs
 
-    def __single_point_crossover(self, parent1: Chromosome, parent2: Chromosome) -> list:
+    def single_point_crossover(self, parent1: Chromosome, parent2: Chromosome) -> list:
         child1_agents, child2_agents = {}, {}
 
         for agent in range(self.num_agents):
@@ -158,7 +160,7 @@ class GeneticAlgorithm:
                 child2_path = parent2_path[: idx_parent2 + 1] + parent1_path[idx_parent1 + 1 :]
 
             child1_agents[agent] = parent1.agents[agent].copy_agent(new_path=child1_path)
-            child2_agents[agent] = parent1.agents[agent].copy_agent(new_path=child2_path)
+            child2_agents[agent] = parent2.agents[agent].copy_agent(new_path=child2_path)
 
         return child1_agents, child2_agents
 
@@ -171,16 +173,16 @@ class GeneticAlgorithm:
                 prob = self.generate_uniform_probability()
 
                 if prob <= self.mutation_probability:
-                    mutated_agent = self.__agent_exit_path_mutation(agent=agent)
+                    mutated_agent = self.agent_exit_path_mutation(agent=agent)
                     chromosome.agents[agent_name] = mutated_agent
 
             mutated_children.append(chromosome)
 
         return mutated_children
 
-    def __agent_exit_path_mutation(self, agent: Agent) -> Agent:
+    def agent_exit_path_mutation(self, agent: Agent) -> Agent:
         # Decide which exit the agent will now go to.
-        new_exit = self.__select_exit(agent=agent)
+        new_exit = self.select_exit(agent=agent)
 
         # Pick the point on the path they switch at.
         path = agent.path
@@ -193,7 +195,7 @@ class GeneticAlgorithm:
         agent.update_path(new_path)
         return agent
 
-    def __select_exit(self, agent: Agent) -> str:
+    def select_exit(self, agent: Agent) -> str:
         exits = agent.preferred_exits
         exit_idx = self.generate_integer(max_val=len(exits))
         return exits[exit_idx]

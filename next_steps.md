@@ -1,29 +1,47 @@
-## Another place to keep track of next steps..
+# Dissertation Code Todo List
+## Bug Fixes
+- [ ] Apply congestion capacity to start nodes (currently excluded)
 
-## 1 Algorith Tuning
-* Need to add tournament selection in and compare the results.
-* Compare outputs of grid search - hope the fitness function starts converging.
-* Look at the performance of the percentage elite.
+## Core Simulation
+- [ ] Walking speed — apply speed to `get_timesteps` so each edge traversal costs `speed` timesteps
+- [ ] Delayed starts — prepend start node X times to agent path at initialisation based on delay parameter
+- [ ] Validate congestion model produces expected results after start node fix
 
-## 2 Agent Tuning
-* Run the different cities with differing number of agents to see what the best number should be.
+## Human Behaviour Characteristics
+- [ ] **Walking speed** — test speeds [1, 2, 3], check if GA naturally routes slow agents to closer exits
+- [ ] **Delayed starts** — test delay distributions [none, low variance, high variance]
+- [ ] **Compliance/anxiety** — at initialisation roll each agent against compliance rate, freeze non-compliant agents on greedy path, skip in crossover/mutation but include in congestion calculation, test rates [0.0, 0.25, 0.5, 0.75, 1.0]
+- [ ] **Familiarity** — restrict `preferred_exits` at initialisation, test [all exits, 2 exits, 1 exit]
 
-## 3 Given above metrics compare algorithms
-* Run the algorithms and see how they differ
+## Experiments to Run
+- [ ] Run base GA and greedy across all three cities (grid, moderate, bottleneck)
+- [ ] Run 100 evolutions with current best hyperparameters (`alpha=0.5`, `epsilon=0.8`)
+- [ ] Run multiple seeds (minimum 3-5) once happy with code
+- [ ] Run greedy and GA across agent counts [10, 20, 30, 40, 50, 100, 200] for each city
+- [ ] Parameter tuning — crossover, mutation, alpha, epsilon (come back to this) (probabilities and methods).
 
-## 4 Add agent compliance
-* Add functionality to compare the performance with different levels of compliance.
+## Analysis & Plots
+- [ ] Cumulative exits plot — GA vs greedy (already built)
+- [ ] Start node dispersal plot at x=1, 2, 3 (already built)
+- [ ] Exit utilisation comparison plot
+- [ ] Path visualisation on city graph
+- [ ] Congestion index across agent counts for GA vs greedy
+- [ ] Compliance rate threshold plot
+- [ ] Familiarity degradation curve
+
+## Nice to Have (if time allows)
+- [ ] Diversity preservation mechanism in survivor selection
+- [ ] Speed-aware fitness function (penalise slow agents on long paths)
+- [ ] Hyperparameter sensitivity analysis
 
 
-
-
-# Research Summary
+# Research Summary - kind of out dated now.
 ## Main Research Question
 "To what extent does globally optimised multi-agent routing via Genetic Algorithms produce better evacuation outcomes than individually optimised greedy routing under varying human behavioural characteristics and dynamic environmental conditions?"
 ## Sub Questions & Approach
 ##### SQ1 — Baseline Performance Does GA outperform greedy routing across structurally different city networks?
 Why: Establishes the fundamental comparison before adding complexity. Validates that your three cities produce meaningfully different results.
-Approach: Run GA and greedy across Grid, Moderate and Bottleneck cities across N seeds. Compare congestion scores. ✅ Already done.
+Approach: Run GA and greedy across Grid, Moderate and Bottleneck cities across N seeds. Compare congestion scores. 
 
 ##### SQ2 — Dynamic Fire Environment How does a dynamically spreading fire affect the performance gap between GA and greedy?
 Why: Makes the simulation more realistic. Fire punishes agents who are congested at the wrong place at the wrong time — directly amplifying greedy's weakness at bottlenecks.
