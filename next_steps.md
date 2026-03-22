@@ -1,6 +1,4 @@
 # Dissertation Code Todo List
-## Bug Fixes
-- [ ] Apply congestion capacity to start nodes (currently excluded)
 
 ## Core Simulation
 - [ ] Walking speed — apply speed to `get_timesteps` so each edge traversal costs `speed` timesteps

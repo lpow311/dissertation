@@ -171,17 +171,7 @@ class Chromosome:
         self.path_lengths = [len(set(path)) for path in agent_times.values()]
         self.congestion_score = list(np.array(self.path_time) - np.array(self.path_lengths))
 
-        # Total evacuation time (your original intent)
-        evacuation_time = float(np.max(self.path_time))
-
-        # Mean time as tiebreaker/gradient signal
-        mean_time = float(np.mean(self.path_time))
-
-        # Primary: minimise evacuation time, secondary: minimise mean time
-        alpha = self.params.get("alpha", 1)
-        self.fitness = alpha * evacuation_time + (1 - alpha) * mean_time
-
-        # self.fitness = self.calculate_chromosome_fitness(self.path_time)
+        self.fitness = self.calculate_chromosome_fitness(self.path_time)
 
     def get_timesteps(self) -> dict:
         city_nodes = self.agents[0].city.graph.nodes
@@ -276,10 +266,10 @@ class Chromosome:
 
     def setup_timesteps(self) -> tuple:
         times, delays, current = {}, {}, {}
-        for a, agent in self.agents.items():
-            times[a] = [str(agent.path[0])]
+        for a in self.agents:
+            times[a] = []
             delays[a] = False
-            current[a] = 1
+            current[a] = 0
 
         return times, delays, current
 
@@ -293,12 +283,20 @@ class Chromosome:
         return nodes
 
     def calculate_chromosome_fitness(self, fitnesses: list) -> float:
-        if self.fitness_calc == "mean":
-            return float(np.mean(fitnesses))
-        elif self.fitness_calc == "median":
-            return float(np.median(fitnesses))
+        vals = {
+            "mean": float(np.mean(fitnesses)),
+            "median": float(np.median(fitnesses)),
+            "max": float(np.max(fitnesses)),
+            "min": float(np.min(fitnesses)),
+        }
+
+        if "-" in self.fitness_calc:
+            metric1, metric2 = self.fitness_calc.split("-")
+            alpha = self.params.get("alpha", 1)
+
+            return (alpha * vals[metric1]) + ((1 - alpha) * vals[metric2])
         else:
-            return float(np.max(fitnesses))
+            return vals[self.fitness_calc]
 
     def calculate_average_path(self) -> float:
         lengths = []

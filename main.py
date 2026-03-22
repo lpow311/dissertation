@@ -157,7 +157,7 @@ def simulate_ga_evacuation(
 if __name__ == "__main__":
     n_experiments = 5
     num_agents = 20
-    params = {"congestion": True, "walking": False, "fitness": "max"}
+    params = {"congestion": True, "walking": False, "fitness": "max-median", "alpha": 0.75}
 
     grid_city = Environment("grid_city")
     grid_city.congestion_amount = 2
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     moderate_ga_solution_small, moderate_ga_eval_small = simulate_ga_evacuation(
         city=grid_city,
         num_agents=num_agents,
-        population_size=20,
+        population_size=50,
         simulation_params=params,
         hyperparams=hyperparams,
         seed=algorithm_seeds[0],
