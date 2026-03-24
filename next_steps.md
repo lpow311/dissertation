@@ -1,7 +1,6 @@
 # Dissertation Code Todo List
 
 ## Core Simulation
-- [ ] Add compliance implementation.
 - [ ] Add the familiarity of exits in.
 
 ## Human Behaviour Characteristics
