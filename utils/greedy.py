@@ -1,6 +1,7 @@
 import networkx as nx
 from utils.agent import Agent, Chromosome
 from jax import random
+from utils.environment import Environment
 
 
 class Greedy:
@@ -12,7 +13,7 @@ class Greedy:
         self.params = simulation_params
         self.key_manager = key_manager
 
-    def solve(self, pick_first: bool = False) -> dict[int, Agent]:
+    def solve(self, pick_first: bool = False) -> dict:
         for i, agent in self.agents.items():
             self.agents[i].path = self.agent_shortest_paths(
                 agent.city, agent.start_point, pick_first
@@ -22,13 +23,17 @@ class Greedy:
 
     def turn_into_chromosome_for_evaluation(self) -> None:
         chromosome = Chromosome(
-            agents=self.agents, params=self.params, key_manager=self.key_manager
+            agents=self.agents,
+            params=self.params,
+            key_manager=self.key_manager,
+            compliant_agents=[0] * len(self.agents),
         )
         chromosome.calculate_fitness()
 
         return chromosome
 
-    def agent_shortest_paths(self, city: nx.Graph, start_node: str, pick_first: bool):
+    def agent_shortest_paths(self, city: Environment, start_node: str, pick_first: bool):
+        # TODO: if change this add it population class as well.
         # Find minimum distance across all exits
         min_length = float("inf")
 

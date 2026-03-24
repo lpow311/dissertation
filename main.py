@@ -13,9 +13,17 @@ def print_simulation_params(attributes: dict, city: Environment, population: lis
     print("-" * 150)
     avg_walk_speed = np.mean(attributes["walking"])
     avg_delay = np.mean(attributes["delay_start"])
-    print(
-        f" City: {city.city_name} | Population size: {len(population)} | Walking Speed: {avg_walk_speed:.2} | Avg Start Delay: {avg_delay:.2}"
-    )
+    avg_compliance = np.mean(attributes["compliance"])
+
+    print_str = [
+        f" City: {city.city_name}",
+        f"Population size: {len(population)}",
+        f"Walking Speed: {avg_walk_speed:.2}",
+        f"Avg Start Delay: {avg_delay:.2}",
+        f"Avg Compliance: {avg_compliance:.2} | ",
+    ]
+
+    print(" | ".join(print_str))
     print("-" * 150)
 
 
@@ -191,7 +199,7 @@ if __name__ == "__main__":
         "fitness": "max-median",
         "alpha": 0.75,
         "delay_start": False,
-        "compliance": 1,
+        "compliance": 0.7,
     }
 
     grid_city = Environment("grid_city")

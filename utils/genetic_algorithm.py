@@ -123,10 +123,20 @@ class GeneticAlgorithm:
                 child2_agents = parents[parent2].agents
 
             children.append(
-                Chromosome(agents=child1_agents, key_manager=self.key_manager, params=params)
+                Chromosome(
+                    agents=child1_agents,
+                    key_manager=self.key_manager,
+                    params=params,
+                    compliance=parents[parent1].compliance,
+                )
             )
             children.append(
-                Chromosome(agents=child2_agents, key_manager=self.key_manager, params=params)
+                Chromosome(
+                    agents=child2_agents,
+                    key_manager=self.key_manager,
+                    params=params,
+                    compliance=parents[parent2].compliance,
+                )
             )
 
         return children
@@ -172,7 +182,7 @@ class GeneticAlgorithm:
             for agent_name, agent in chromosome.agents.items():
                 prob = self.generate_uniform_probability()
 
-                if prob <= self.mutation_probability:
+                if prob <= self.mutation_probability and agent.compliant:
                     mutated_agent = self.agent_exit_path_mutation(agent=agent)
                     chromosome.agents[agent_name] = mutated_agent
 

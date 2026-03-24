@@ -17,9 +17,9 @@ class Agent:
         city: Environment,
         characteristics: dict,
         key_manager,
-        start_point: str | None = None,
+        shortest_path: list,
+        start_point: str,
         path: list | None = None,
-        shortest_path: list | None = None,
         preferred_exits: list | None = None,
     ) -> None:
         self.name = name
@@ -28,42 +28,24 @@ class Agent:
 
         self.characteristics = characteristics
         self.speed = characteristics["walking"]
+        self.compliant = bool(characteristics["compliance"])
 
-        if start_point is None:
-            self.start_point = self.select_start_point()
-        else:
-            self.start_point = start_point
+        self.start_point = start_point
+        self.shortest_path = shortest_path
+        self.shortest_path_length = len(self.shortest_path)
 
-        if path is None:
+        if not self.compliant:
+            self.path = self.shortest_path
+        elif path is None and self.compliant:
             self.path = self.generate_random_path()
         else:
             self.path = path
-
-        if shortest_path is None:
-            self.shortest_path_length = self.calculate_shortest_path()
-        else:
-            self.shortest_path_length = shortest_path
 
         if preferred_exits is None:
             # TODO: can update this later for local vs visitor.
             self.preferred_exits = self.city.exits
         else:
             self.preferred_exits = preferred_exits
-
-    def select_start_point(self) -> str | int:
-        start_point_idx = random.randint(
-            key=self.key_manager.next_key(), shape=(), minval=0, maxval=self.city.num_starts
-        )
-        return self.city.starts[start_point_idx]
-
-    def calculate_shortest_path(self) -> int:
-        exit_path_lengths = [
-            nx.shortest_path_length(self.city.graph, source=self.start_point, target=exit_option)
-            for exit_option in self.city.exits
-        ]
-        # This calculates edges whereas I manually do node count.
-        shortest_length = min(exit_path_lengths) + 1
-        return shortest_length
 
     def generate_random_path(self) -> list:
         current_location = self.start_point
@@ -116,7 +98,7 @@ class Agent:
             key_manager=self.key_manager,
             start_point=self.start_point,
             path=new_path,
-            shortest_path=self.shortest_path_length,
+            shortest_path=self.shortest_path,
             preferred_exits=self.preferred_exits,
         )
 
@@ -127,6 +109,7 @@ class Chromosome:
         self,
         agents: dict,
         key_manager,
+        compliance: list,
         params: dict = {"congestion": False, "human": False, "fitness": "max"},
         initialisation: bool = False,
     ) -> None:
@@ -135,6 +118,8 @@ class Chromosome:
 
         self.agents = self.deep_copy_agents(agents=agents, initialisation=initialisation)
         self.num_agents = len(self.agents)
+        self.compliance = compliance
+
         self.fitness = None
         self.fitness_calc = params["fitness"]
 
@@ -148,7 +133,7 @@ class Chromosome:
         agents_copy = {}
         for agent_num, agent in agents.items():
             new_agent = agent.copy_agent(new_path=None)
-            if initialisation:
+            if initialisation and agent.compliant:
                 new_agent.path = new_agent.generate_random_path()
 
             agents_copy[agent_num] = new_agent
@@ -366,7 +351,7 @@ class PopulationCreation:
         Creates the initial population of chromosomes to be used, each has its
         own unique seed for reproduction of "random" probabilities.
         """
-        agents = self.initialise_agents(simulation_params)
+        agents = self.initialise_agents()
 
         population = []
         for _ in range(self.pop_size):
@@ -375,6 +360,7 @@ class PopulationCreation:
                 params=simulation_params,
                 key_manager=self.key_manager,
                 initialisation=True,
+                compliance=self.attributes["compliance"],
             )
             chromosome.calculate_fitness()
 
@@ -382,7 +368,7 @@ class PopulationCreation:
 
         return population, self.attributes
 
-    def initialise_agents(self, simulation_params: dict) -> dict:
+    def initialise_agents(self) -> dict:
         """
         Creates a set of agents to use in the modelling ensuring the agent
         characteristics are the same across the different chromosomes.
@@ -390,26 +376,54 @@ class PopulationCreation:
         agents = {}
 
         for agent in range(self.num_agents):
-            walking_speed = self.attributes["walking"][agent] if simulation_params["walking"] else 1
-            start_point = self.attributes["starts"][agent]
-            delay_start = (
-                self.attributes["delay_start"][agent] if simulation_params["delay_start"] else 0
-            )
-
-            default_characteristics = {
-                "walking": walking_speed,  # How many time steps it takes to move 1 node.
-                "delay_start": delay_start,
+            attributes = {
+                "walking": self.attributes["walking"][agent],
+                "delay_start": self.attributes["delay_start"][agent],
+                "compliance": self.attributes["compliance"][agent],
             }
+            shortest_path = self.agent_shortest_paths(
+                city=self.city, start_node=self.attributes["starts"][agent], pick_first=False
+            )
 
             agents[agent] = Agent(
                 name=f"Agent{agent}",
                 city=self.city,
-                characteristics=default_characteristics,
+                characteristics=attributes,
                 key_manager=self.key_manager,
-                start_point=start_point,
+                start_point=self.attributes["starts"][agent],
+                shortest_path=shortest_path,
             )
 
         return agents
+
+    def agent_shortest_paths(self, city: Environment, start_node: str, pick_first: bool):
+        # TODO: if change this add it greedy class as well.
+        # Find minimum distance across all exits
+        min_length = float("inf")
+
+        for exit_node in city.exits:
+            try:
+                path_length = nx.shortest_path_length(city.graph, start_node, exit_node)
+                if path_length < min_length:
+                    min_length = path_length
+            except nx.NetworkXNoPath:
+                continue
+
+        all_paths = []
+        for exit_node in city.exits:
+            try:
+                if nx.shortest_path_length(city.graph, start_node, exit_node) == min_length:
+                    all_paths.extend(nx.all_shortest_paths(city.graph, start_node, exit_node))
+            except nx.NetworkXNoPath:
+                continue
+
+        if pick_first:
+            return all_paths[0]
+        else:
+            path_idx = random.randint(
+                key=self.key_manager.next_key(), shape=(), minval=0, maxval=len(all_paths)
+            )
+            return all_paths[path_idx]
 
 
 def generate_agent_options(
