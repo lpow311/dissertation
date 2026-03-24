@@ -1,7 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from jax.random import PRNGKey, split
-from tqdm import tqdm
 
 from utils.environment import Environment
 from utils.agent import PopulationCreation, generate_agent_options
@@ -107,6 +105,14 @@ def simulate_ga_evacuation(
             default=0,
             weights=[0.4, 0.4, 0.2],
         ),
+        "compliance": generate_agent_options(
+            options=[0, 1],
+            num_agents=num_agents,
+            seed=seed,
+            on=bool(simulation_params["compliance"]),
+            default=1,
+            weights=[(1 - simulation_params["compliance"]), simulation_params["compliance"]],
+        ),
     }
 
     key_manager = KeyManager(seed=seed)
@@ -185,6 +191,7 @@ if __name__ == "__main__":
         "fitness": "max-median",
         "alpha": 0.75,
         "delay_start": False,
+        "compliance": 1,
     }
 
     grid_city = Environment("grid_city")
