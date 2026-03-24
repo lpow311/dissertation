@@ -170,10 +170,14 @@ class Chromosome:
 
         self.path_time = [len(path) for path in agent_times.values()]
         self.path_lengths = [len(set(path)) for path in agent_times.values()]
+        self.start_delays = [a.characteristics["delay_start"] for a in self.agents.values()]
 
         self.congestion_score = [congestion_delays[a] for a in agent_times]
         self.walking_delay = list(
-            np.array(self.path_time) - np.array(self.path_lengths) - np.array(self.congestion_score)
+            np.array(self.path_time)
+            - np.array(self.path_lengths)
+            - np.array(self.congestion_score)
+            - np.array(self.start_delays)
         )
 
         self.fitness = self.calculate_chromosome_fitness(self.path_time)
@@ -187,7 +191,7 @@ class Chromosome:
         )
 
         speeds = {a: int(v.characteristics["walking"]) for a, v in self.agents.items()}
-        times, delays, current, walking, congestion = self.setup_timesteps()
+        times, delays, current, walking, congestion, start_delays = self.setup_timesteps()
 
         node_queue = {n: [] for n in city_nodes}
 
@@ -211,12 +215,15 @@ class Chromosome:
 
                 if len(agents) > capacity:
                     queue = node_queue[node]
+                    delayed_agents = [a for a in agents if start_delays[a] > 0]
 
                     # Queued agents always have priority; fill remaining slots randomly
                     if queue:
-                        priority_agents = list(queue)
+                        priority_agents = [a for a in queue if a not in delayed_agents]
                         remaining_slots = capacity - len(priority_agents)
-                        arriving_agents = [a for a in agents if a not in queue]
+                        arriving_agents = [
+                            a for a in agents if (a not in queue) and (a not in delayed_agents)
+                        ]
 
                         if remaining_slots > 0 and arriving_agents:
                             extra = self.sample_without_replacement(
@@ -226,13 +233,27 @@ class Chromosome:
                             )
                             first_agents = priority_agents + extra
                         else:
-                            first_agents = priority_agents[:capacity]
+                            first_agents = self.sample_without_replacement(
+                                self.key_manager.next_key(), priority_agents, capacity
+                            )
                     else:
-                        first_agents = self.sample_without_replacement(
-                            self.key_manager.next_key(), agents, capacity
-                        )
+                        active_agents = [a for a in agents if a not in delayed_agents]
+                        if len(active_agents) > 0:
+                            first_agents = self.sample_without_replacement(
+                                self.key_manager.next_key(),
+                                active_agents,
+                                min(len(active_agents), capacity),
+                            )
+                        else:
+                            first_agents = []
 
-                    stuck_agents = [a for a in agents if a not in first_agents]
+                    stuck_agents = [
+                        a for a in agents if (a not in first_agents) and (a not in delayed_agents)
+                    ]
+
+                    for agent in delayed_agents:
+                        start_delays[agent] -= 1
+                        times[agent].append(node)
 
                     for agent in first_agents:
                         times[agent].append(node)
@@ -253,14 +274,18 @@ class Chromosome:
 
                 else:
                     for agent in agents:
-                        times[agent].append(node)
-                        walking[agent] += 1
-                        if walking[agent] > speeds[agent]:
-                            current[agent] += 1
-                            walking[agent] = 1
-                        delays[agent] = False
-                        if agent in node_queue[node]:
-                            node_queue[node].remove(agent)
+                        if start_delays[agent] > 0:
+                            start_delays[agent] -= 1
+                            times[agent].append(node)
+                        else:
+                            times[agent].append(node)
+                            walking[agent] += 1
+                            if walking[agent] > speeds[agent]:
+                                current[agent] += 1
+                                walking[agent] = 1
+                            delays[agent] = False
+                            if agent in node_queue[node]:
+                                node_queue[node].remove(agent)
 
             if all(current[a] >= len(self.agents[a].path) for a in current):
                 break
@@ -268,15 +293,16 @@ class Chromosome:
         return times, congestion
 
     def setup_timesteps(self) -> tuple:
-        times, delays, current, walking, congestion = {}, {}, {}, {}, {}
+        times, delays, current, walking, congestion, start_delays = {}, {}, {}, {}, {}, {}
         for a in self.agents:
             times[a] = []
             delays[a] = False
             current[a] = 0
             walking[a] = 1
             congestion[a] = 0
+            start_delays[a] = self.agents[a].characteristics["delay_start"]
 
-        return times, delays, current, walking, congestion
+        return times, delays, current, walking, congestion, start_delays
 
     @staticmethod
     def sample_without_replacement(key, items: list, num_samples: int) -> list:
@@ -366,9 +392,13 @@ class PopulationCreation:
         for agent in range(self.num_agents):
             walking_speed = self.attributes["walking"][agent] if simulation_params["walking"] else 1
             start_point = self.attributes["starts"][agent]
+            delay_start = (
+                self.attributes["delay_start"][agent] if simulation_params["delay_start"] else 0
+            )
 
             default_characteristics = {
                 "walking": walking_speed,  # How many time steps it takes to move 1 node.
+                "delay_start": delay_start,
             }
 
             agents[agent] = Agent(
@@ -382,6 +412,10 @@ class PopulationCreation:
         return agents
 
 
-def generate_agent_options(options: list, num_agents: int, seed: int) -> list:
+def generate_agent_options(
+    options: list, num_agents: int, seed: int, on: bool, default: int
+) -> list:
+    if not on:
+        return [default] * num_agents
     rng = np.random.default_rng(seed)
     return list(rng.choice(options, size=num_agents, replace=True))

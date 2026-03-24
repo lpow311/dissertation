@@ -11,7 +11,13 @@ from utils.greedy import Greedy
 from utils.algorithm_evaluation import AlgorithmComparison
 
 
-def print_log_line():
+def print_simulation_params(attributes: dict, city: Environment, population: list) -> None:
+    print("-" * 150)
+    avg_walk_speed = np.mean(attributes["walking"])
+    avg_delay = np.mean(attributes["delay_start"])
+    print(
+        f" City: {city.city_name} | Population size: {len(population)} | Walking Speed: {avg_walk_speed:.2} | Avg Start Delay: {avg_delay:.2}"
+    )
     print("-" * 150)
 
 
@@ -77,8 +83,16 @@ def simulate_ga_evacuation(
     """
     # 1 Generate the population
     attributes = {
-        "starts": generate_agent_options(city.starts, num_agents, seed),
-        "walking": generate_agent_options([1, 2, 3], num_agents, seed),
+        # TODO: do the starts aren't uniform is this ok?
+        "starts": generate_agent_options(city.starts, num_agents, seed, True, 0),
+        # TODO: do I want this to be from a distribution?
+        "walking": generate_agent_options(
+            [1, 2, 3], num_agents, seed, simulation_params["walking"], 1
+        ),
+        # TODO: what do I want the starts to be like? Distribution?
+        "delay_start": generate_agent_options(
+            [0, 1, 2], num_agents, seed, simulation_params["delay_start"], 0
+        ),
     }
 
     key_manager = KeyManager(seed=seed)
@@ -108,14 +122,8 @@ def simulate_ga_evacuation(
 
     evaluation = Evaluation()
 
-    avg_walking_speed = np.mean(human_traits["walking"])
-
     if verbose:
-        print_log_line()
-        print(
-            f" City: {city.city_name} | Population size: {len(population)} | Walking Speed: {avg_walking_speed:.2}"
-        )
-        print_log_line()
+        print_simulation_params(attributes, city, population)
 
     parent_method = "roulette" if hyperparams["tournament_size"] is None else "tournament"
 
@@ -157,7 +165,13 @@ def simulate_ga_evacuation(
 if __name__ == "__main__":
     n_experiments = 5
     num_agents = 20
-    params = {"congestion": False, "walking": False, "fitness": "max-median", "alpha": 0.75}
+    params = {
+        "congestion": True,
+        "walking": True,
+        "fitness": "max-median",
+        "alpha": 0.75,
+        "delay_start": False,
+    }
 
     grid_city = Environment("grid_city")
     grid_city.congestion_amount = 2
