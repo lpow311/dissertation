@@ -1,7 +1,8 @@
 # Dissertation Code Todo List
 
 ## Core Simulation
-- [ ] Delayed starts — prepend start node X times to agent path at initialisation based on delay parameter
+- [ ] Add compliance implementation.
+- [ ] Add the familiarity of exits in.
 
 ## Human Behaviour Characteristics
 - [ ] **Walking speed** — test speeds [1, 2, 3], check if GA naturally routes slow agents to closer exits.

@@ -84,14 +84,28 @@ def simulate_ga_evacuation(
     # 1 Generate the population
     attributes = {
         # TODO: do the starts aren't uniform is this ok?
-        "starts": generate_agent_options(city.starts, num_agents, seed, True, 0),
-        # TODO: do I want this to be from a distribution?
+        "starts": generate_agent_options(
+            options=city.starts,
+            num_agents=num_agents,
+            seed=seed,
+            on=True,
+        ),
         "walking": generate_agent_options(
-            [1, 2, 3], num_agents, seed, simulation_params["walking"], 1
+            options=[1, 2, 3],
+            num_agents=num_agents,
+            seed=seed,
+            on=simulation_params["walking"],
+            default=1,
+            weights=[0.6, 0.3, 0.1],
         ),
         # TODO: what do I want the starts to be like? Distribution?
         "delay_start": generate_agent_options(
-            [0, 1, 2], num_agents, seed, simulation_params["delay_start"], 0
+            options=[0, 1, 2],
+            num_agents=num_agents,
+            seed=seed,
+            on=simulation_params["delay_start"],
+            default=0,
+            weights=[0.4, 0.4, 0.2],
         ),
     }
 

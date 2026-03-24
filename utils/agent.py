@@ -413,9 +413,14 @@ class PopulationCreation:
 
 
 def generate_agent_options(
-    options: list, num_agents: int, seed: int, on: bool, default: int
+    options: list,
+    num_agents: int,
+    seed: int,
+    on: bool,
+    default: float = 0,
+    weights: list | None = None,
 ) -> list:
     if not on:
         return [default] * num_agents
     rng = np.random.default_rng(seed)
-    return list(rng.choice(options, size=num_agents, replace=True))
+    return list(rng.choice(options, size=num_agents, replace=True, p=weights))
