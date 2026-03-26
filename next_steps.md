@@ -1,13 +1,10 @@
 # Dissertation Code Todo List
 
-## Core Simulation
-- [ ] Add the familiarity of exits in.
 
 ## Human Behaviour Characteristics
 - [ ] **Walking speed** — test speeds [1, 2, 3], check if GA naturally routes slow agents to closer exits.
 - [ ] **Delayed starts** — test delay distributions [none, low variance, high variance]
 - [ ] **Compliance/anxiety** — at initialisation roll each agent against compliance rate, freeze non-compliant agents on greedy path, skip in crossover/mutation but include in congestion calculation, test rates [0.0, 0.25, 0.5, 0.75, 1.0]
-- [ ] **Familiarity** — restrict `preferred_exits` at initialisation, test [all exits, 2 exits, 1 exit]
 
 ## Experiments to Run
 - [ ] Run base GA and greedy across all three cities (grid, moderate, bottleneck)
