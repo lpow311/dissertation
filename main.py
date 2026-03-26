@@ -200,6 +200,7 @@ if __name__ == "__main__":
         "alpha": 0.75,
         "delay_start": False,
         "compliance": 0.7,
+        "preferred_exits": 1,
     }
 
     grid_city = Environment("grid_city")
