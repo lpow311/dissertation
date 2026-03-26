@@ -192,18 +192,17 @@ def simulate_ga_evacuation(
 
 if __name__ == "__main__":
     n_experiments = 5
-    num_agents = 20
+    num_agents = 100
     params = {
         "congestion": True,
         "walking": True,
         "fitness": "max-median",
         "alpha": 0.75,
         "delay_start": False,
-        "compliance": 0.7,
+        "compliance": 1,
     }
 
     grid_city = Environment("grid_city")
-    grid_city.congestion_amount = 2
 
     rng = np.random.default_rng(123)
     algorithm_seeds = rng.integers(0, 10**6, size=n_experiments)

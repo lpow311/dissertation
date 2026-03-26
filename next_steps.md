@@ -1,5 +1,11 @@
 # Dissertation Code Todo List
 
+## Hyperparameters:
+- [ ] phase 2 - epsilon - [0.2, 0.4, 0.6, 0.8]
+- [ ] phase 3 - crossover -  [0.6, 0.7, 0.8]
+- [ ] phase 4 - mutation - [0.05, 0.1, 0.2]
+- [ ] phase 5 - population size -  [10, 20, 50, 100]
+
 
 ## Human Behaviour Characteristics
 - [ ] **Walking speed** — test speeds [1, 2, 3], check if GA naturally routes slow agents to closer exits.
