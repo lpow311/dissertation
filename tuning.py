@@ -85,3 +85,5 @@ if __name__ == "__main__":
     with Pool(processes=n_cores) as pool:
         pool.map(basic_function, tune1)
     print("\nAll experiments complete.")
+
+# TODO: need to look at results and start next one off..
