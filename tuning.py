@@ -16,6 +16,8 @@ def basic_function(extra_params):
         "walking": False,
         "delay_start": False,
         "compliance": 1,
+        "fitness": "max-median",
+        "alpha": 0.8,
     }
 
     city = Environment("moderate_city")
@@ -23,16 +25,20 @@ def basic_function(extra_params):
     rng = np.random.default_rng(123)
     algorithm_seeds = rng.integers(0, 10**6, size=n_experiments)
 
-    hyperparams = {
+    original_hyperparams = {
         "crossover": 0.8,
         "mutation": 0.1,
-        "epsilon": 0.8,
+        # "epsilon": 0.8,
         "max_evolutions": 50,  # 50
         "survivor_method": "elite_percentage",
         "tournament_size": None,
     }
 
-    params = {**original_params, **extra_params}
+    # params = {**original_params, **extra_params}
+    params = original_params
+
+    hyperparams = {**original_hyperparams, **extra_params}
+    # hyperparams = original_hyperparams
 
     start = perf_counter()
 
@@ -52,7 +58,8 @@ def basic_function(extra_params):
 
     end = perf_counter()
 
-    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{params['fitness']}_{params['alpha']}_fitness.pkl"
+    epsilon = str(hyperparams["epsilon"]).replace(".", "")
+    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{epsilon}_epsilon.pkl"
     with open(path, "wb") as f:
         results = {
             # results
@@ -71,19 +78,18 @@ def basic_function(extra_params):
 
 
 if __name__ == "__main__":
+    print("starting...")
     # phase 1 - hyperparameter tuning
-    tune1 = [
-        {"fitness": "max", "alpha": 1},
-        {"fitness": "mean", "alpha": 1},
-        {"fitness": "median", "alpha": 1},
-        {"fitness": "max-median", "alpha": 0.8},
-        {"fitness": "max-median", "alpha": 0.65},
-        {"fitness": "max-median", "alpha": 0.5},
+    tune = [
+        {"epsilon": 0},
+        {"epsilon": 0.2},
+        {"epsilon": 0.4},
+        {"epsilon": 0.6},
+        {"epsilon": 0.8},
+        {"epsilon": 1},
     ]
 
     n_cores = 6
     with Pool(processes=n_cores) as pool:
-        pool.map(basic_function, tune1)
-    print("\nAll experiments complete.")
-
-# TODO: need to look at results and start next one off..
+        pool.map(basic_function, tune)
+    print("\nAll experiments complete for epsilon.")
