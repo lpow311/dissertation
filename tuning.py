@@ -26,9 +26,9 @@ def basic_function(extra_params):
     algorithm_seeds = rng.integers(0, 10**6, size=n_experiments)
 
     original_hyperparams = {
-        "crossover": 0.8,
+        # "crossover": 0.8,
         "mutation": 0.1,
-        # "epsilon": 0.8,
+        "epsilon": 1,
         "max_evolutions": 50,  # 50
         "survivor_method": "elite_percentage",
         "tournament_size": None,
@@ -58,8 +58,8 @@ def basic_function(extra_params):
 
     end = perf_counter()
 
-    epsilon = str(hyperparams["epsilon"]).replace(".", "")
-    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{epsilon}_epsilon.pkl"
+    crossover = str(hyperparams["crossover"]).replace(".", "")
+    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{crossover}_crossover.pkl"
     with open(path, "wb") as f:
         results = {
             # results
@@ -78,18 +78,18 @@ def basic_function(extra_params):
 
 
 if __name__ == "__main__":
-    print("starting...")
+    print("Starting...")
     # phase 1 - hyperparameter tuning
     tune = [
-        {"epsilon": 0},
-        {"epsilon": 0.2},
-        {"epsilon": 0.4},
-        {"epsilon": 0.6},
-        {"epsilon": 0.8},
-        {"epsilon": 1},
+        {"crossover": 0.4},
+        {"crossover": 0.5},
+        {"crossover": 0.6},
+        {"crossover": 0.7},
+        {"crossover": 0.8},
+        {"crossover": 0.9},
     ]
 
     n_cores = 6
     with Pool(processes=n_cores) as pool:
         pool.map(basic_function, tune)
-    print("\nAll experiments complete for epsilon.")
+    print("\nAll experiments complete for crossover.")
