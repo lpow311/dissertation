@@ -37,8 +37,8 @@ def basic_function(extra_params):
     # params = {**original_params, **extra_params}
     params = original_params
 
-    hyperparams = {**original_hyperparams, **extra_params}
-    # hyperparams = original_hyperparams
+    # hyperparams = {**original_hyperparams, **extra_params}
+    hyperparams = original_hyperparams
 
     start = perf_counter()
 
@@ -47,7 +47,7 @@ def basic_function(extra_params):
         seed_solution, seed_eval = simulate_ga_evacuation(
             city=city,
             num_agents=num_agents,
-            population_size=50,  # 50
+            population_size=extra_params,  # 50
             simulation_params=params,
             hyperparams=hyperparams,
             seed=seed,
@@ -58,9 +58,8 @@ def basic_function(extra_params):
 
     end = perf_counter()
 
-    mutation = str(hyperparams["mutation"]).replace(".", "")
-    max_evol = hyperparams["max_evolutions"]
-    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{mutation}_mutation_{max_evol}.pkl"
+    pop_size = extra_params
+    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{pop_size}_pop_size.pkl"
     with open(path, "wb") as f:
         results = {
             # results
@@ -71,7 +70,7 @@ def basic_function(extra_params):
             "num_agents": num_agents,
             "hyperparams": hyperparams,
             "params": params,
-            "population_size": 50,
+            "population_size": pop_size,
             "n_experiments": n_experiments,
             "population_creation_seed": algorithm_seeds,
         }
@@ -81,16 +80,9 @@ def basic_function(extra_params):
 if __name__ == "__main__":
     print("Starting...")
     # phase 1 - hyperparameter tuning
-    tune = [
-        {"mutation": 0.01},
-        {"mutation": 0.05},
-        {"mutation": 0.1},
-        {"mutation": 0.2},
-        {"mutation": 0.3},
-        {"mutation": 0.4},
-    ]
+    tune = [5, 10, 20, 50, 100, 200]
 
     n_cores = 6
     with Pool(processes=n_cores) as pool:
         pool.map(basic_function, tune)
-    print("\nAll experiments complete for mutation.")
+    print("\nAll experiments complete for population size.")

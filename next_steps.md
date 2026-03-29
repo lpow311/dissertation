@@ -1,9 +1,5 @@
 # Dissertation Code Todo List
 
-## Hyperparameters:
-- [ ] phase 5 - population size -  [10, 20, 50, 100]
-
-
 ## Human Behaviour Characteristics
 - [ ] **Walking speed** — test speeds [1, 2, 3], check if GA naturally routes slow agents to closer exits.
 - [ ] **Delayed starts** — test delay distributions [none, low variance, high variance]
