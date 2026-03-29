@@ -1,7 +1,6 @@
 # Dissertation Code Todo List
 
 ## Hyperparameters:
-- [ ] phase 4 - mutation - [0.05, 0.1, 0.2]
 - [ ] phase 5 - population size -  [10, 20, 50, 100]
 
 
