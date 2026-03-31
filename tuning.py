@@ -9,7 +9,7 @@ import pickle
 
 
 def basic_function(extra_params):
-    n_experiments = 3
+    n_experiments = 10
     num_agents = 100  # 100
     original_params = {
         "congestion": True,
@@ -27,9 +27,9 @@ def basic_function(extra_params):
 
     original_hyperparams = {
         "crossover": 0.8,
-        "mutation": 0.05,
+        "mutation": 0.1,
         "epsilon": 1,
-        "max_evolutions": 50,  # 50
+        "max_evolutions": 100,  # 50
         "survivor_method": "elite_percentage",
         "tournament_size": None,
     }
@@ -37,8 +37,9 @@ def basic_function(extra_params):
     # params = {**original_params, **extra_params}
     params = original_params
 
-    # hyperparams = {**original_hyperparams, **extra_params}
-    hyperparams = original_hyperparams
+    hyperparams = {**original_hyperparams, **extra_params}
+    # hyperparams = original_hyperparams
+    pop_size = 50
 
     start = perf_counter()
 
@@ -47,7 +48,7 @@ def basic_function(extra_params):
         seed_solution, seed_eval = simulate_ga_evacuation(
             city=city,
             num_agents=num_agents,
-            population_size=extra_params,  # 50
+            population_size=pop_size,  # 50
             simulation_params=params,
             hyperparams=hyperparams,
             seed=seed,
@@ -58,8 +59,11 @@ def basic_function(extra_params):
 
     end = perf_counter()
 
-    pop_size = extra_params
-    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{pop_size}_pop_size.pkl"
+    parent_method = "roulette" if hyperparams["tournament_size"] is None else "tournament"
+    tournament_size = hyperparams["tournament_size"]
+    survivor_method = hyperparams["survivor_method"]
+
+    path = f"outputs/tuning/{city.city_name}_{n_experiments}_test_tournament3.pkl"
     with open(path, "wb") as f:
         results = {
             # results
@@ -78,11 +82,21 @@ def basic_function(extra_params):
 
 
 if __name__ == "__main__":
-    print("Starting...")
-    # phase 1 - hyperparameter tuning
-    tune = [5, 10, 20, 50, 100, 200]
+    print("Starting phase 2 experiements...")
+    # phase 2 - method tuning
+    phase2 = [
+        {"survivor_method": "elite_percentage", "tournament_size": None},
+        {"survivor_method": "elite_percentage", "tournament_size": 3},
+        {"survivor_method": "elite_percentage", "tournament_size": 5},
+        {"survivor_method": "elite", "tournament_size": None},
+        {"survivor_method": "elite", "tournament_size": 3},
+        {"survivor_method": "elite", "tournament_size": 5},
+        {"survivor_method": "children", "tournament_size": None},
+        {"survivor_method": "children", "tournament_size": 3},
+        {"survivor_method": "children", "tournament_size": 5},
+    ]
 
     n_cores = 6
     with Pool(processes=n_cores) as pool:
-        pool.map(basic_function, tune)
-    print("\nAll experiments complete for population size.")
+        pool.map(basic_function, phase2)
+    print("\nAll experiments complete for phase 2 size.")

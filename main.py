@@ -1,5 +1,7 @@
 import numpy as np
 from jax.random import PRNGKey, split
+from time import perf_counter
+
 
 from utils.environment import Environment
 from utils.agent import PopulationCreation, generate_agent_options
@@ -83,6 +85,7 @@ def simulate_ga_evacuation(
     simulation_params: dict,
     hyperparams: dict,
     verbose: int = 0,
+    track: bool = True,
 ):
     """
     Main function to running the genetic algorithm.
@@ -154,16 +157,24 @@ def simulate_ga_evacuation(
         print_simulation_params(attributes, city, population)
 
     parent_method = "roulette" if hyperparams["tournament_size"] is None else "tournament"
+    generation_stats = {}
+
+    steps = {step: [] for step in ["parent", "crossover", "mutation", "survivor"]}
 
     while not terminate:
+        evolution_start = perf_counter()
+
         # PARENT SELECTION
         parents = ga.parent_selection(population=population, method=parent_method)
+        parent_time = perf_counter()
 
         # CROSSOVER
         children = ga.chromosome_crossover(parents=parents)
+        crossover_time = perf_counter()
 
         # MUTATION
         mutated_children = ga.agent_mutation(children=children)
+        mutation_time = perf_counter()
 
         # SURVIVOR SELECTION
         old_population = [p for p in population]
@@ -173,8 +184,32 @@ def simulate_ga_evacuation(
             old_population=old_population,
             method=hyperparams["survivor_method"],
         )
+        survivor_time = perf_counter()
+
+        # EVALUATION
+        steps["parent"].append(parent_time - evolution_start)
+        steps["crossover"].append(crossover_time - parent_time)
+        steps["mutation"].append(mutation_time - crossover_time)
+        steps["survivor"].append(survivor_time - mutation_time)
+
+        survivor_analysis = ga.analyse_survivor_selection(
+            old_population, mutated_children, population
+        )
 
         evaluation.calculate_metrics(population, evolution, verbose)
+
+        fitnesses = [c.fitness for c in population]
+        inverted = [1 / f for f in fitnesses]
+
+        generation_stats[evolution] = {
+            "parent_selection": {
+                "cv": (np.std(fitnesses) / np.mean(fitnesses)) * 100,
+                "dominance": max(fitnesses) / (min(fitnesses) + 1e-9),
+                "best_share": (max(inverted) / sum(inverted)) * 100,
+            },
+            "survivor_selection": survivor_analysis,
+            "fitnesses": fitnesses,
+        }
 
         # 7 Termination
         evolution += 1
@@ -186,6 +221,9 @@ def simulate_ga_evacuation(
     )
     final_eval.score(verbose=verbose)
     final_eval.add_evolution_scores(evaluation.avg_score)
+
+    final_eval.generation_stats = generation_stats
+    final_eval.timings = steps
 
     return final_solution, final_eval
 

@@ -118,7 +118,7 @@ def extract_metric(evolution_stats, metric_key, component):
     all_seeds = []
     for seed_stats in evolution_stats:
         seed_values = []
-        for evolution_num, results in seed_stats.items():
+        for evolution_num, results in seed_stats.generation_stats.items():
             if component is not None:
                 seed_values.append(results[component][metric_key])
             else:
@@ -189,7 +189,9 @@ def plot_parent_selection_stats(evolution_stats, city_name: str, method: str = "
 def plot_survivor_selection(evolution_stats, city_name: str):
     parent_count = extract_metric(evolution_stats, "parent_count", "survivor_selection")
     child_count = extract_metric(evolution_stats, "child_count", "survivor_selection")
-    passthrough = extract_metric(evolution_stats, "passthrough", "survivor_selection")
+    passthrough = extract_metric(
+        evolution_stats, "identical_children", "survivor_selection"
+    )  # passthrough
     parent_fitness = extract_metric(evolution_stats, "parent_fitness", "survivor_selection")
     child_fitness = extract_metric(evolution_stats, "child_fitness", "survivor_selection")
 
