@@ -9,8 +9,10 @@ import pickle
 
 
 def basic_function(extra_params):
+    city_name, num_agents = extra_params
+
     n_experiments = 10
-    num_agents = 100  # 100
+
     original_params = {
         "congestion": True,
         "walking": False,
@@ -20,7 +22,7 @@ def basic_function(extra_params):
         "alpha": 0.8,
     }
 
-    city = Environment("moderate_city")
+    city = Environment(city_name)
 
     rng = np.random.default_rng(123)
     algorithm_seeds = rng.integers(0, 10**6, size=n_experiments)
@@ -31,14 +33,14 @@ def basic_function(extra_params):
         "epsilon": 1,
         "max_evolutions": 100,  # 50
         "survivor_method": "elite_percentage",
-        "tournament_size": None,
+        "tournament_size": 3,
     }
 
     # params = {**original_params, **extra_params}
     params = original_params
 
-    hyperparams = {**original_hyperparams, **extra_params}
-    # hyperparams = original_hyperparams
+    # hyperparams = {**original_hyperparams, **extra_params}
+    hyperparams = original_hyperparams
     pop_size = 50
 
     start = perf_counter()
@@ -59,11 +61,7 @@ def basic_function(extra_params):
 
     end = perf_counter()
 
-    parent_method = "roulette" if hyperparams["tournament_size"] is None else "tournament"
-    tournament_size = hyperparams["tournament_size"]
-    survivor_method = hyperparams["survivor_method"]
-
-    path = f"outputs/tuning/{city.city_name}_{n_experiments}_test_tournament3.pkl"
+    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{num_agents}_agents.pkl"
     with open(path, "wb") as f:
         results = {
             # results
@@ -82,21 +80,14 @@ def basic_function(extra_params):
 
 
 if __name__ == "__main__":
-    print("Starting phase 2 experiements...")
-    # phase 2 - method tuning
-    phase2 = [
-        {"survivor_method": "elite_percentage", "tournament_size": None},
-        {"survivor_method": "elite_percentage", "tournament_size": 3},
-        {"survivor_method": "elite_percentage", "tournament_size": 5},
-        {"survivor_method": "elite", "tournament_size": None},
-        {"survivor_method": "elite", "tournament_size": 3},
-        {"survivor_method": "elite", "tournament_size": 5},
-        {"survivor_method": "children", "tournament_size": None},
-        {"survivor_method": "children", "tournament_size": 3},
-        {"survivor_method": "children", "tournament_size": 5},
-    ]
+    print("Starting phase 3 experiements...")
+    # phase 3 - agent tuning
+    cities = ["grid_city", "moderate_city", "bottleneck_city"]
+    agent_counts = [10, 20, 50, 100, 200]
+
+    configs = [(city, n_agents) for city in cities for n_agents in agent_counts]
 
     n_cores = 6
     with Pool(processes=n_cores) as pool:
-        pool.map(basic_function, phase2)
-    print("\nAll experiments complete for phase 2 size.")
+        pool.map(basic_function, configs)
+    print("\nAll experiments complete for phase 3 size.")
