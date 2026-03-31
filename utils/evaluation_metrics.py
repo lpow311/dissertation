@@ -132,6 +132,9 @@ class FinalEvaluationMetrics:
 
         self.algorithm = algorithm
 
+        self.generation_stats = {}
+        self.timings = {}
+
     def score(self, verbose: int = 1) -> dict[str, float]:
         agent_time, path_lengths, congestion_impact, congestion_delayed = (
             self.calculate_agent_times()

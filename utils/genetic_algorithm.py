@@ -247,7 +247,7 @@ class GeneticAlgorithm:
         if method == "elite_percentage":
             # [c.calculate_fitness() for c in old_population]
             sorted_old = sorted(old_population, key=lambda c: c.fitness)
-            n_elite = max(5, int(0.1 * len(old_population)))
+            n_elite = max(10, int(0.1 * len(old_population)))
             elite = sorted_old[:n_elite]
 
             sorted_children = sorted(children, key=lambda c: c.fitness)
@@ -268,27 +268,24 @@ class GeneticAlgorithm:
 
         return new_population
 
+    def paths_match(self, c1: Chromosome, c2: Chromosome) -> bool:
+        return all(c1.agents[a].path == c2.agents[a].path for a in c1.agents)
+
+    def is_clone_of_any(self, c: Chromosome, population: list) -> bool:
+        return any(self.paths_match(c, p) for p in population)
+
     def analyse_survivor_selection(self, parent: list, child: list, new: list) -> dict:
-        parent_ids = {id(c) for c in parent}
-
-        child_ids = {id(c) for c in child} - parent_ids
-        passthrough_ids = {id(c) for c in child} & parent_ids  # intersection = passthroughs
-
-        parent_count = sum(1 for c in new if id(c) in parent_ids and id(c) not in passthrough_ids)
-        child_count = sum(1 for c in new if id(c) in child_ids)
-        passthrough_count = sum(1 for c in new if id(c) in passthrough_ids)
-
         best_parent = sorted(parent, key=lambda c: c.fitness)[0]
         best_child = sorted(child, key=lambda c: c.fitness)[0]
 
-        assert parent_count + child_count + passthrough_count == len(
-            new
-        ), f"Counts don't add up: {parent_count} + {child_count} + {passthrough_count} != {len(new)}"
+        parent_count = sum(1 for c in new if self.is_clone_of_any(c, parent))
+        identical_children = sum(1 for c in child if self.is_clone_of_any(c, parent))
+        child_count = len(new) - parent_count
 
         return {
             "parent_count": parent_count,
             "parent_fitness": best_parent.fitness,
             "child_count": child_count,
             "child_fitness": best_child.fitness,
-            "passthrough": passthrough_count,
+            "identical_children": identical_children,
         }
