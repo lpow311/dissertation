@@ -26,7 +26,7 @@ class Greedy:
             agents=self.agents,
             params=self.params,
             key_manager=self.key_manager,
-            compliant_agents=[0] * len(self.agents),
+            compliance=[0] * len(self.agents),
         )
         chromosome.calculate_fitness()
 
