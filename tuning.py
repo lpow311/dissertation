@@ -2,22 +2,24 @@ from multiprocessing import Pool
 import numpy as np
 
 from utils.environment import Environment
-from main import simulate_ga_evacuation
+from main import simulate_ga_evacuation, simulate_greedy_evacuation
 
 from time import perf_counter
 import pickle
 
 
 def basic_function(extra_params):
-    city_name, num_agents = extra_params
+    walking, delay, compliance, city_name = extra_params
+
+    num_agents = 100
 
     n_experiments = 10
 
     original_params = {
         "congestion": True,
-        "walking": False,
-        "delay_start": False,
-        "compliance": 1,
+        "walking": walking,
+        "delay_start": delay,
+        "compliance": compliance,
         "fitness": "max-median",
         "alpha": 0.8,
     }
@@ -36,16 +38,12 @@ def basic_function(extra_params):
         "tournament_size": 3,
     }
 
-    # params = {**original_params, **extra_params}
     params = original_params
-
-    # hyperparams = {**original_hyperparams, **extra_params}
     hyperparams = original_hyperparams
     pop_size = 50
 
-    start = perf_counter()
-
-    solutions, evals = [], []
+    solutions_ga, evals_ga = [], []
+    solutions_greedy, evals_greedy = [], []
     for seed in algorithm_seeds:
         seed_solution, seed_eval = simulate_ga_evacuation(
             city=city,
@@ -56,38 +54,100 @@ def basic_function(extra_params):
             seed=seed,
             verbose=0,
         )
-        solutions.append(seed_solution)
-        evals.append(seed_eval)
+        solutions_ga.append(seed_solution)
+        evals_ga.append(seed_eval)
 
-    end = perf_counter()
+        greedy_solution_seed, greedy_evals_seed = simulate_greedy_evacuation(
+            num_agents=num_agents, simulation_params=params, city=city, seed=seed, verbose=False
+        )
+        solutions_greedy.append(greedy_solution_seed)
+        evals_greedy.append(greedy_evals_seed)
 
-    path = f"outputs/tuning/{city.city_name}_{n_experiments}_{num_agents}_agents.pkl"
+    compliance_str = str(compliance).replace(".", "")
+    path = f"outputs/runs/{city_name}_{walking}walking_{delay}delay_{compliance_str}compliance.pkl"
     with open(path, "wb") as f:
         results = {
-            # results
-            "solutions": solutions,
-            "evals": evals,
-            "timings": end - start,
-            # metadata
-            "num_agents": num_agents,
-            "hyperparams": hyperparams,
-            "params": params,
-            "population_size": pop_size,
-            "n_experiments": n_experiments,
-            "population_creation_seed": algorithm_seeds,
+            "ga": {
+                # results
+                "solutions": solutions_ga,
+                "evals": evals_ga,
+                # metadata
+                "num_agents": num_agents,
+                "hyperparams": hyperparams,
+                "params": params,
+                "population_size": pop_size,
+                "n_experiments": n_experiments,
+                "population_creation_seed": algorithm_seeds,
+            },
+            "greedy": {
+                # results
+                "solutions": solutions_greedy,
+                "evals": evals_greedy,
+                # metadata
+                "num_agents": num_agents,
+                "hyperparams": hyperparams,
+                "params": params,
+                "population_size": 1,
+                "n_experiments": n_experiments,
+                "population_creation_seed": algorithm_seeds,
+            },
         }
         pickle.dump(results, f)
 
 
 if __name__ == "__main__":
-    print("Starting phase 3 experiements...")
+    print("Starting propoer runs....")
     # phase 3 - agent tuning
-    cities = ["grid_city", "moderate_city", "bottleneck_city"]
-    agent_counts = [10, 20, 50, 100, 200]
 
-    configs = [(city, n_agents) for city in cities for n_agents in agent_counts]
+    experiments = [
+        # walking - delay - compliance - city name
+        # Walking Speed (+ congestion)
+        (True, False, 1, "grid_city"),
+        (True, False, 1, "moderate_city"),
+        (True, False, 1, "bottleneck_city"),
+        # Delayed Start (+ congestion)
+        (False, True, 1, "grid_city"),
+        (False, True, 1, "moderate_city"),
+        (False, True, 1, "bottleneck_city"),
+        # Compliance (+ congestion) - grid city
+        (False, False, 0, "grid_city"),
+        (False, False, 0.25, "grid_city"),
+        (False, False, 0.5, "grid_city"),
+        (False, False, 0.75, "grid_city"),
+        (False, False, 1, "grid_city"),
+        # Compliance (+ congestion) - moderate city
+        (False, False, 0, "moderate_city"),
+        (False, False, 0.25, "moderate_city"),
+        (False, False, 0.5, "moderate_city"),
+        (False, False, 0.75, "moderate_city"),
+        (False, False, 1, "moderate_city"),
+        # Compliance (+ congestion) - bottleneck city
+        (False, False, 0, "bottleneck_city"),
+        (False, False, 0.25, "bottleneck_city"),
+        (False, False, 0.5, "bottleneck_city"),
+        (False, False, 0.75, "bottleneck_city"),
+        (False, False, 1, "bottleneck_city"),
+        # Combined - grid city
+        (True, True, 0, "grid_city"),
+        (True, True, 0.25, "grid_city"),
+        (True, True, 0.5, "grid_city"),
+        (True, True, 0.75, "grid_city"),
+        (True, True, 1, "grid_city"),
+        # Combined - moderate city
+        (True, True, 0, "moderate_city"),
+        (True, True, 0.25, "moderate_city"),
+        (True, True, 0.5, "moderate_city"),
+        (True, True, 0.75, "moderate_city"),
+        (True, True, 1, "moderate_city"),
+        # Combined - bottleneck city
+        (True, True, 0, "bottleneck_city"),
+        (True, True, 0.25, "bottleneck_city"),
+        (True, True, 0.5, "bottleneck_city"),
+        (True, True, 0.75, "bottleneck_city"),
+        (True, True, 1, "bottleneck_city"),
+    ]
 
     n_cores = 6
     with Pool(processes=n_cores) as pool:
-        pool.map(basic_function, configs)
+        pool.map(basic_function, experiments)
     print("\nAll experiments complete for phase 3 size.")
