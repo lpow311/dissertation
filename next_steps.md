@@ -1,16 +1,114 @@
-# Dissertation Code Todo List
+# Analysis & Results Plan
 
-## Human Behaviour Characteristics
-- [ ] **Walking speed** — test speeds [1, 2, 3], check if GA naturally routes slow agents to closer exits.
-- [ ] **Delayed starts** — test delay distributions [none, low variance, high variance]
-- [ ] **Compliance/anxiety** — at initialisation roll each agent against compliance rate, freeze non-compliant agents on greedy path, skip in crossover/mutation but include in congestion calculation, test rates [0.0, 0.25, 0.5, 0.75, 1.0]
+## For each experiment, the comparison is always:
+1. GA with condition vs Greedy with condition — does GA still outperform?
+2. GA with condition vs GA baseline — how much does the condition hurt GA?
+3. Greedy with condition vs Greedy baseline — how much does the condition hurt Greedy?
 
-## Experiments to Run
-- [ ] Run base GA and greedy across all three cities (grid, moderate, bottleneck)
-- [ ] Run 100 evolutions with current best hyperparameters (`alpha=0.5`, `epsilon=0.8`)
-- [ ] Run multiple seeds (minimum 3-5) once happy with code
-- [ ] Run greedy and GA across agent counts [10, 20, 30, 40, 50, 100, 200] for each city
-- [ ] Parameter tuning — crossover, mutation, alpha, epsilon (come back to this) (probabilities and methods).
+---
+
+## Objective 1 — Baseline GA vs Greedy across cities
+
+### For each city (Grid, Moderate, Bottleneck):
+- [ ] Table: total time, avg time, congestion index, avg congestion delay, exit utilisation — GA vs Greedy at each agent count [10, 20, 50, 100, 200]
+- [ ] Plot: greedy scaling plot (total time, avg time, congestion delay vs agent count) — already done
+- [ ] Plot: cumulative exits over time — GA vs Greedy at 100 agents
+- [ ] Plot: start node dispersal (x=3) — GA vs Greedy at 100 agents
+- [ ] Plot: agent path density map — GA vs Greedy at 100 agents
+- [ ] Statistical test: Mann-Whitney U test on total time GA vs Greedy across 10 seeds
+
+### Cross-city summary:
+- [ ] Table: GA vs Greedy at 100 agents across all three cities side by side
+- [ ] Written conclusion: does city structure affect the GA advantage? Which city benefits most?
+
+---
+
+## Objective 2 — Agent Dispersal
+
+- [ ] Plot: start node dispersal at x=1, x=2, x=3 — GA vs Greedy for each city at 100 agents
+- [ ] Written conclusion: do GA agents clear the danger zone faster? Is this consistent across cities?
+
+---
+
+## Objective 3a — Walking Speed
+
+### For each city at 100 agents:
+- [ ] Table: baseline vs walking speed condition — GA and Greedy side by side
+    - Columns: total time, avg time, congestion index, avg congestion delay, exit utilisation
+    - Rows: GA baseline | GA + walking | Greedy baseline | Greedy + walking
+- [ ] Plot: cumulative exits — GA vs Greedy with and without walking speed
+- [ ] Plot: start node dispersal — GA vs Greedy with and without walking speed
+- [ ] Statistical test: is the difference between walking and baseline significant for each algorithm?
+
+### Cross-city summary:
+- [ ] Table: delta from baseline for GA and Greedy across all three cities
+    - i.e. how much does walking speed hurt each algorithm?
+- [ ] Written conclusion: does walking speed hurt Greedy more than GA? Does GA route slow agents differently?
+
+---
+
+## Objective 3b — Delayed Starts
+
+### For each city at 100 agents:
+- [ ] Table: baseline vs delay condition — GA and Greedy side by side
+    - Columns: total time, avg time, congestion index, avg congestion delay, exit utilisation
+    - Rows: GA baseline | GA + delay | Greedy baseline | Greedy + delay
+- [ ] Plot: cumulative exits — GA vs Greedy with and without delay
+- [ ] Plot: start node dispersal — GA vs Greedy with and without delay
+- [ ] Statistical test: is the difference between delay and baseline significant for each algorithm?
+
+### Cross-city summary:
+- [ ] Table: delta from baseline for GA and Greedy across all three cities
+- [ ] Written conclusion: do delayed starts amplify greedy's congestion problem? Does GA handle waves of agents better?
+
+---
+
+## Objective 3c — Compliance / Anxiety
+
+### For each city at 100 agents:
+- [ ] Plot: compliance threshold curve — total time vs compliance rate [0.0, 0.25, 0.5, 0.75, 1.0] for GA and Greedy on same plot
+- [ ] Plot: congestion index vs compliance rate
+- [ ] Plot: exit utilisation vs compliance rate
+- [ ] Table: all metrics at each compliance rate for each city
+- [ ] Identify: at what compliance rate does GA begin to outperform Greedy?
+
+### Cross-city summary:
+- [ ] Table: compliance threshold per city
+- [ ] Written conclusion: is there a consistent compliance threshold? Does city structure affect when GA advantage emerges?
+
+---
+
+## Objective 3d — Combined Condition (Walking + Delay + Compliance)
+
+### For each city at 100 agents:
+- [ ] Table: baseline | combined 0.25 | combined 0.5 | combined 0.75 | combined 1.0 — GA and Greedy
+- [ ] Plot: cumulative exits — GA vs Greedy at each compliance rate under combined condition
+- [ ] Plot: bar chart — total time for GA and Greedy across all conditions and cities
+
+### Cross-city summary:
+- [ ] Written conclusion: under fully realistic human behaviour does GA still add value? At what compliance rate?
+
+---
+
+## Final Summary (for Discussion chapter)
+
+- [ ] Table: GA vs Greedy across all conditions and cities at 100 agents — one master summary table
+- [ ] Written conclusion for each sub question:
+    - SQ1: does city structure affect GA advantage?
+    - SQ2: do GA agents disperse faster and reduce danger exposure?
+    - SQ3: how does each human factor affect the performance gap?
+- [ ] Limitations noted:
+    - Simplified city structures
+    - Simplified human behaviour model
+    - Sequential tuning not full grid search
+    - Walking speed not considered in fitness function
+    - Compliance assumes binary compliant/non-compliant not partial
+- [ ] Future work identified:
+    - Exit familiarity / visitor vs local
+    - Dynamic fire model
+    - Speed-aware fitness function
+    - Real city graph structures
+
 
 ## Analysis & Plots
 - [ ] Cumulative exits plot — GA vs greedy (already built)
@@ -20,90 +118,3 @@
 - [ ] Congestion index across agent counts for GA vs greedy
 - [ ] Compliance rate threshold plot
 - [ ] Familiarity degradation curve
-
-## Nice to Have (if time allows)
-- [ ] Diversity preservation mechanism in survivor selection
-- [ ] Speed-aware fitness function (penalise slow agents on long paths)
-- [ ] Hyperparameter sensitivity analysis
-
-
-# Research Summary - kind of out dated now.
-## Main Research Question
-"To what extent does globally optimised multi-agent routing via Genetic Algorithms produce better evacuation outcomes than individually optimised greedy routing under varying human behavioural characteristics and dynamic environmental conditions?"
-## Sub Questions & Approach
-##### SQ1 — Baseline Performance Does GA outperform greedy routing across structurally different city networks?
-Why: Establishes the fundamental comparison before adding complexity. Validates that your three cities produce meaningfully different results.
-Approach: Run GA and greedy across Grid, Moderate and Bottleneck cities across N seeds. Compare congestion scores. 
-
-##### SQ2 — Dynamic Fire Environment How does a dynamically spreading fire affect the performance gap between GA and greedy?
-Why: Makes the simulation more realistic. Fire punishes agents who are congested at the wrong place at the wrong time — directly amplifying greedy's weakness at bottlenecks.
-
-**Approach:**
-* Add timestep simulation (agent positions tracked at each step)
-* Add node capacity limit N with random queue ordering
-* Add agent speeds (variable movement rates)
-* Fire starts at one node, spreads to all adjacent nodes every K timesteps
-* Agents cannot see fire coming
-* Agents on fire node receive large penalty
-* Test across multiple fire spread rates (slow, medium, fast)
-
-##### SQ3 — Compliance / Altruism At what compliance rate does collective GA routing begin to outperform pure greedy?
-Why: Bridges the gap between purely individual and purely collective routing. Models realistic human behaviour — not everyone will follow an evacuation plan.
-Approach:
-At initialisation each agent rolls a probability p
-If p < compliance rate → agent takes GA assigned path
-If p ≥ compliance rate → agent takes greedy path
-Test compliance rates [0.0, 0.25, 0.5, 0.75, 1.0]
-Run across all three cities
-Identify threshold compliance rate where GA begins to outperform greedy
-
-##### SQ4 — Visibility How does limited visibility of fire affect evacuation outcomes under GA vs greedy routing?
-Why: Agents following a pre-planned GA route may be routed into unseen fire — visibility limits could make compliance harmful rather than helpful. Creates a nuanced finding around when GA's global plan is actually beneficial.
-Approach:
-Visibility radius limits which nodes an agent can consider when replanning
-Safe nodes = visible nodes not on fire
-Test visibility radii [full, medium, minimal]
-Combine with compliance rates to create a compliance × visibility experiment
-
-
-Tomorrow's To Do List
-Priority 1 — Timestep Simulation (foundation for SQ2, SQ3, SQ4)
-
- Add timestep_positions tracking to agent — where is each agent at each timestep
- Define agent speeds — how many timesteps to traverse one edge
- Add node capacity limit N
- Add random queue ordering when node is at capacity
- Build core simulation loop:
-
-    for each timestep:
-        spread fire
-        for each agent:
-            check fire penalty
-            check capacity → queue if needed
-            move if able
-        record positions
-Priority 2 — Fire Model
-
- Define fire start node per city
- Define spread rate K (timesteps between spread events)
- Add fire penalty to scoring
- Test across spread rates [slow, medium, fast]
-
-Priority 3 — Update Scoring
-
- Move congestion scoring from static (post-hoc) to timestep-level (in-the-moment)
- Add fire penalty to fitness function
- Validate new scoring against existing results
-
-Priority 4 — Compliance
-
- Add compliance rate parameter to agent initialisation
- At initialisation assign each agent GA or greedy path based on compliance roll
- Test compliance rates [0.0, 0.25, 0.5, 0.75, 1.0]
-
-Priority 5 — Visibility (if time allows)
-
- Add visibility radius parameter to agent
- Filter available nodes to visibility radius at each step
- Remove fire nodes from visible options
- Test visibility radii [full, medium, minimal]
