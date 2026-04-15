@@ -260,8 +260,8 @@ def simulate_ga_evacuation(
 
 
 if __name__ == "__main__":
-    n_experiments = 5
-    num_agents = 100
+    n_experiments = 1
+    num_agents = 50
     params = {
         "congestion": True,
         "walking": True,

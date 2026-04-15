@@ -9,7 +9,7 @@ import pickle
 
 
 def basic_function(extra_params):
-    walking, delay, compliance, city_name = extra_params
+    walking, delay, compliance, city_name, max_evolution = extra_params
 
     num_agents = 100
 
@@ -33,7 +33,7 @@ def basic_function(extra_params):
         "crossover": 0.8,
         "mutation": 0.1,
         "epsilon": 1,
-        "max_evolutions": 100,  # 50
+        "max_evolutions": max_evolution,
         "survivor_method": "elite_percentage",
         "tournament_size": 3,
     }
@@ -63,8 +63,7 @@ def basic_function(extra_params):
         solutions_greedy.append(greedy_solution_seed)
         evals_greedy.append(greedy_evals_seed)
 
-    compliance_str = str(compliance).replace(".", "")
-    path = f"outputs/runs/{city_name}_{walking}walking_{delay}delay_{compliance_str}compliance.pkl"
+    path = f"outputs/runs/{city_name}_max_evolutions_results.pkl"
     with open(path, "wb") as f:
         results = {
             "ga": {
@@ -100,51 +99,9 @@ if __name__ == "__main__":
     # phase 3 - agent tuning
 
     experiments = [
-        # walking - delay - compliance - city name
-        # Walking Speed (+ congestion)
-        (True, False, 1, "grid_city"),
-        (True, False, 1, "moderate_city"),
-        (True, False, 1, "bottleneck_city"),
-        # Delayed Start (+ congestion)
-        (False, True, 1, "grid_city"),
-        (False, True, 1, "moderate_city"),
-        (False, True, 1, "bottleneck_city"),
-        # Compliance (+ congestion) - grid city
-        (False, False, 0, "grid_city"),
-        (False, False, 0.25, "grid_city"),
-        (False, False, 0.5, "grid_city"),
-        (False, False, 0.75, "grid_city"),
-        (False, False, 1, "grid_city"),
-        # Compliance (+ congestion) - moderate city
-        (False, False, 0, "moderate_city"),
-        (False, False, 0.25, "moderate_city"),
-        (False, False, 0.5, "moderate_city"),
-        (False, False, 0.75, "moderate_city"),
-        (False, False, 1, "moderate_city"),
-        # Compliance (+ congestion) - bottleneck city
-        (False, False, 0, "bottleneck_city"),
-        (False, False, 0.25, "bottleneck_city"),
-        (False, False, 0.5, "bottleneck_city"),
-        (False, False, 0.75, "bottleneck_city"),
-        (False, False, 1, "bottleneck_city"),
-        # Combined - grid city
-        (True, True, 0, "grid_city"),
-        (True, True, 0.25, "grid_city"),
-        (True, True, 0.5, "grid_city"),
-        (True, True, 0.75, "grid_city"),
-        (True, True, 1, "grid_city"),
-        # Combined - moderate city
-        (True, True, 0, "moderate_city"),
-        (True, True, 0.25, "moderate_city"),
-        (True, True, 0.5, "moderate_city"),
-        (True, True, 0.75, "moderate_city"),
-        (True, True, 1, "moderate_city"),
-        # Combined - bottleneck city
-        (True, True, 0, "bottleneck_city"),
-        (True, True, 0.25, "bottleneck_city"),
-        (True, True, 0.5, "bottleneck_city"),
-        (True, True, 0.75, "bottleneck_city"),
-        (True, True, 1, "bottleneck_city"),
+        (False, False, 1, "grid_city", 200),
+        (False, False, 1, "moderate_city", 200),
+        (False, False, 1, "bottleneck_city", 200),
     ]
 
     n_cores = 6
