@@ -33,7 +33,7 @@ def basic_function(extra_params):
         "crossover": 0.8,
         "mutation": 0.1,
         "epsilon": 1,
-        "max_evolutions": max_evolution,
+        "max_evolutions": max_evolution,  # 100
         "survivor_method": "elite_percentage",
         "tournament_size": 3,
     }
