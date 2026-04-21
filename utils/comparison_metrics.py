@@ -210,15 +210,21 @@ def plot_dispersion_all_cities(baseline_files: dict, n: int = 3) -> None:
     plt.show()
 
 
-def plot_metrics_by_walking_speed(
-    walking_files: dict, metrics: list = None, metric_labels: list = None
+def plot_metrics_by_human_behaviour(
+    files: dict, behaviour: str, metrics: list = None, metric_labels: list = None
 ) -> None:
-    """
-    Bar chart of average time and congestion delay per walking speed category,
-    GA vs Greedy, per topology.
-    """
-    cities = list(walking_files.keys())
-    speed_categories = [1, 2, 3]
+    cities = list(files.keys())
+
+    # set categories and labels based on behaviour
+    if behaviour == "walking":
+        categories = [1, 2, 3]
+        x_labels = ["Speed 1\n(Fast)", "Speed 2\n(Med)", "Speed 3\n(Slow)"]
+        behaviour_str = "Walking Speed"
+    elif behaviour == "delay_start":
+        categories = [0, 1, 2]
+        x_labels = ["Delay 0\n(None)", "Delay 1\n(Moderate)", "Delay 2\n(High)"]
+        behaviour_str = "Delayed Starts"
+
     if metrics is None:
         metrics = ["path_time", "congestion_score"]
         metric_labels = ["Average Time", "Congestion Delay"]
@@ -231,54 +237,53 @@ def plot_metrics_by_walking_speed(
     for row, (metric, label) in enumerate(zip(metrics, metric_labels)):
         for col, city in enumerate(cities):
             ax = axes[row, col]
-            results = extract_results(walking_files[city])
+            results = extract_results(files[city])
 
-            x = np.arange(len(speed_categories))
+            x = np.arange(len(categories))
             width = 0.35
 
             for i, (algorithm, colour, alg_label) in enumerate(
                 [("ga", ga_colour, "GA"), ("greedy", greedy_colour, "Greedy")]
             ):
-                # aggregate across seeds
-                speed_means = []
-                speed_stds = []
+                category_means = []
+                category_stds = []
 
-                for speed in speed_categories:
+                for cat in categories:
                     seed_values = []
                     for ev in results[algorithm]["evals"]:
-                        # get metric values for agents of this speed
                         agent_values = [
                             getattr(ev.chromosome, metric)[agent_id]
                             for agent_id, agent in ev.solution.items()
-                            if agent.characteristics["walking"] == speed
+                            if agent.characteristics[behaviour] == cat
                         ]
                         if agent_values:
                             seed_values.append(np.mean(agent_values))
 
-                    speed_means.append(np.mean(seed_values))
-                    speed_stds.append(np.std(seed_values))
+                    category_means.append(np.mean(seed_values))
+                    category_stds.append(np.std(seed_values))
 
                 offset = (i - 0.5) * width
-                bars = ax.bar(
+                ax.bar(
                     x + offset,
-                    speed_means,
+                    category_means,
                     width,
                     label=alg_label,
                     color=colour,
                     alpha=0.8,
-                    yerr=speed_stds,
+                    yerr=category_stds,
                     capsize=4,
+                    error_kw={"elinewidth": 0.8, "ecolor": "gray", "alpha": 0.6},
                 )
 
             ax.set_title(f"{city} — {label}")
             ax.set_xticks(x)
-            ax.set_xticklabels(["Speed 1\n(Fast)", "Speed 2\n(Med)", "Speed 3\n(Slow)"])
+            ax.set_xticklabels(x_labels)
             ax.set_ylabel(label)
             ax.grid(True, alpha=0.3, axis="y")
 
             if row == 0 and col == 0:
                 ax.legend()
 
-    plt.suptitle("Metrics by Walking Speed Category: GA vs Greedy", fontsize=14)
+    plt.suptitle(f"Metrics by {behaviour_str} Category: GA vs Greedy", fontsize=14)
     plt.tight_layout()
     plt.show()
