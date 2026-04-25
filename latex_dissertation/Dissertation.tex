@@ -7,13 +7,13 @@
 
 \usepackage{Bath-CS-Dissertation}
 
-\title{\bf $\langle$Dissertation Title$\rangle$}
-\author{$\langle$Student Name$\rangle$}
-\date{MSc in $\langle$Programme$\rangle$\\ 
+\title{\bf Human Inspired Genetic Algorithms for Multi-Agent Evacuation Routing}
+\author{Laura Powell}
+\date{MSc in Artificial Intelligence\\ 
                                  % E.g.: Bachelor of Science in Computer Science
                                  %       Master of Science in Data Science
       The University of Bath\\
-      $\langle$Academic Year$\rangle$}
+      2026}
 \renewcommand{\bibname}{References}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,7 +35,7 @@
 %\consultation{0}
 %\newpage
 
-\declaration{$\langle$Dissertation Title$\rangle$}{$\langle$Student Name$\rangle$}
+\declaration{Human Inspired Genetic Algorithms for Multi-Agent Evacuation Routing}{Laura Powell}
 \newpage
 
 \hypersetup{pageanchor=true}
@@ -72,21 +72,130 @@ This research has been conducted in line with the University of Bath’s ethics 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
 
-This is the introductory chapter.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Example Section}
-
-Like all chapters, it will have a number of sections \dots
+\section{Background}
 
 %-------------------------------------------------------------------------------
-\subsection{Example Subsection}
-\dots\ and subsections \dots
+\subsection{Evacuation Routing Overview}
+Evacuation routing is vital to ensure that people can efficiently and carefully get to safe locations in emergency situations. It involves routing people from dangerous areas with high levels of threat to areas of safety. The frequency of disaster has been increasing in recent decades \citep{ALDAHLAWI_2024,RITCHIE_2024} and alongside the increase in population size \citep{ALSNIH_2004} there is a larger demand for effective evacuation planning \citep{CHEN_C_2023,KAMYABNIYA_2024}. Some examples of recent disasters which include: 156 deaths in the Halloween stampede in Seoul in 2022 \citep{SON_HALLOWEEN_2025}, 2431 deaths during the Mecca Pilgrimage in 2015 \citep{GANJEH_MECCA_2016} and Cyclone Ditwah in Sri Lanka in 2025, which affected over 1.4 million people, killing 410 people \citep{WHO_CYCLONE_2026}. This rise in need for evacuation routing has resulted in new methods to improve evacuation efficiency such as controlling traffic, staging the evacuation process and providing route guidance \citep{ABBELGAWAD_2009}.
 
-\subsubsection{Example Sub-subsection}
-\dots\ and sub-subsections.
+Evacuations can occur in a wide range of environments which each present different structural and behavioural challenges. Building evacuations such as offices \citep{RONCHI_OFFICES_2013}, hospitals \citep{SAHEBI_HOSPITALS_2021} and shopping centres \citep{ALBIS_SHOPPING_CENTERS_2015} involve confined spaces with limited exits and high occupant densities. Large public venues such as stadiums \citep{KUO_STADIUMS_2025}, arenas and religious locations \citep{TOPRAKLI_RELIGION_2024} involve occupants having to navigate shared corridors and exits. Then urban evacuations \citep{SARMA_URBAN_2022,ALDAHLAWI_2024} triggered by more natural events such as fires, flooding or terror incidents involve more complex networks with more options, agent unfamiliarity and large populations.
+
+\subsubsection{Cost of uncoordinated behaviour}
+Human behaviour changes in evacuation situations and can result in less effective decision-making. A key driver of these behaviours is panic, which influences individual behaviours and can spread rapidly through crowds \citep{LE_BON_2024_PANIC}. One way panic can manifest in evacuation situations is herding behaviour where people group together or towards familiar exits which can result in dangerous overcrowding and potential stampedes \citep{LUGERING_2023_STAMPEDE} increasing the risk of injury and overall clearance time. Suboptimal decision making from time pressure and incomplete information can also contribute towards this \citep{LUGERING_2023_STAMPEDE}.  As panic increases throughout the crowds these behaviours accumulate and result in dysfunctional and selfish behaviour \citep{DE_IULISIS_2023_SELFISH} often to the detriment of the evacuation population as a whole. However, in evacuations situations people can feel a sense of social belonging which resulting in altruistic and cooperative behaviour \citep{COCKING_2009_SELFISH}, which can reduce the risk of these dangerous behaviours. Given the physical dangers combined with complex human behaviours under stress, evacuation planning approaches need to account for the full range of potential human responses rather than just assuming rational actions \citep{KYRIAKIDIS_2021_CONSIDER}.
+
+\subsection{Existing Approaches}
+Evacuation planning is both a practical and legal requirement in many situations, as a result there are a wide range of existing tools and software’s used to model outcomes and create appropriate safety measures. Research by \cite{SENANAYAKE_2024_PLATFORMS} found that NetLogo, AnyLogic and Pathfinder are some of the most widely used platforms to multi-agent behaviours with NetLogo and AnyLogic being referenced in 13.8\% and 7.5\% of papers respectively. Despite the capabilities of tools like above, the broader evacuation planning literature reveals a gap between the complexity of real human behaviour and the assumptions made in practice \citep{KYRIAKIDIS_2021_CONSIDER}. \cite{LOVREGLIO_2019_SURVEY} ran an online survey of user or pedestrian evacuation models across 41 countries and found 73 different models are in use, showing there is no shared standard for evacuation modellling. In addition, they found behavioural realism what not a consideration in models selected. \cite{ALDAHLAWI_2024} performaed a systematic review of 100 peer reviewed papers on large scale evacuation planning looking at how human behaviour is modelled and how routes are optimised. They found that agent-based simulation is the dominant method for modelling showing that individual level modelling has become more of a focus, however they found that heuristics and shortest path algorithms were mainly utilised showing routing decisions are still made on shortest path assumptions.
+
+\section{Project Aims and Objectives}
+
+\subsection{Aims}
+Considering the importance of evacuating routing, this project aims to understand the impact of modelling realistic human behaviours and environment conditions on routing performance. In particular to understand in which situations a globally optimised multi-agent routing can produce better evacuation outcomes than individually optimised greedy routing under varying human behavioural characteristics. 
+
+\subsection{Objectives}
+The objectives of this research are as follows:
+
+\begin{description}
+\item[RQ1]Implement and compare the global optimised genetic algorithm (GA) against an individually optimised greedy routing strategy across structurally different topologies and seeds to understand if network topology meaningfully affect the performance of each approach.
+\item[RQ2]Evaluate the rate at which agents disperse from their origin under each routing algorithm, to understand the implications of early evacuation safety.
+\item[RQ3]Determine the effect of human characteristics on evacuation outcomes by embedding behaviours into the GA fitness function. Specifically:
+\begin{description}
+  \item[RQ3a]Evaluate how physical limitations such as walking speed effect algorithm performance such as total evacuation time and congestion.
+  \item[RQ3b]Evaluate how delayed starts effect relative algorithm performance, in particular the congestion metric.
+  \item[RQ3c]Evaluate how compliance levels across the population effect the GA performance, where non-compliance agents follow a shortest path route.
+  \item[RQ3d]Evaluate the impact of all human behaviours on relative algorithm performance.
+\end{description}
+\end{description}
+
+\subsection{Scope}
+
+The following is in scope for this project:
+\begin{itemize}
+\item Agent based evacuation simulation using abstract graph-based networks.
+\item Three structurally different network topologies, aiming to reflect the different situations evacuations occur in described above.
+\item Congestion modelling via node capacity constraints with simple queue-based delay.
+\item Human behaviour variations in walking speed, delayed started and compliance rate.
+\item Multi-seed statical evaluation across multiple random seeds per experiment.
+\end{itemize}  
+
+The following is out of scope for this project but could be a potential future extension:
+\begin{itemize}
+\item Real world city maps or geospatial data, instead each location in the proposed network is the same distance away from each other.
+\item Dynamic Routing, instead all paths are pre-planned before the evacuation.
+\item Hazard modelling, instead danger exposure is inferred from agent positions over time.
+\item Additional human behaviours such as herding, panic and altruism are not considered.
+\item Limited Exit familiarity, it is assumed all agents know all available exits and they have no preference to a specific exit.
+\end{itemize}  
+
+\section{Contribution to Field}
+This project aims to contribute to the field in two different ways. Firstly,\cite{ALDAHLAWI_2024} research identified a gap in evacuation literature which highlighted the lack of integration of human behaviours in the routing optimisation process, such as the fitness function, instead of treating it as a analysis done retroactively. Secondly, this will provide additional information on varying compliance levels, rather than the zero and full adherence which is covered in literature. This will allow us to gain further information on when collective routing strategies break down.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Literature and Technology Survey}
+The following chapter will start with an overview of existing techniques utilised for evacuation modelling with additional detail on the use of genetic algorithm's for evacuation routing alongside providing additional context into the motivation for this research around human behaviours and city topology.
+
+\section{Evacuation Modelling Approaches - REFERENCE}
+Evacuation models are used to predict evacuee movement and behaviour in emergency scenarios, enabling planners to assess the effectiveness of evacuation strategies before they are needed. Early evacuation modelling treated the problem as network flow optimisation problem, routing evacuee flow as directed edges with fixed capacities (Chalmet, Francis and Saunders, 1982). This approach was operationalised into tools such as EVACNET+ (Kisko and Francis, 1985) which focused on population level metrics such as total time and bottleneck emergence, but assumed fixed traversal and no behavioural variations. Later extensions such as FPETool (Nelson, 1990) added environment dynamics such as fire and smoke, while EXIT89 (Fahy, Rita, 1991; Fahy, R, 1994) introduced pre-defined behaviour rules. However, evacuees were still not treated as individual decision makers. 
+
+Since these early methods, the number of published articles around evacuation modelling has significantly grown (Liu et al., 2020) and research has shifted more towards agent-based modelling. Zheng, Zhong and Liu (2009) identified seven methodological approaches for crowd evacuation, including: cellular automation, lattice gas, social force, fluid dynamics, agent-based, game theory and animal-based experiments (Appendix A, Table 16). This classification helps map how evacuation modelling has moved from macroscopic flow methods towards microscopic behaviour frameworks and in particular the increase in agent-based frameworks. For this project agent-based modelling is the most applicable framework because it naturally supports explicitly representation of human behaviours that macroscopic behaviours naturally tend to aggregate away.
+
+\section{Routing Optimisation}
+\subsection{Shortest Path Approaches - REFERENCES}
+The fundamental challenge in evacuation planning is determining how agents should be routed from their starting positions to safety. Shortest path techniques were first formulated by Dijkstra in 1959 (Dijkstra, 2022), whose algorithm finds the least-cost route from a starting node to all other nodes in a weighted graph. The simplest and most widely used approach is greedy routing, where each agent selects the shortest path to a known safe location (Mizumura, Taguchi and Nakamura, 2024). Greedy approaches are widely used as the default option in many evacuation planning tools as they are computationally inexpensive and require not coordination between agents (Chen, Y. et al., 2014), (Mirahadi and McCabe, 2021).
+
+However, greedy routing assumes that all agents have full knowledge of the environment, that all exits are known and equally accessible and that individual optimality translates to collective optimality. Stepanov and Smith (2009) showed that individually optimal routing in transportation networks produced worse collective outcomes than globally coordinated routing. It has also been demonstrated that greedy routing breaks down when there are capacity constraints, congestion and time dependent conflicts (Min, Lee and Lim, 2014; Hong et al., 2018; Shahabi and Wilson, 2018), likely occuring due to locally optimal step selection.
+
+This highlights a key limitation in shortest path approaches, although they may look efficient in isolation, they often generate congestion when many agents use them simultaneously, resulting in poor results for the population as a whole.
+
+\subsection{Price of Anarchy - REFERENCES}
+This gap between individual versus the collective optimally is defined as the Price of Anarchy (PoA)(Papadimitriou, 2001). PoA is a concept utilised in game theory (Cominetti, Dose and Scarsini, 2024) which defines the ratio between the worst case scenario and the best, thereby quantifying the inefficiency of selfish behaviour on the system (Roughgarden and Tardos, 2002; Roughgarden, 2015). Roughgarden (2003) showed that the PoA effects arises even in very small networks, meaning scalable models of city-wide evacuations can be informed by simpler examples. Fries et al. (2022) examined planned evacuation routes versus guidance from navigation systems (shortest path) and found the planned routes produces less congestion. These results reinforce that evacuation routing strategies must explicitly manage the trade-off between individual convenience and system wide efficiency.
+
+\subsection{Metaheuristic Approaches - REFERENCES}
+Metaheuristic approaches are useful for finding the balance between exploration (searching widely across the solution space) and exploitation (refining promising solutions) to tackle evacuation routing problems (Abdel-Basset, Abdel-Fatah and Sangaiah, 2018), however they do not guarentee an optimal result.
+
+Metaheuristics are useful in evacuation routing applications as they can incorporate changing conditions and multiple objectives such as travel time and route capacity. Li, C. et al. (2025) combined a flood hazard rating with distance in Ant Colony Optimisation (ACO) and Particle Swarm Optimisation (PSO) to identify efficiency evacuation routes which avoided high risk flood areas. The improved ACO and PCO improved safety and speed respectively for the York flooding scenario. Yang, G. and Chen (2024) showed the combining simulated annealing with genetic algorithms found short and safe routes in crowded underground public spaces. Pratap and Aziz (2025) applied an ensemble of metaheuristics and found it produced more robust routes across a range of test networks with varying uncertainty levels, than simpler methods. These examples show that metaheuristics can encode richer objectives and environmental constraints but most research still treats human behaviours as external parameters rather than as an optimisation variable.
+
+\section{Genetic Algorithms}
+\subsection{Genetic Algorithm Concepts}
+Genetic algorithms (GA) are a population based evolutionary metaheuristic that has been widely used in search and optimisation problems, including evacuation routing. They draw inspiration from biological evolution, using operators such as selection, crossover and mutation to evolve potential solutions over successive generations. In the context of evacuation routing, the populations typically encode a set of potential routes or collection of routes.
+
+Each generation proceeds through the following steps and repeats itself until a termination criteria has been met. Parent solutions are selected from the population based on their fitness value using techniques such as roulette or tournament selection. Children are then generated from parent pairs through crossover operators such as single or multi-point, before being potentially modified through mutation to maintain diversity and prevent premature convergence. After the children are generated, they are evaluated and a new population is selected for the next generation. The fitness function can incorporate multiple objectives and constraints, to assess the quality of each route configuration. A known limitation is the high computational cost of evaluating complex fitness functions, especially in high dimensional evacuation networks.
+
+\subsection{Use in Evacuation Routing - REFERENCES}
+von Schantz and Ehtamo (2022) combined a genetic algorithm with a social force model to identify the best locations to place rescue guides in emergency situations in a fictional building whilst also minimising congestion effects and total evacuation time. Saadatseresht, Mansourian and Taleai (2009) incorporated distance from a safe area, exposure to risk and total time into their objective function to identify potential evacuation plants. Cotta and Gallardo (2024) optimised placement of exits and incorporated factors such as last evacuee time and average time, to create a score for each potential exit layout. They found the evolutionary algorithm consistently found better layouts.
+
+Despite these advances in research, human behaviour is often oversimplied or not explicitly modelled. Research which has explicity modelled human behaviour include: Hansen et al. (2016) by rewarding plans which kept evacuees together (herding) and Dembytskyi and Dorogyy (2017) who utilised GAs to optimise a neural network to better model the state of people in crowds including route decisions and risk tasking. These studies show that GAs can be used both for route optimisation and for approximating human behaviour but there remains a gap in literature regarding how to embed human behaviour rules directly into the GA routing process.
+
+For this project, GAs have been chosen because they are population based (providing multiple routing policies), multi-objective compatible and well suited for encoding evacuation routes over complex networks.
+
+\section{Human Behaviour in Evacuations}
+\subsection{Importance of Human Behaviour in Modelling - REFERENCES}
+Behaviours such as panic, conformity and familiarity shape evacuation (Kuligowski and Gwynne, 2010; Caunhye, Nie and Pokharel, 2012; Zhou et al., 2019). When models neglect these behaviours estimated routes, safety levels and evacuation times can be underestimated, leading to overly optimistic planning assumptions (Keykhaei et al., 2023; Giardini et al., 2024).
+
+Hofinger, Zinke and Künzer (2014) identified key factors which can influence evacuations, including physical limitations (mobility, age, disability), cognitive aspects (risk perception, attention, familiarity), motivational factors (anxiety, trust) and social influences (group attachment, following others). They argue that current evacuation simulations often oversimplify these by assuming “uniform, highly rational evacuees” and call for better data and validated variables for human behaviours in evacuations. Templeton et al. (2024) review of agent-based modelling papers showed most modern simulations don't consider human behaviour and those which do are often simplistic and not grounding in theory. This motivates the need for empirically informed representation of human behaviour that are tightly integrated with evacuation routing and optimisation, rather than added on after the fact.
+
+\subsection{Existing research on the impact of human behaviour - REFERENCES}
+Wang, J. et al. (2025) used Pathfinder to model pedestrian flow in 3D environments and found controlling or reducing flow improved evacuation efficiency by 15\%, but in severe panic scenarios evacuation efficiency decreased by 16\%, highlighting that states such as panic can negatively impact routing strategies. Li, Jianxun et al. (2024) embedded characteristics such as age and altruism probability into a social-force evacuation model. They found increasing the help probability from 10\% to 40\% improved total evacuation time but after this point there was no additional improvement, suggesting some positive social behaviour can improve total time. Moussaid et al. (2016) used a virtual environment platform with human participants to study how participants moved under different high stress evacuation conditions. They found that herd behaviour naturally arose and resulted in congestion at exit points and bottlenecks even when other routes or exits were less crowded. This implies real evacuees do not just pick the shortest path but instead react to other evacuees’ movements which may not be fully captured in shortest path approaches. Wang, Y., Kyriakidis and Dang (2021) reviewed evacuation modelling over time from both pedestrian and vehicle evacuations. They examined different human behaviours such as pre-movement delay and social influence, and compared them to how models represented evacuees. They found that research which only models the route choice of evacuees can result in missing vital decisions, such as when to leave and who to follow, which impact later decisions and outcomes.
+
+Şahin, Rokne and Alhajj (2019) highlighted the importance of modelling people as decision making agents including factors such as speed, size, familiarity and importantly decision-making rules. Comparing the results to simpler models, such as shortest path, showed exit time and usage differed significantly. They highlighted several next steps around grounding human behaviour in real data, richer cognitive architectures, dynamic environmental models and incorporating it into frameworks to design and test evacuation policies. Collectively, these studies how that small changes in behavioural assumptions can have large, non-linear effects on evacuation time and safety.
+
+\subsection{Research Gaps and Opportunities}
+Aldahlawi, Akbari and Lawson (2024) systematic review of 100 papers identified that although there is research in Agent Based Simulations being used to model behaviours, optimisation driven techniques such as heuristics and traffic assignment still dominate evacuation route planning. The integration between decisions and route choices is underutilised in optimisation approaches and required further research. They also highlight there is an absence of literature exploring different contexts such as university campuses and the differing facilities, vehicle evacuations and signage systems, industrial cities and country-sides with varying familiarity and environmental risk (e.g. increased fire spreading). This motivates the need for frameworks that embed empirically informed human‑behavioural rules into evacuation optimisation across different settings, (e.g., campuses, mixed‑traffic environments, and heterogeneous populations).
+
+In particular, prior GA evacuation work has largely focused on route length, risk and infrastructure layout but has not typically evolved the human behaviours as part of the genetic search process. This project aims to bridge this gap by designing a genetic algorithm-based framework that considers human behaviours as part of the optimisation process across different network topology settings.
+
+\section{Network Topology and City Structures - REFERENCES}
+Evacuations occur in a range of different scenarios; evacuation planning needs to be tailored to each of these contexts because different physical and social factors will dominate. In buildings, evacuation outcomes depend heavily on the capacity of corridors and stairs, visibility and familiarity of occupants with the layout (Fu et al., 2024). In city-scale environments, dense populations require considerations of exit placement, medical services, management of traffic flow patterns and agent behaviour, for example do all agents become aware of the evacuation at the same time or do they become aware in stages (León et al., 2019; Borowska-Stefańska et al., 2025). All these factors and city structures strongly shape where bottlenecks and congestion develop which in turn influences evacuation time and safety. By better understanding how agents flow through different networks, there is a better understanding of how to create routing policies and plans which adapt to human behavioural patterns rather than assuming uniform shortest path behaviour. This project uses multiple network topologies as environments to simulate the multi-agent algorithm and to evaluate how behaviourally informed routing affects evacuation performance.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Useful stuff}
 
 \section[Short Section Title]{Another Section With a Long Title and Whose Title Is Abbreviated in the Table of Contents}
+
 
 %-------------------------------------------------------------------------------
 \begin{table}[htb]
@@ -109,59 +218,8 @@ Item 2 & Value 2 \\
 Another section, just for good measure. You can reference a table, figure or equation using \verb|\ref|, just like this reference to Table \ref{Example-Table}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Example Lists}
-
-%-------------------------------------------------------------------------------
-\subsection{Enumerated}
-
-\begin{enumerate}
-\item Example enumerated list:
-  \begin{itemize}
-  \item a nested enumerated list item;
-  \item and another one.
-  \end{itemize}
-\item Second item in the list.
-\end{enumerate}
-
-%-------------------------------------------------------------------------------
-\subsection{Itemised}
-
-\begin{itemize}
-\item Example itemised list.
-  \begin{itemize}
-  \item A nested itemised list item.
-  \end{itemize}
-\item Second item in the list.
-\end{itemize}
-
-%-------------------------------------------------------------------------------
-\subsection{Description}
-
-\begin{description}
-\item[Item 1]First item in the list.
-\item[Item 2]Second item in the list.
-\end{description}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Literature and Technology Survey}
 
-This is the chapter for your Literature and Technology Survey.
-
-You will wish to cite authors like \citep{Brun:03:Atomic-C:oz} or \citep{Stra:17:Combinat:qf}. Alternate
-commands are used to cite \citet{Brun:03:Atomic-C:oz} as a noun, or add text to the citation, \citep[\emph{e.g.},][]{Stra:17:Combinat:qf}. You can also use other styles of citation, for example numerical. Whatever style you use, be consistent.
-
-%% NOTE Replace the following with chapters that are appropriate for your
-%%      style of project.  It is unlikely these will fit your project perfectly.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Requirements}
-
-If you are doing a primarily software development project, this is the chapter in which you review the requirements decisions and critique the requirements process.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Design}
 
 This is the chapter in which you review your design decisions at various
@@ -215,7 +273,7 @@ Number of words until this point, excluding front matter: XXX.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\bibliography{ExampleBibFile}
+\bibliography{EndNotesTest}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
