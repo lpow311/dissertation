@@ -51,21 +51,23 @@
 \contentsline {chapter}{\numberline {5}Results}{25}{chapter.5}%
 \contentsline {section}{\numberline {5.1}Baseline Genetic Algorithm versus Greedy (RQ1 and RQ2)}{25}{section.5.1}%
 \contentsline {section}{\numberline {5.2}Walking Speed (RQ3a)}{27}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Delayed Starts (RQ3b)}{28}{section.5.3}%
-\contentsline {chapter}{\numberline {6}Useful stuff}{29}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Short Section Title}{29}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Example Lists}{29}{section.6.2}%
-\contentsline {subsection}{\numberline {6.2.1}Enumerated}{29}{subsection.6.2.1}%
-\contentsline {subsection}{\numberline {6.2.2}Itemised}{30}{subsection.6.2.2}%
-\contentsline {subsection}{\numberline {6.2.3}Description}{30}{subsection.6.2.3}%
-\contentsline {chapter}{\numberline {7}Discussion}{31}{chapter.7}%
-\contentsline {chapter}{\numberline {8}Conclusions}{32}{chapter.8}%
-\contentsline {chapter}{References}{33}{chapter*.9}%
-\contentsline {chapter}{\numberline {A}Seven Methodological Approaches for Crowd Evacuation}{36}{appendix.A}%
-\contentsline {chapter}{\numberline {B}Results Diagrams}{37}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Implemetation Tuning Results}{37}{section.B.1}%
-\contentsline {section}{\numberline {B.2}Experiment Results}{38}{section.B.2}%
-\contentsline {chapter}{\numberline {C}User Documentation}{40}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Raw Results Output}{41}{appendix.D}%
-\contentsline {chapter}{\numberline {E}Code}{42}{appendix.E}%
-\contentsline {section}{\numberline {E.1}File: yourCodeFile.java}{43}{section.E.1}%
+\contentsline {section}{\numberline {5.3}Delayed Starts (RQ3b)}{29}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Compliance Rate (RQ3c)}{30}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Combined Human Factors (RQ3d and RQ2)}{31}{section.5.5}%
+\contentsline {chapter}{\numberline {6}Useful stuff}{34}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Short Section Title}{34}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Example Lists}{34}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Enumerated}{34}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Itemised}{35}{subsection.6.2.2}%
+\contentsline {subsection}{\numberline {6.2.3}Description}{35}{subsection.6.2.3}%
+\contentsline {chapter}{\numberline {7}Discussion}{36}{chapter.7}%
+\contentsline {chapter}{\numberline {8}Conclusions}{37}{chapter.8}%
+\contentsline {chapter}{References}{38}{chapter*.9}%
+\contentsline {chapter}{\numberline {A}Seven Methodological Approaches for Crowd Evacuation}{41}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Results Diagrams}{42}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Implemetation Tuning Results}{42}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Experiment Results}{43}{section.B.2}%
+\contentsline {chapter}{\numberline {C}User Documentation}{45}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Raw Results Output}{46}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Code}{47}{appendix.E}%
+\contentsline {section}{\numberline {E.1}File: yourCodeFile.java}{48}{section.E.1}%

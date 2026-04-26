@@ -675,7 +675,7 @@ The below figures show the route usage across the 10 seeds for each of the topol
     \centering
     \includegraphics[width=1\textwidth]{dissertation_images/dispersion_rate_N_3.png}
     \caption[Dispersion plot at N=3]{Dispersion plot at across the GA and Greedy algorithms where the number of agents are within N=3 nodes from their starting point.}
-    \label{fig:bottleneck-baseline-routes}
+    \label{fig:baseline-dispersion-plot}
 \end{figure}
 
 These results suggest that under idealised baseline conditions greedy routing matches or outperforms the GA on total evacuation time across all three topologies, with the exception of moderate where performance is equivalent. The dispersion analysis shows no meaningful difference in early evacuation safety between algorithms. 
@@ -713,9 +713,30 @@ Total Time & 20.5$\pm$0.81 \newline\textbf{(9.1)} & 25.7$\pm$1.35 \newline\textb
 
 However, it is worth highlighting in comparison to the baselines the GA now has the better average total time (52.40) than the greedy (54.00) for the bottleneck topology and the grid topology shifted to an improved total time for the greedy routing. \autoref{table:walking-results} shows the change in each metric between the baseline and the walking speed incorporation (in bold), to highlight how the walking speed effects algorithm performance. The results show that the greedy algorithm picks up more congestion (+1.7) in the bottleneck environment and this is reflected in the increase in total time (+25) in comparison to the GA. A surprising result is that the greedy routing in the moderate environment reduces the congestion delay in the moderate topology (-0.16). 
 
-The ratio of greedy to GA mean total evacuation time for the grid, moderate and bottleneck topologies were 0.798, 0.944 and 1.031 respectively. The ratio for the bottleneck topology exceeds 1 which is the first time the GA outperforms the greedy algorithm. Figure 20 shows the agent evacuation times and congestion delays across the seeds, the GA is consistently slower than the greedy across all three speed categories for the grid and moderate topologies. However, for the bottleneck the GA has lower average total time for the slower agents, the reverse of the other topologies.
+The ratio of greedy to GA mean total evacuation time for the grid, moderate and bottleneck topologies were 0.798, 0.944 and 1.031 respectively. The ratio for the bottleneck topology exceeds 1 which is the first time the GA outperforms the greedy algorithm. \autoref{fig:walking-speed-split} shows the agent evacuation times and congestion delays across the seeds, the GA is consistently slower than the greedy across all three speed categories for the grid and moderate topologies. However, for the bottleneck the GA has lower average total time for the slower agents, the reverse of the other topologies.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{dissertation_images/walking_speed_breakdown.png}
+    \caption[Total Time and Congestion by Walking Speeds]{Total Time and Congestion by walking speed categories across the different topologies and greedy (green) vs GA (blue). The line across the top of the bars shows the $\pm1$ standard deviation across the seeds.}
+    \label{fig:walking-speed-split}
+\end{figure}
+
+The dispersion plot (\autoref{fig:walking-speed-dispersion}), shows a longer amount of time is needed to get agents 3 nodes away from their start position compared to the baseline (\autoref{fig:baseline-dispersion-plot}), which makes sense given agents are walking slower.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/walking_speed_dispersion.png}
+    \caption[Dispersion Plot with Walking Speed]{Dispersion Plot with Walking Speed for greedy (green) and GA (blue) across the topologies and seeds for agents within 3 nodes of their starting node.}
+    \label{fig:walking-speed-dispersion}
+\end{figure}
+
+These results suggest that introducing walking speed changes the relative performance of the two algorithms, with the GA gaining its first total time advantage over the greedy in the bottleneck topology.
 
 \section{Delayed Starts (RQ3b)}
+The third experiment adds delayed starts into the baseline model to understand how they impact evacuation times.
+
+\autoref{table:delayed-starts-results} shows the delayed starts results across the topologies and algorithms, the results are consistent with the baseline approach where the greedy routing is better for the grid (p=0.002, d=4.80) and bottleneck (p=0.002, d=3.00) topologies. The moderate topology shows a trend towards GA outperforming the greedy slightly (d=-0.90) however this does not reach statistical significance (p=0.062). The largest change in the delta (bold numbers in \autoref{table:delayed-starts-results}) from baseline is a reduction in congestion delay of approximately 0.8 timesteps, consistent across both algorithms and all topologies. 
 
 \begin{table}[htb]
 \centering
@@ -726,22 +747,129 @@ The ratio of greedy to GA mean total evacuation time for the grid, moderate and 
 \textbf{Algorithm} & Greedy & GA & Greedy & GA & Greedy & GA \\
 \hline
 \hline
-% $\pm$
-Mean Time & 1 & 2 & 3 & 4 & 5 & 6 \\
+% $\pm$ \newline\textbf{()}
+Mean Time & 7.47$\pm$0.12 \newline\textbf{(-0.05)} & 10.57$\pm$0.31 \newline\textbf{(0.25)} & 10.0$\pm$0.03 \newline\textbf{(0)} & 10.8$\pm$0.35 \newline\textbf{(-0.01)} & 19.5$\pm$0.00 \newline\textbf{(0)} & 21.1$\pm$0.14 \newline\textbf{(-0.03)} \\
 \hline
-Congestion Delay Mean & 1 & 2 & 3 & 4 & 5 & 6  \\
+Congestion Delay Mean & 1.66$\pm$0.15 \newline\textbf{(-0.86)} & 1.44$\pm$0.18 \newline\textbf{(-0.80)} & 3.21$\pm$0.08 \newline\textbf{(-0.81)} & 1.55$\pm$0.18 \newline\textbf{(-0.81)} & 8.17$\pm$0.06 \newline\textbf{(-0.81)} & 8.18$\pm$0.06 \newline\textbf{(-0.81)}  \\
 \hline
-Path Efficiency & 1 & 2 & 3 & 4 & 5 & 6  \\
+Path Efficiency & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.19$\pm$0.03 \newline\textbf{(0.01)} & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.12$\pm$0.02 \newline\textbf{(0)} & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.06$\pm$0.01 \newline\textbf{(-0.01)}  \\
 \hline
-Mean Path Length & 1 & 2 & 3 & 4 & 5 & 6 \\
+Mean Path Length & 5.00$\pm$0.00 \newline\textbf{(0)} & 8.31$\pm$0.25 \newline\textbf{(0.24)} & 6.00$\pm$0.05 \newline\textbf{(0)} & 8.46$\pm$0.24 \newline\textbf{(-0.02)} & 10.5$\pm$0.05 \newline\textbf{(0)} & 12.1$\pm$0.16 \newline\textbf{(-0.03)} \\
 \hline
-Total Time & 1 & 2 & 3 & 4 & 5 & 6 \\
+Total Time & 11.4$\pm$0.66 \newline\textbf{(0)} & 15.8$\pm$0.40 \newline\textbf{(0.20)} & 15.5$\pm$0.50 \newline\textbf{(0)} & 14.9$\pm$0.30 \newline\textbf{(-0.4)} & 29.0$\pm$0.00 \newline\textbf{(0)} & 30.2$\pm$0.40 \newline\textbf{(0.1)} \\
 \hline
 \end{tabular}
 }
 \caption[Delayed Starts results for Greedy versus Genetic Algorithm]{Delayed Starts results for Greedy versus Genetic Algorithm. Results show the mean and standard deviations across 10 seeds and the bold number shows the delta from baseline.}
 \label{table:delayed-starts-results}
 \end{table}
+
+The ratio of greedy to GA for the mean total evacuation time for grid, moderate and bottleneck topologies as 0.722, 1.040 and 0.960 respectively. These ratios do not vary significantly from the baseline ratios (0.731,1.013 and 0.963 respectively).
+
+The per delay breakdown in \autoref{fig:delayed-starts-split}, show a slight increase in greedy congestion delay, especially in the moderate topology and some in the grid topology. These results suggest that introducing delayed starts does not change the relative performance of the two algorithms for total evacuation time but does reduce congestion by about 1 time step on average.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{dissertation_images/delay_start_breakdown.png}
+    \caption[Total Time and Congestion by Delayed Starts]{Total Time and Congestion by delayed starts categories across the different topologies and greedy (green) vs GA (blue). The line across the top of the bars shows the $\pm1$ standard deviation across the seeds.}
+    \label{fig:delayed-starts-split}
+\end{figure}
+
+\section{Compliance Rate (RQ3c)}
+The next experiment varies the compliance rates of agents from 25\% to 100\% to understand how the proportion of agents following the GA routing effects evacuation performance. \autoref{table:compliance-results} shows the Wilcoxon signed-rank, Cohen’s d effect size and Price of Anarchy (PoA) for each of the compliance levels across the three topologies and \autoref{fig:compliance-baseline-plot} shows the total time and congestion at the different compliance levels. 
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{dissertation_images/compliance_rate_plot.png}
+    \caption[Varying compliance rate across total time and congestion]{Varying compliance rate across total time and congestion across the greedy (green) and GA (blue) with varying compliance percentages.}
+    \label{fig:compliance-baseline-plot}
+\end{figure}
+
+\begin{table}[htb]
+\centering
+{\small
+\begin{tabular}{| >{\raggedright\arraybackslash}p{1.6cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} | >{\centering\arraybackslash}p{0.75cm} |}
+\hline
+ & \multicolumn{4}{c|}{Grid} & \multicolumn{4}{c|}{Moderate} & \multicolumn{4}{c|}{Bottleneck} \\
+ & 25\% & 50\% & 75\% & 100\% & 25\% & 50\% & 75\% & 100\% & 25\% & 50\% & 75\% & 100\% \\
+\hline
+\hline
+GA Mean & 11.4 & 13.3 & 14.6 & 15.6 & 13.4 & 13.5 & 14.4 & 15.3 & 29 & 29 & 29.1 & 30.1 \\
+\hline
+Greedy Mean & 11.4 & 11.4 & 11.4 & 11.4 & 15.5 & 15.5 & 15.5 & 15.5 & 29 & 29 & 29 & 29 \\
+\hline
+Delta & 0 & 1.9 & 3.2 & 4.2 & -2.1 & -2.0 & -1.1 & -0.2 & 0 & 0 & 0.1 & 1.1 \\
+\hline
+PoA & 1 & 0.857 & 0.781 & 0.731 & 1.157 & 1.148 & 1.076 & 1.013 & 1 & 1 & 0.997 & 0.963 \\
+\hline
+p-value & 1 & \textit{0.002} & \textit{0.002} & \textit{0.002} & \textit{0.002} & \textit{0.002} & \textit{0.016} & 0.727 & 1 & 1 & 1 & \textit{0.002} \\
+\hline
+Cohen's d & 0 & 2.01 & 3.67 & 4.82 & -3.9 & -3.1 & -1.3 & -0.2 & N/A & N/A & 0.33 & 3.67 \\
+\hline
+\end{tabular}
+}
+\caption[Compliance statistical results]{Wilcoxon signed-rank, Cohen's d effect size and Price of Anarchy (PoA) ratios for compliance levels across the topologies. Significant p-values are italic.}
+\label{table:compliance-results}
+\end{table}
+
+These results show a non-linear relationship between compliance and GA performance across all topologies. The moderate topology shows the best performance at partial compliance, with 25-50\% representing the optimal window where the combination produces better results than either approach alone. These results answer RQ3c but show that the threshold is not a simple cut off but rather a point where increasing compliance raises path length faster than reducing congestion.
+
+\section{Combined Human Factors (RQ3d and RQ2)}
+The final experiment combines the walking speed, delayed starts and compliance levels, to understand the cumulative effect of including human behaviours. \autoref{table:human-behaviour-results} shows the combination of walking speed and delayed starts with full compliance (100\%). The overall patterns are similar to the walking speed experiment, the greedy wins for the grid (d=3.56, p=0.002, PoA=0.766) and moderate (d=1.46, p=0.008, PoA=0.945) whilst the GA routing wins for the bottleneck city (d=-1.75, p=0.004, PoA=1.027). The delta results (bold) highlights an interesting result where for the grid and moderate city the average delay for both greedy and GA decreases.
+
+\begin{table}[htb]
+\centering
+{\small
+\begin{tabular}{| >{\raggedright\arraybackslash}p{2cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} |}
+\hline
+\textbf{Topology} & \multicolumn{2}{c|}{Grid} & \multicolumn{2}{c|}{Moderate} & \multicolumn{2}{c|}{Bottleneck} \\
+\textbf{Algorithm} & Greedy & GA & Greedy & GA & Greedy & GA \\
+\hline
+% $\pm$ \newline\textbf{()}
+\hline
+Mean Time & 10.0$\pm$0.46 \newline\textbf{(2.5)} & 14.8$\pm$0.77 \newline\textbf{(4.51)} & 12.1$\pm$0.41 \newline\textbf{(2.05)} & 15.3$\pm$0.64 \newline\textbf{(4.45)} & 25.9$\pm$1.18 \newline\textbf{(6.35)} & 28.1$\pm$1.12 \newline\textbf{(6.95)} \\
+\hline
+Congestion Delay Mean & 2.21$\pm$0.22 \newline\textbf{(-0.31)} & 2.14$\pm$0.18 \newline\textbf{(-0.11)} & 2.73$\pm$0.18 \newline\textbf{(-1.29)} & 2.28$\pm$0.18 \newline\textbf{(-0.08)} & 9.74$\pm$0.58 \newline\textbf{(0.76)} & 9.56$\pm$0.56 \newline\textbf{(0.57)} \\
+\hline
+Path Efficiency & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.24$\pm$0.02 \newline\textbf{(0.06)} & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.14$\pm$0.04 \newline\textbf{(0.03)} & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.05$\pm$0.01 \newline\textbf{(-0.01)} \\
+\hline
+Mean Path Length & 5.00$\pm$0.00 \newline\textbf{(0)} & 8.65$\pm$0.21 \newline\textbf{(0.58)} & 6.00$\pm$0.05 \newline\textbf{(0)} & 8.73$\pm$0.35 \newline\textbf{(0.25)} & 10.5$\pm$0.05 \newline\textbf{(0)} & 12.3$\pm$0.26 \newline\textbf{(0.2)} \\
+\hline
+Total Time & 20.9$\pm$1.14 \newline\textbf{9.5)} & 27.3$\pm$2.49 \newline\textbf{(11.7)} & 25.6$\pm$1.20 \newline\textbf{(10.1)} & 27.1$\pm$1.64 \newline\textbf{(11.8)} & 54.0$\pm$2.37 \newline\textbf{(25)} & 52.6$\pm$2.06 \newline\textbf{(22.5)} \\
+\hline
+\end{tabular}
+}
+\caption[Cumulative human behaviour results]{Cumulative human behaviour results for Genetic Algorithm versus Greedy. Results show the mean and standard deviations across 10 seeds and the bold number shows the delta from baseline with full compliance.}
+\label{table:human-behaviour-results}
+\end{table}
+
+The dispersion plots for N=3 (\autoref{fig:full-dispersion-3}) show a similar result to the previous experiments and N=5 (\autoref{fig:full-dispersion-3}) show an interesting result that the GA dispersion at N=5 becomes worse when all human behaviours are considered.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/full-behaviour-dispersion-N3.png}
+    \caption[Dispersion plot for full human behaviours (N=3)]{Dispersion plot for full human behaviours for greedy (green) and GA (blue) for agents 3 steps away from their start node.}
+    \label{fig:full-dispersion-3}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/full-behaviour-dispersion-N5.png}
+    \caption[Dispersion plot for full human behaviours (N=5)]{Dispersion plot for full human behaviours for greedy (green) and GA (blue) for agents 5 steps away from their start node.}
+    \label{fig:full-dispersion-5}
+\end{figure}
+
+\autoref{fig:compliance-human-plot} shows the total time and congestion delays for the different compliance levels with human behaviours turned on, this can be compared to the baseline in \autoref{fig:compliance-baseline-plot}. The grid topology is similar to the baseline in the best performance being 0\% compliance and performance decreasing from there, but interestingly the congestion now creates a u-shape with the GA increasing up to similar levels to the greedy at 100\% compliance. For the moderate topology a similar congestion behaviour can be seen but the total time is now above the greedy, whereas before it was below. The bottleneck topology shows the most difference with the GA consistently below the greedy performance for both total time and congestion.  
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{dissertation_images/full-human-compliance-plots.png}
+    \caption[Varying compliance rate for cumulative human behaviours]{Varying compliance rate across total time and congestion across the greedy (green) and GA (blue) with varying compliance percentages for all human behaviours incorporated.}
+    \label{fig:compliance-human-plot}
+\end{figure}
+
+These results suggest that the cumulative effect of combining human behaviours does not fundamentally alter the relative performance patterns established in the individual experiments, but does amplify the bottleneck advantage for the GA. The bottleneck topology is the only case when the GA consistently outperforms the greedy across multiple compliance levels with human behaviours incorporated. The partial compliance advantage seen in the moderate topology baseline disappears when human factors are added in, but partial compliance in the bottleneck city could provide some advantage (between 25-75\% compliance). Across all experiments the grid topology consistently favours greedy, across the moderate and bottleneck topologies the performance varies suggesting the conditions which globally optimised routing outperforms individually optimised are topology and behaviour sensitive.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
