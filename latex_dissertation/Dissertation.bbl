@@ -1,4 +1,4 @@
-\begin{thebibliography}{22}
+\begin{thebibliography}{23}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\urlprefix}{Available from: }
@@ -136,5 +136,11 @@
 \newblock \bibinfo{title}{Simulation-based assessment of evacuation efficiency in sports stadiums: Insights from case studies}.
 \newblock \emph{\bibinfo{journal}{Fire}} [Online], \bibinfo{volume}{8}(\bibinfo{number}{6}).
 \newblock \urlprefix\url{https://doi.org/10.3390/fire8060210}.
+
+\bibitem[{Zheng, Zhong and Liu(2009)}]{ZHONG_2009_7_CROWD_BEHAVIOUR_MODELS}
+\bibinfo{author}{Zheng, X.}, \bibinfo{author}{Zhong, T.} and \bibinfo{author}{Liu, M.}, \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Modeling crowd evacuation of a building based on seven methodological approaches}.
+\newblock \emph{\bibinfo{journal}{Building and environment}} [Online], \bibinfo{volume}{44}(\bibinfo{number}{3}), pp.\bibinfo{pages}{437--445}.
+\newblock \urlprefix\url{https://doi.org/10.1016/j.buildenv.2008.04.002}.
 
 \end{thebibliography}

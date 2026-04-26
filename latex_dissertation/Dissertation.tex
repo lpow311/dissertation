@@ -139,7 +139,7 @@ The following chapter will start with an overview of existing techniques utilise
 \section{Evacuation Modelling Approaches - REFERENCE}
 Evacuation models are used to predict evacuee movement and behaviour in emergency scenarios, enabling planners to assess the effectiveness of evacuation strategies before they are needed. Early evacuation modelling treated the problem as network flow optimisation problem, routing evacuee flow as directed edges with fixed capacities (Chalmet, Francis and Saunders, 1982). This approach was operationalised into tools such as EVACNET+ (Kisko and Francis, 1985) which focused on population level metrics such as total time and bottleneck emergence, but assumed fixed traversal and no behavioural variations. Later extensions such as FPETool (Nelson, 1990) added environment dynamics such as fire and smoke, while EXIT89 (Fahy, Rita, 1991; Fahy, R, 1994) introduced pre-defined behaviour rules. However, evacuees were still not treated as individual decision makers. 
 
-Since these early methods, the number of published articles around evacuation modelling has significantly grown (Liu et al., 2020) and research has shifted more towards agent-based modelling. Zheng, Zhong and Liu (2009) identified seven methodological approaches for crowd evacuation, including: cellular automation, lattice gas, social force, fluid dynamics, agent-based, game theory and animal-based experiments (Appendix A, Table 16). This classification helps map how evacuation modelling has moved from macroscopic flow methods towards microscopic behaviour frameworks and in particular the increase in agent-based frameworks. For this project agent-based modelling is the most applicable framework because it naturally supports explicitly representation of human behaviours that macroscopic behaviours naturally tend to aggregate away.
+Since these early methods, the number of published articles around evacuation modelling has significantly grown (Liu et al., 2020) and research has shifted more towards agent-based modelling. \cite{ZHONG_2009_7_CROWD_BEHAVIOUR_MODELS} identified seven methodological approaches for crowd evacuation, including: cellular automation, lattice gas, social force, fluid dynamics, agent-based, game theory and animal-based experiments (\autoref{chap:seven-methods}). This classification helps map how evacuation modelling has moved from macroscopic flow methods towards microscopic behaviour frameworks and in particular the increase in agent-based frameworks. For this project agent-based modelling is the most applicable framework because it naturally supports explicitly representation of human behaviours that macroscopic behaviours naturally tend to aggregate away.
 
 \section{Routing Optimisation}
 \subsection{Shortest Path Approaches - REFERENCES}
@@ -720,9 +720,41 @@ Number of words until this point, excluding front matter: XXX.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Design Diagrams}
+\chapter{Seven Methodological Approaches for Crowd Evacuation}
+\label{chap:seven-methods}
+The following table provides additional dtails on the work by \cite{ZHONG_2009_7_CROWD_BEHAVIOUR_MODELS} on the methodological approaches to crowd evacuations. Additional relevant reseach for these can be found in the article.
 
-% latex_dissertation/dissertation_images/appendix_diagrams/genetic_algortihm_process.png
+\begin{table}[htb]
+  \bigskip
+  \begin{center}
+    \begin{tabular}{| p{3cm} | p{6cm} | p{6cm} |}
+      \hline
+      Approach & Description & Impact \\
+      \hline
+      \hline
+      Cellular Automata Models & This involves dividing the building into a grid and people move cell by cell in a rules-based manner. & These models showed the impact of environment on evacuee movement and the interactions amount evacuees. \\
+      \hline
+      Lattice Gas Models & Similar to cellular automata models but crowds are modelling in a more of a flow like manner. & These models identify important characteristics in pedestrian flow. \\
+      \hline
+      Social Force Models & Evacuees are treated like particles and influenced by social forces such as attraction to exits and avoidance of others (congestion). & These models provide a more realistic view of crowd motion and interaction. \\
+      \hline
+      Fluid Dyanmic Models &  Crowds are modelled as a fluid in a space. & These models help to understanding high density movement such as congestion. \\
+      \hline
+      Agent Based Models & Each evacuee is modelled as an individual agent with its own decisions.& Allowed researchers to start modelling individual decisions not just crowd flow. However this level of modelling is more computationally expensive. \\
+      \hline
+      Game Theory Models & Evacuee level modelling of decision based of actions of others. & These models help to study strategic decisions and conflict.  \\
+      \hline
+      Animal Based Experiements & Utilises animal experiments to understand collective escape behaviour. & This approach helps to explain collective motions without requiring human experiments. \\
+
+      \hline
+    \end{tabular}
+  \end{center}
+\caption{Seven Methodologies for crowd evacuation}
+\end{table}
+
+
+
+
 
 \chapter{Results Diagrams}
 \label{chap:results}
@@ -766,7 +798,7 @@ For the survivor selection methods with tournament (N=3) parent selection:
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.9\textwidth]{dissertation_images/survivor_elite_perc_tournament_3.png}
-    \caption{Survivor Selection Performance Metrics for Elite Percentage Selection (repeated plot from main text.)}
+    \caption[Survivor Selectiion Elite Percentage]{Survivor Selection Performance Metrics for Elite Percentage Selection (repeated plot from main text.)}
 \end{figure}
 
 
