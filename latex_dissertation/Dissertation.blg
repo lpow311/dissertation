@@ -5,46 +5,49 @@ The style file: bathx.bst
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: EndNotesTest.bib
+Warning--missing publisher in ABDEL_BASSET_2018_METAHEURISTICS
+Warning--empty booktitle in DEMBYTSKYI_2017_GA
+Warning--missing publisher in DIJKSTRA_2022_SHORT_PATHS
 Warning--missing publisher in LE_BON_2024_PANIC
-You've used 24 entries,
+You've used 71 entries,
             5466 wiz_defined-function locations,
-            1114 strings with 12828 characters,
-and the built_in function-call counts, 21027 in all, are:
-= -- 2172
-> -- 788
-< -- 1
-+ -- 300
-- -- 269
-* -- 1832
-:= -- 2739
-add.period$ -- 93
-call.type$ -- 24
-change.case$ -- 213
-chr.to.int$ -- 25
-cite$ -- 25
-duplicate$ -- 1467
-empty$ -- 1609
-format.name$ -- 334
-if$ -- 4685
+            1455 strings with 24559 characters,
+and the built_in function-call counts, 63367 in all, are:
+= -- 6528
+> -- 2312
+< -- 2
++ -- 893
+- -- 793
+* -- 5435
+:= -- 8200
+add.period$ -- 273
+call.type$ -- 71
+change.case$ -- 631
+chr.to.int$ -- 72
+cite$ -- 75
+duplicate$ -- 4410
+empty$ -- 4939
+format.name$ -- 975
+if$ -- 14213
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 215
-newline$ -- 151
-num.names$ -- 96
-pop$ -- 487
+missing$ -- 644
+newline$ -- 423
+num.names$ -- 284
+pop$ -- 1456
 preamble$ -- 1
-purify$ -- 167
+purify$ -- 498
 quote$ -- 0
-skip$ -- 980
+skip$ -- 3029
 stack$ -- 0
-substring$ -- 485
-swap$ -- 969
-text.length$ -- 1
+substring$ -- 1669
+swap$ -- 2899
+text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 400
-warning$ -- 1
-while$ -- 113
+type$ -- 1182
+warning$ -- 4
+while$ -- 350
 width$ -- 0
-write$ -- 383
-(There was 1 warning)
+write$ -- 1102
+(There were 4 warnings)

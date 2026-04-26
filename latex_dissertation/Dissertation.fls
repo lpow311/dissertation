@@ -941,6 +941,7 @@ INPUT Dissertation.bbl
 INPUT ./Dissertation.bbl
 INPUT Dissertation.bbl
 INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecsi1200.tfm
+INPUT /usr/local/texlive/2023/texmf-dist/fonts/tfm/jknappen/ec/ecss0800.tfm
 INPUT ./dissertation_images/appendix_diagrams/elite_perc_roulette_parent_selection.png
 INPUT ./dissertation_images/appendix_diagrams/elite_perc_roulette_parent_selection.png
 INPUT dissertation_images/appendix_diagrams/elite_perc_roulette_parent_selection.png
