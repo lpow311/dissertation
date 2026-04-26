@@ -6,45 +6,45 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: EndNotesTest.bib
 Warning--missing publisher in LE_BON_2024_PANIC
-You've used 23 entries,
+You've used 24 entries,
             5466 wiz_defined-function locations,
-            1108 strings with 12606 characters,
-and the built_in function-call counts, 20256 in all, are:
-= -- 2095
-> -- 748
+            1114 strings with 12828 characters,
+and the built_in function-call counts, 21027 in all, are:
+= -- 2172
+> -- 788
 < -- 1
-+ -- 285
-- -- 255
-* -- 1764
-:= -- 2625
-add.period$ -- 90
-call.type$ -- 23
-change.case$ -- 204
-chr.to.int$ -- 24
-cite$ -- 24
-duplicate$ -- 1421
-empty$ -- 1557
-format.name$ -- 317
-if$ -- 4521
++ -- 300
+- -- 269
+* -- 1832
+:= -- 2739
+add.period$ -- 93
+call.type$ -- 24
+change.case$ -- 213
+chr.to.int$ -- 25
+cite$ -- 25
+duplicate$ -- 1467
+empty$ -- 1609
+format.name$ -- 334
+if$ -- 4685
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 208
-newline$ -- 146
-num.names$ -- 92
-pop$ -- 470
+missing$ -- 215
+newline$ -- 151
+num.names$ -- 96
+pop$ -- 487
 preamble$ -- 1
-purify$ -- 159
+purify$ -- 167
 quote$ -- 0
-skip$ -- 944
+skip$ -- 980
 stack$ -- 0
-substring$ -- 474
-swap$ -- 941
+substring$ -- 485
+swap$ -- 969
 text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 384
+type$ -- 400
 warning$ -- 1
-while$ -- 109
+while$ -- 113
 width$ -- 0
-write$ -- 370
+write$ -- 383
 (There was 1 warning)

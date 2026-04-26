@@ -54,20 +54,23 @@
 \contentsline {section}{\numberline {5.3}Delayed Starts (RQ3b)}{29}{section.5.3}%
 \contentsline {section}{\numberline {5.4}Compliance Rate (RQ3c)}{30}{section.5.4}%
 \contentsline {section}{\numberline {5.5}Combined Human Factors (RQ3d and RQ2)}{31}{section.5.5}%
-\contentsline {chapter}{\numberline {6}Useful stuff}{34}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Short Section Title}{34}{section.6.1}%
-\contentsline {section}{\numberline {6.2}Example Lists}{34}{section.6.2}%
-\contentsline {subsection}{\numberline {6.2.1}Enumerated}{34}{subsection.6.2.1}%
-\contentsline {subsection}{\numberline {6.2.2}Itemised}{35}{subsection.6.2.2}%
-\contentsline {subsection}{\numberline {6.2.3}Description}{35}{subsection.6.2.3}%
-\contentsline {chapter}{\numberline {7}Discussion}{36}{chapter.7}%
-\contentsline {chapter}{\numberline {8}Conclusions}{37}{chapter.8}%
-\contentsline {chapter}{References}{38}{chapter*.9}%
-\contentsline {chapter}{\numberline {A}Seven Methodological Approaches for Crowd Evacuation}{41}{appendix.A}%
-\contentsline {chapter}{\numberline {B}Results Diagrams}{42}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Implemetation Tuning Results}{42}{section.B.1}%
-\contentsline {section}{\numberline {B.2}Experiment Results}{43}{section.B.2}%
-\contentsline {chapter}{\numberline {C}User Documentation}{45}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Raw Results Output}{46}{appendix.D}%
-\contentsline {chapter}{\numberline {E}Code}{47}{appendix.E}%
-\contentsline {section}{\numberline {E.1}File: yourCodeFile.java}{48}{section.E.1}%
+\contentsline {chapter}{\numberline {6}Discussion}{34}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Greedy versus Genetic Algorithm}{34}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Human Behaviours}{35}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Compliance}{35}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Contribution}{36}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Limitations}{36}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Static Human Behaviour}{36}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Simplied City Structures and Crowd Dynamics}{36}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}Algorithm Tuning}{37}{subsection.6.5.3}%
+\contentsline {section}{\numberline {6.6}Future Work}{37}{section.6.6}%
+\contentsline {chapter}{\numberline {7}Conclusions}{39}{chapter.7}%
+\contentsline {chapter}{References}{40}{chapter*.9}%
+\contentsline {chapter}{\numberline {A}Seven Methodological Approaches for Crowd Evacuation}{43}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Results Diagrams}{44}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Implemetation Tuning Results}{44}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Experiment Results}{45}{section.B.2}%
+\contentsline {chapter}{\numberline {C}User Documentation}{47}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Raw Results Output}{48}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Code}{49}{appendix.E}%
+\contentsline {section}{\numberline {E.1}File: yourCodeFile.java}{50}{section.E.1}%

@@ -1,4 +1,4 @@
-\begin{thebibliography}{23}
+\begin{thebibliography}{24}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \providecommand{\urlprefix}{Available from: }
@@ -67,6 +67,11 @@
 \bibinfo{author}{Le~Bon, G.}, \bibinfo{year}{2024}.
 \newblock \emph{\bibinfo{title}{The crowd: A study of the popular mind}} [Online], \bibinfo{type}{book section}~\bibinfo{chapter}{1}, p.\bibinfo{pages}{13}.
 \newblock \urlprefix\url{https://books.google.co.uk/books?hl=en&lr=&id=SPk5EQAAQBAJ&oi=fnd&pg=PA13&ots=wmPIVZaHwE&sig=BahvuvvlvUQRmlmlx5kGH4QD-Wo&redir_esc=y#v=onepage&q&f=false}.
+
+\bibitem[{Li et~al.(2023)Li, Du, Noto and Li}]{LI_2023_ADAPTIVE_RATES}
+\bibinfo{author}{Li, J.}, \bibinfo{author}{Du, H.}, \bibinfo{author}{Noto, M.} and \bibinfo{author}{Li, L.}, \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{Research on emergency rescue route optimization based on adaptive genetic algorithm} [Online].
+\newblock \urlprefix\url{https://doi.org/10.1109/icite59717.2023.10733881}.
 
 \bibitem[{Lovreglio, Ronchi and Kinsey(2019)}]{LOVREGLIO_2019_SURVEY}
 \bibinfo{author}{Lovreglio, R.}, \bibinfo{author}{Ronchi, E.} and \bibinfo{author}{Kinsey, M.J.}, \bibinfo{year}{2019}.
