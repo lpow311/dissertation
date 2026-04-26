@@ -6,6 +6,7 @@
 % latex and dvipdfmx to translate to pdf, insert dvipdfmx into the options.
 
 \usepackage{array}
+\usepackage{multirow}
 \usepackage{Bath-CS-Dissertation}
 
 \title{\bf Human Inspired Genetic Algorithms for Multi-Agent Evacuation Routing}
@@ -610,8 +611,139 @@ Overall, the implementation was designed to produce a reproducible and controlle
 \label{table:ga-final-params}
 \end{table}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Results}
+This chapter presents the results of the five experiments outlined in Chapter 3, comparing the genetic algorithm against the greedy baseline across three network topologies under increasingly realistic human behaviour conditions.
+
+\section{Baseline Genetic Algorithm versus Greedy (RQ1 and RQ2)}
+The first experiment compares the genetic algorithm (GA) against the greedy baseline with no human behaviour modifiers applied, establishing the performance gap under idealised conditions. 
+
+\autoref{table:baseline-results} shows the mean and standard deviations across ten seeds for each topology and algorithm. Wilcoxon signed-rank tests were used to assess the statistically significant of the results given the paired experimental design and small sample size, with Cohen’s d reported as a measure of effect size. Greedy routing achieved significantly lower total evacuation times than then GA in both the grid (p=0.002, d=4.82) and bottleneck (p=0.002, d=3.67) topologies, with large effect sizes (d) in both cases. In the moderate topology the difference was not statistically significant (p=0.727, d=-0.23), representing an equal performance across the two approaches.
+
+\begin{table}[htb]
+\centering
+{\small
+\begin{tabular}{| >{\raggedright\arraybackslash}p{2cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} |}
+\hline
+\textbf{Topology} & \multicolumn{2}{c|}{Grid} & \multicolumn{2}{c|}{Moderate} & \multicolumn{2}{c|}{Bottleneck} \\
+\textbf{Algorithm} & Greedy & GA & Greedy & GA & Greedy & GA \\
+\hline
+\hline
+Mean Time & 7.52$\pm$0.16 & 10.3$\pm$0.25 & 10.0$\pm$0.03 & 10.8$\pm$0.26 & 19.5$\pm$0.00 & 21.1$\pm$0.16 \\
+\hline
+Congestion Delay Mean & 2.52$\pm$0.16 & 2.25$\pm$0.09 & 4.02$\pm$0.05 & 2.35$\pm$0.12 & 8.98$\pm$0.05 & 8.99$\pm$0.05 \\
+\hline
+Path Efficiency & 1.00$\pm$0.00 & 1.18$\pm$0.03 & 1.00$\pm$0.00 & 1.11$\pm$0.02 & 1.00$\pm$0.00 & 1.06$\pm$0.01 \\
+\hline
+Mean Path Length & 5.00$\pm$0.00 & 8.07$\pm$0.22 & 6.00$\pm$0.05 & 8.48$\pm$0.18 & 10.5$\pm$0.05 & 12.1$\pm$0.18 \\
+\hline
+Total Time & 11.4$\pm$0.66 & 15.6$\pm$0.66 & 15.5$\pm$0.50 & 15.3$\pm$0.46 & 29.0$\pm$0.00 & 30.1$\pm$0.3 \\
+\hline
+\end{tabular}
+}
+\caption[Baseline results for Greedy versus Genetic Algorithm]{Baseline results for Greedy versus Genetic Algorithm without human behaviour modifiers. Results show the mean and standard deviations across 10 seeds.}
+\label{table:baseline-results}
+\end{table}
+
+The ratio of greedy to GA mean total evacuation time for the grid, moderate and bottleneck topologies were 0.731,1.013 and 0.963 respectively. The largest performance gap can be seen in the grid topology, with the bottleneck showing a smaller but consistent advantage. The moderate topology was only the case where the ratio exceeded 1.0 indicating a marginal GA advantage.
+
+The below figures show the route usage across the 10 seeds for each of the topologies. The grid topology in \autoref{fig:grid-baseline-routes} shows the largest amount of different in route choices, the GA appears to focus most of its routes through the left-hand side of the grid whereas the greedy algorithm spreads the agents across the different paths. The bottleneck shows the opposite effect where after the initial bottleneck the GA spreads agents across more paths than the greedy (\autoref{fig:bottleneck-baseline-routes}), this supports the results above where the congestion delay shows no significant difference (p=1.0). In the moderate topology (\autoref{fig:moderate-baseline-routes}), the GA makes greater use of the left-side vertical corridor compared to greedy, reflecting its redistribution strategy and explaining the significant reduction in congestion delay observed.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{dissertation_images/route_comparison_grid.png}
+    \caption[Route Usages in baseline for grid topology]{Route usage for the greedy and genetic algorithm across the 10 seeds for the grid topology.}
+    \label{fig:grid-baseline-routes}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{dissertation_images/route_comparison_moderate.png}
+    \caption[Route Usages in baseline for bottleneck topology]{Route usage for the greedy and genetic algorithm across the 10 seeds for the moderate topology.}
+    \label{fig:moderate-baseline-routes}
+\end{figure}
 
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\textwidth]{dissertation_images/route_comparison_bottleneck.png}
+    \caption[Route Usages in baseline for bottleneck topology]{Route usage for the greedy and genetic algorithm across the 10 seeds for the balancesottleneck topology.}
+    \label{fig:bottleneck-baseline-routes}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{dissertation_images/dispersion_rate_N_3.png}
+    \caption[Dispersion plot at N=3]{Dispersion plot at across the GA and Greedy algorithms where the number of agents are within N=3 nodes from their starting point.}
+    \label{fig:bottleneck-baseline-routes}
+\end{figure}
+
+These results suggest that under idealised baseline conditions greedy routing matches or outperforms the GA on total evacuation time across all three topologies, with the exception of moderate where performance is equivalent. The dispersion analysis shows no meaningful difference in early evacuation safety between algorithms. 
+
+\section{Walking Speed (RQ3a)}
+The next experiment added in agent walking speed to the simulation, aiming to establish the performance when simple human behaviours are added in.
+
+\begin{table}[htb]
+\centering
+{\small
+\begin{tabular}{| >{\raggedright\arraybackslash}p{2cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} |}
+\hline
+\textbf{Topology} & \multicolumn{2}{c|}{Grid} & \multicolumn{2}{c|}{Moderate} & \multicolumn{2}{c|}{Bottleneck} \\
+\textbf{Algorithm} & Greedy & GA & Greedy & GA & Greedy & GA \\
+\hline
+\hline
+% $\pm$ \newline\textbf{()}
+Mean Time & 10.4$\pm$0.47 \newline\textbf{(2.91)} & 15.0$\pm$0.66 \newline\textbf{(4.74)} & 12.4$\pm$0.66 \newline\textbf{(2.37)} & 15.6$\pm$0.7 \newline\textbf{(4.72)} & 26.0$\pm$1.32 \newline\textbf{(6.48)} & 28.2$\pm$1.36 \newline\textbf{(7.08)} \\
+\hline
+Congestion Delay Mean & 3.43$\pm$0.23 \newline\textbf{(0.91)}& 3.38$\pm$0.21 \newline\textbf{(1.13)}  & 3.85$\pm$0.41 \newline\textbf{(-0.16)} & 3.63$\pm$0.25 \newline\textbf{(1.28)} & 10.68$\pm$0.79 \newline\textbf{(1.7)} & 10.47$\pm$0.53 \newline\textbf{(1.48)}  \\
+\hline
+Path Efficiency & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.23$\pm$0.04 \newline\textbf{(0.06)} & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.14$\pm$0.02 \newline\textbf{(0.03)} & 1.00$\pm$0.00 \newline\textbf{(0)} & 1.05$\pm$0.01 \newline\textbf{(-0.01)}  \\
+\hline
+Mean Path Length & 5.00$\pm$0.00 \newline\textbf{(0)} & 8.60$\pm$0.33 \newline\textbf{(0.53)} & 6.00$\pm$0.05 \newline\textbf{(0)} & 8.58$\pm$0.20 \newline\textbf{(0.11)} & 10.52$\pm$0.05 \newline\textbf{(0)} & 12.4$\pm$0.21 \newline\textbf{(0.24)} \\
+\hline
+Total Time & 20.5$\pm$0.81 \newline\textbf{(9.1)} & 25.7$\pm$1.35 \newline\textbf{(10.1)} & 25.3$\pm$1.42 \newline\textbf{(9.8)} & 26.8$\pm$1.40 \newline\textbf{(11.5)} & 54.0$\pm$2.68 \newline\textbf{(25)} & 52.4$\pm$2.11 \newline\textbf{(22.3)} \\
+\hline
+\end{tabular}
+}
+\caption[Walking Speed results for Greedy versus Genetic Algorithm]{Walking Speed results for Greedy versus Genetic Algorithm. Results show the mean and standard deviations across 10 seeds and the bold number shows the delta from baseline.}
+\label{table:walking-results}
+\end{table}
+
+\autoref{table:walking-results} shows the mean and standard deviation across the 10 seeds for each topology when walking speed is considered. In alignment with the baseline the greedy routing achieved significantly lower total evacuation times on the grid (p=0.002, d=5.96). However, for the bottleneck (p=0.004, d=-1.44) the negative Cohen's d indicates the GA outperforms greedy, while moderate also shows a significant difference in favour of greedy (p=0.016, d=1.34). Additionally, the congestion delay is no longer significantly different between the approaches for the grid (p=0.105) and bottleneck (p=0.044) topologies, it still remains significant for the moderate however (p=0.020). 
+
+However, it is worth highlighting in comparison to the baselines the GA now has the better average total time (52.40) than the greedy (54.00) for the bottleneck topology and the grid topology shifted to an improved total time for the greedy routing. \autoref{table:walking-results} shows the change in each metric between the baseline and the walking speed incorporation (in bold), to highlight how the walking speed effects algorithm performance. The results show that the greedy algorithm picks up more congestion (+1.7) in the bottleneck environment and this is reflected in the increase in total time (+25) in comparison to the GA. A surprising result is that the greedy routing in the moderate environment reduces the congestion delay in the moderate topology (-0.16). 
+
+The ratio of greedy to GA mean total evacuation time for the grid, moderate and bottleneck topologies were 0.798, 0.944 and 1.031 respectively. The ratio for the bottleneck topology exceeds 1 which is the first time the GA outperforms the greedy algorithm. Figure 20 shows the agent evacuation times and congestion delays across the seeds, the GA is consistently slower than the greedy across all three speed categories for the grid and moderate topologies. However, for the bottleneck the GA has lower average total time for the slower agents, the reverse of the other topologies.
+
+\section{Delayed Starts (RQ3b)}
+
+\begin{table}[htb]
+\centering
+{\small
+\begin{tabular}{| >{\raggedright\arraybackslash}p{2cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} | >{\centering\arraybackslash}p{1.8cm} |}
+\hline
+\textbf{Topology} & \multicolumn{2}{c|}{Grid} & \multicolumn{2}{c|}{Moderate} & \multicolumn{2}{c|}{Bottleneck} \\
+\textbf{Algorithm} & Greedy & GA & Greedy & GA & Greedy & GA \\
+\hline
+\hline
+% $\pm$
+Mean Time & 1 & 2 & 3 & 4 & 5 & 6 \\
+\hline
+Congestion Delay Mean & 1 & 2 & 3 & 4 & 5 & 6  \\
+\hline
+Path Efficiency & 1 & 2 & 3 & 4 & 5 & 6  \\
+\hline
+Mean Path Length & 1 & 2 & 3 & 4 & 5 & 6 \\
+\hline
+Total Time & 1 & 2 & 3 & 4 & 5 & 6 \\
+\hline
+\end{tabular}
+}
+\caption[Delayed Starts results for Greedy versus Genetic Algorithm]{Delayed Starts results for Greedy versus Genetic Algorithm. Results show the mean and standard deviations across 10 seeds and the bold number shows the delta from baseline.}
+\label{table:delayed-starts-results}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Useful stuff}
@@ -681,12 +813,7 @@ Another section, just for good measure. You can reference a table, figure or equ
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Results}
 
-This is the chapter in which you present the results. You may include user evaluation here too.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Discussion}
 
@@ -753,10 +880,8 @@ The following table provides additional dtails on the work by \cite{ZHONG_2009_7
 \end{table}
 
 
-
-
-
 \chapter{Results Diagrams}
+\section{Implemetation Tuning Results}
 \label{chap:results}
 Additional plots can be found in \texttt{2\_genetic\_algorithm\_hyperparams.ipynb} file in the code repository (\autoref{chap:code}).
 
@@ -801,6 +926,15 @@ For the survivor selection methods with tournament (N=3) parent selection:
     \caption[Survivor Selectiion Elite Percentage]{Survivor Selection Performance Metrics for Elite Percentage Selection (repeated plot from main text.)}
 \end{figure}
 
+\section{Experiment Results}
+The below plot shows the number of agents across each seed at each starting point. This was to validate that the standard deivation of zero in the expriement results for the greedy algorithm wasn't just coming from all agents starting in the same place.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/appendix_diagrams/agent_starting_point_distributions.png}
+    \caption{Agent Start Node Counts across seeds}
+    \label{fig:agent-start-node-counts}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

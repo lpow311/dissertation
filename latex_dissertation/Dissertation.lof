@@ -14,18 +14,23 @@
 \contentsline {figure}{\numberline {4.9}{\ignorespaces Analysis number of agents for greeedy algorithm}}{23}{figure.4.9}%
 \contentsline {figure}{\numberline {4.10}{\ignorespaces Genetic Algorithm fitness over evolutions}}{24}{figure.4.10}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces Architecture Diagram}}{25}{figure.5.1}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Route Usages in baseline for grid topology}}{26}{figure.5.1}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Route Usages in baseline for bottleneck topology}}{26}{figure.5.2}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Route Usages in baseline for bottleneck topology}}{27}{figure.5.3}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Dispersion plot at N=3}}{27}{figure.5.4}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {6.1}{\ignorespaces Architecture Diagram}}{29}{figure.6.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\addvspace {10\p@ }
-\contentsline {figure}{\numberline {B.1}{\ignorespaces Parent Selection Performance Metrics for Roulette Selection}}{34}{figure.B.1}%
-\contentsline {figure}{\numberline {B.2}{\ignorespaces Parent Selection Performance Metrics for Tournament Selection (N=3)}}{34}{figure.B.2}%
-\contentsline {figure}{\numberline {B.3}{\ignorespaces Parent Selection Performance Metrics for Tournament Selection (N=5)}}{35}{figure.B.3}%
-\contentsline {figure}{\numberline {B.4}{\ignorespaces Survivor Selection Performance Metrics for Children Only Selection}}{35}{figure.B.4}%
-\contentsline {figure}{\numberline {B.5}{\ignorespaces Survivor Selection Performance Metrics for Elite Selection}}{35}{figure.B.5}%
-\contentsline {figure}{\numberline {B.6}{\ignorespaces Survivor Selectiion Elite Percentage}}{35}{figure.B.6}%
+\contentsline {figure}{\numberline {B.1}{\ignorespaces Parent Selection Performance Metrics for Roulette Selection}}{37}{figure.B.1}%
+\contentsline {figure}{\numberline {B.2}{\ignorespaces Parent Selection Performance Metrics for Tournament Selection (N=3)}}{37}{figure.B.2}%
+\contentsline {figure}{\numberline {B.3}{\ignorespaces Parent Selection Performance Metrics for Tournament Selection (N=5)}}{38}{figure.B.3}%
+\contentsline {figure}{\numberline {B.4}{\ignorespaces Survivor Selection Performance Metrics for Children Only Selection}}{38}{figure.B.4}%
+\contentsline {figure}{\numberline {B.5}{\ignorespaces Survivor Selection Performance Metrics for Elite Selection}}{39}{figure.B.5}%
+\contentsline {figure}{\numberline {B.6}{\ignorespaces Survivor Selectiion Elite Percentage}}{39}{figure.B.6}%
+\contentsline {figure}{\numberline {B.7}{\ignorespaces Agent Start Node Counts across seeds}}{39}{figure.B.7}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
