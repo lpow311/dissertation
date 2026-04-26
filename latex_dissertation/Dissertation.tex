@@ -188,8 +188,248 @@ In particular, prior GA evacuation work has largely focused on route length, ris
 \section{Network Topology and City Structures - REFERENCES}
 Evacuations occur in a range of different scenarios; evacuation planning needs to be tailored to each of these contexts because different physical and social factors will dominate. In buildings, evacuation outcomes depend heavily on the capacity of corridors and stairs, visibility and familiarity of occupants with the layout (Fu et al., 2024). In city-scale environments, dense populations require considerations of exit placement, medical services, management of traffic flow patterns and agent behaviour, for example do all agents become aware of the evacuation at the same time or do they become aware in stages (León et al., 2019; Borowska-Stefańska et al., 2025). All these factors and city structures strongly shape where bottlenecks and congestion develop which in turn influences evacuation time and safety. By better understanding how agents flow through different networks, there is a better understanding of how to create routing policies and plans which adapt to human behavioural patterns rather than assuming uniform shortest path behaviour. This project uses multiple network topologies as environments to simulate the multi-agent algorithm and to evaluate how behaviourally informed routing affects evacuation performance.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Design}
+
+\section{Research Aims and Design Scope}
+This project aims to utilise genetic algorithms with human behaviours incorporated into the fitness function to better understand the impact of human behaviours on key evacuation metrics. This will be compared against a shortest path algorithm across the following human behaviours: delayed starts, compliance and physical limitations (represented through walking speed). These different behaviours will be evaluated across three fictional network topologies: grid-like, moderate-complexity and bottleneck-constrained areas. 
+
+The following section breaks down the design decisions for the key components of the simulation framework in this project. The project is structured as an agent-based simulation where:
+\begin{itemize}
+\item Agents represent evacuees with distinct behavioural states and movement constraints.
+\item The environment is a graph-based network, instantiated in three different topologies.
+\item Two routing algorithms are compared: a greedy shortest path baseline and a genetic behaviour aware algorithm.
+\item The experiment pipeline runs multiple simulations across a range of seeds and records the evacuation metrics for comparison.
+\end{itemize}
+
+\autoref{fig:architecture-design} provides an architecture diagram that illustrates the overall framework, showing the interactions between the environment, agents, routing algorithms and experiment evaluation.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{dissertation_images/architecture_diagram_design.png}
+    \caption[Architecture Diagram]{Architecture diagram showing the  project framework connecting the input parameters through environment, agent creation, routing algorithms and evaluation.}
+    \label{fig:architecture-design}
+\end{figure}
+
+\section{Design Framework}
+\subsection{Environments}
+Three network topologies were picked in order to represent the different conditions which evacuations can occur. They are represented as abstract graphs rather than spatial or geospatial maps, with nodes corresponding to intersections and edges corresponding to roads or corridors. Representing the topologies as spatial or geospatial graphs would have been more realistic, capturing factors such as one-way streets, distances and elevation which all impact evacuation routing and would also be immediately applicable to real locations. However, by using simplified examples of cities we can guarantee a comparable performance and ensure that the difference between the algorithms is due to the routing strategy and human behaviours rather than the network layout. Fictional topologies also allow for the networks to constructed to deliberately represent different conditions.
+For all the topologies the number of start and exit locations will be held constant in order to focus on the network structure rather than confounding the results with number of exits (more could cause faster evacuations) or start locations (less could lead to more congestion at the beginning). This assumption is idealised as in real evacuations the number of exits and starts will varying widely, such as high-rise buildings, stadiums or city evacuations, so we could be underrepresenting the number of safe locations which influences many evacuation outcomes.
+
+Additionally, for the following topologies the edge weight is set to one in order to simplify the model and focus on the structural properties of the network. This assumption treats all edges with having equal travel costs which avoids the need to specify distances. For the same reason, all nodes have the same capacity constraints, assuming every agent location can hold the same number of evacuees. If this capacity is exceeded, congestion forms at the node blocking further movements until the density decreases. When the nodes reach capacity, this will be representing the real-world bottlenecks which appear in evacuations such as in corridors or narrow streets. This simplification has limitations as in real world evacuations, routes differ in length and agent locations have differing capacities. Ignoring these variations can mask important routing effects such as avoiding hazard areas or longer distance routes.
+
+The above design choices have been selected as this is an initial exploratory study of network topology and human behaviours and allow for a cleaner comparison of routing behaviour and human behaviours across the network structures, but it does limit the comparison of the results with empirically informed networks.
+
+The first grid like topology represents a grid city, such as a city from in a dense urban area. The edges between nodes represent the streets between blocks of buildings and agents are not permitted to move “into buildings”, so all movement is constrained to the street network.  The high connectivity and multiple parallel routes will create a wide range of paths to exits. This makes the grid topology a useful test case for studying how agents distribute themselves across many alternative routes.
+
+The next is the moderate-complexity topology, this represents a partially obstructed evacuation environment, such as a scenario where certain routes have become blocked or inaccessible. By removing a subset of nodes and edges from the grid the networks will product uneven route distribution where some edges become heavily dependent in reaching an exit location and short alternative routes may not always be an option. This makes the moderate topology useful for comparing the routing strategies when paths become more constrained but there are still alternative paths.
+
+The final topology is bottleneck-constrained, this is meant to represent evacuation scenarios where there are limited initial path choices. An example of this might be stadium or venue evacuations, initially all evacuees must follow limited routes but once out the initial area they have more options to finding safe locations. By limiting the number of initial edges from the start nodes, agents will have to share these initial routes resulting in high congestion levels. This makes the bottleneck-constrained topology a useful test for understanding how routing strategies perform when the environment created unavoidable conflicts.
+
+\subsection{Agents}
+Agents will have a range of individual characteristics representing walking speed (physical limitation such as age and vulnerabilities), delayed starts (not all agents will react to situations at the same rate) and a compliance (will agents follow indicated routes or focus on selfish routes to get to safety). The agents’ characteristics and start location in each topology will be the same across experiment seeds and will be randomly generated at the start of the simulation. This will ensure that the comparison between the routing algorithms will be due to routing choices and not the variation is not due to start locations or different behaviours (e.g. one algorithm has a quicker average walking speed). For all the following attributes, the model assumes they remain constant over time. This simplification improved reproducibility and analysis of the outcomes, however it is not reflective of real evacuation situations, where agents will experience dynamic changes such as increasing panic levels or shifting compliance.
+
+The agents walking speed will be encoded as three different options: one, two or three. These categories represent the time it takes to traverse an edge with speed one the quickest someone could walk. This simulation assumes walking speed is not interrupted by terrain or environmental factors. A standard walking speed used in most research is 1.35m/s identified by Fruin (1970), studies have shown this can increase to 1.6-2.2m/s (Zhao et al., 2017) in evacuation situations. Additionally, GOV UK (2025) highlighted that people with limited physical abilities walk in the range of 0.2-0.5m/s. The three walking speeds selected represent these speeds in a simpler way, where slowest speed (0.5m/s) represents approximately a third of the speed of the fastest walkers (1.6m/s). These discrete walking speeds are a simplification than a more realistic continuous distribution so it may not capture full human variability found in evacuations. Each agent is randomly assigned one of these categories according to proportion of the population that these groups represent in the evacuation scenario, for this project these where set as 60:30:10\% respectively. This weighting assumption allows the model to capture the impact of different weights on evacuation time and congestion, but this is a significant simplification of reality as the mix of abilities will vary by building type, for example universities are likely to have more abled bodied people than a hospital.
+
+Agents will also be encoded with differing delayed start values; zero, one or two. In evacuation situations it is rare that everyone begins moving at exactly the same time, and even when people become aware simultaneously, they do not all react or evacuate at the same pace. This delayed start attribute represents the differing pre-movement delays which are commonly observed across human evacuations (Fahy, R.F. and Proulx, 2001). In this experiment the delay values represent the number of time steps an agent will wait before starting the exit route journey: zero represents an immediate response, one a moderate delay and two the longer delayed start such as waiting for an explicit evacuation instruction. Forssberg et al. (2019) analysed 2486 data points and found that pre-movement times can be represented as a lognormal or loglogistic distribution, so the three delay levels will be assigned to agents following a discrete approximation of this with [0.4, 0.4, 0.2] respectively. Although this is simplification of the continuous variation in real pre-movement, and assumes all people will delay, it captures the general right skewed nature of evacuation start behaviour. Additionally, this model assumes delay is fixed to the start of the journey, although delays can occur at any point as information’s spreads or risk becomes clearer (Bode and Codling, 2018). 
+
+The final human attribute which will be evaluated is a human compliance attribute. For this each agent will be assigned a Boolean value to indicate if they can be part of the genetic algorithm route optimisation (1 = compliant) or if they instead will choose the selfish, shortest path (0 = non-compliant). This will directly encode a common trade off in evacuation behaviour between following centralised guidance and pursuing individually optimal routes. Encoding compliance as a single binary value, simplifies complex human behaviours as agents may choose to be compliant in some sections of an evacuation process, for example near authority figures but not otherwise. However, it allows for an analysis of how the overall evacuation outcomes vary as compliance becomes more of a risk.
+
+The design of this project focuses on walking speed, delayed starts and routing compliance because they directly affect evacuations time, congestion and the gap between greedy and centrally optimised routing. Other attributes which are present in evacuations such as panic, herd behaviour or familiarity also impact evacuation time but become more complex to model. 
+
+\section{Routing Algorithms}
+\subsection{Genetic Algorithm}
+The GA will follow the traditional methodology with changes to the fitness function to ensure that human behaviours are considered as part of the optimisation process. 
+The fitness function will focus on the total evacuation time for all agents across the chromosome. Each chromosome encodes a candidate solution as a list containing the proposed path for the corresponding agent. In traditional genetic algorithm terminology, a gene is a single position in the chromosome, and in this implementation each gene is a single agent’s path. At the initialisation phase of each chromosome a random path is created from a pre-defined start point to any exit in the network. In order to ensure that each chromosome has a reproducible, random path a Key Manager will be utilised, this ensures the results can be reproduce and that each chromosome has a different starting path ensuring population diversity. In order to simplify the modelling process and avoid the genetic algorithm becoming stuck with long routes, each time a route is created and updated any potential loops are removed from the path, this assumes that evacuees would not just keep walking in circles, although it is worth noting that in reality this can happen especially in scenarios where people are panicked and not paying full attention.
+
+An agent’s total evacuation time is made up of two key components: the length of the path (how many nodes from start to exit points) and the amount of congestion experienced. An agent will experience a congestion delay if they are at a node which the capacity is exceeded, and they are not selected as a node to move through the node. The agent will wait at the node until the number of agents drops below the capacity or they are selected as a node to go through. Any agent which was previously at the node will have a priority over new agents arriving at the node for the first time steps they arrive at but after that agents are randomly selected as to whether they progress or have to wait. Another option considered was a weakly time dependent model for congestion where delays didn’t propagate forward, however this would greatly exaggerate the congestion effect where agents are consistently getting stuck at the same nodes each time step. 
+
+Additionally, when walking speed and delayed start behaviour are turned on, they will affect fitness function. The agents walking speed will become a multiple to the path length so slower agents will take three timesteps to traverse between nodes and delayed starts will stop agents from moving for the initial delay period, adding a delay to the total time. The compliance behaviour will not directly influence the fitness function but instead replaces the GA path with the shortest path. The fitness function will likely take the maximum agent path value, however values such as mean and median will be considered to ensure the GA balances overall vs worse performance. While this fitness function explicitly optimises paths in the presence of human behaviours, it treats each agent’s path as fixed once generated and cannot adapt to dynamic changes during a simulation which limits its ability to represent changing risks in real time.
+
+\begin{equation}
+    f(c) = \max_{i \in \mathcal{A}} (S_i \cdot \mathrm{length}(p_i) + D_i + C_i)
+    \label{eq:fitness-function}
+\end{equation}
+
+\noindent The fitness function $f$ for a chromosome $c$ seen in \autoref{eq:fitness-function} is made up of: $\mathcal{A}$ is the set of agents and for each agent $i$ the walking speed ($S_i$), $length$ of the path ($p_i$), delayed start ($D_i$) and congestion delay ($C_i$). For delayed starts and walking speed if they are not turned on for an experiment they are set to the default values, 0 and 1 respectively.
+
+The performance of the GA depends on the implementation and tuning of its core operators: parent selection, crossover, mutation and survivor selection.
+
+The genetic algorithm will use a roulette parent selection operator. Roulette select involves taking the population of chromosomes, ordering them by their fitness value and assigning each a probability of being selected as a parent in the next evolution proportional to its fitness value. This method ensures that better solutions have a higher chance of moving through the generations whilst still ensuring that lower fitness solutions still can come through in order to maintain diversity. One concern with roulette selection is that if a chromosome dominates the wheel of finesses, it could cause premature convergence. To monitor this the metrics in \autoref{table:parent-selection} will be used during experimentation. If any show undesirable behaviours, the algorithm may switch to an alternative selection method such tournament or rank selection will be used.
+
+\begin{table}[htb]
+  \bigskip
+  \begin{center}
+    \begin{tabular}{| p{2.5cm} | p{5.2cm} | l | p{5cm} |}
+      \hline
+      Metric & Reason & Equation & Thresholds \\
+      \hline
+      \hline
+      Coefficient of Variance & How spread out the fitness values ($f$) are in comparison to the mean value. & $\frac{std(f)}{mean(f)}$ & $\leq 5\%$ values are too similar and $\geq 30\%$ one solution is dominating. \\
+
+      Dominance Ratio & Shows the ratio of best to worst fitness values. ($f$) & $\frac{\max(f)}{\min(f)}$ & $<1.5$ results are too similar and $>10$ the best solution dominates. \\
+
+      Best Wheel Share & Proportion of the wheel the best chromosome takes up. & $\frac{\max(\mathrm{inverse\ f})}{sum(\mathrm{inverse\ f})}$ & Between $20-40\%$. \\
+
+      \hline
+    \end{tabular}
+  \end{center}
+\caption{Parent selection performance metrics}
+\label{table:parent-selection}
+\end{table}
+
+In the crossover operator, for each set of parents the algorithm will first check whether child candidates will be created according to a pre-defined crossover probability. If crossover occurs, the two parent chromosomes are taken and the algorithm loop through each agent. For every agent we check to see if the paths have an overlapping crossover point, if they don’t then the parent paths are carried directly forward into mutation. If they do a random overlap point is selected and the paths for the agents are swapped, because crossover is performed at the agent‑level and only uses overlapping nodes as crossover points, the resulting paths remain valid, and there is no need to add extra logic to “repair” invalid routes or to fall back to greedy shortcuts. This simplifies the comparison between routed paths and ensures that the GA‑search space remains constrained to feasible evacuation routes. However, agent level crossover can limit the space of possible new ideas as the algorithm might struggle to combine ideas from different routing patterns which could slow exploration.
+
+For the mutation operator, for each agent in a chromosome is tested independently against the mutation probability threshold. In this implementation, mutation occurs by allowing an agent to select a new exit to go to (including their current one), then a point along the agent’s path is selected and a new path is creating using an epsilon-greedy path selection. This method was selected over a purely greedy path selection strategy as it preserves a balance exploration vs exploitation. This technique keeps routes valid; however, it still likely oversimplifies human behaviour changes in evacuation as it assumes local path adjustment rather than a broader change in decision making. It also does not explicitly model panic-driven behaviours or communication effects, instead representing these indirectly through the balance between exploration and exploitation
+
+The final operator in the GA is the survivor selector operator, in most literature the next generation of the population is made up of the highest fitness between children and parents (elitism). For this project a hybrid percentage-based selection approach has been selected where only a certain percentage of the parent selection will be carried through to the next generation. This method was selected in order to preserve exploration by avoiding discarding immature route structures before they have the chance to evolve. This approach may result in a delayed convergence in comparison to a pure elitism approach as weaker parents can survive for longer than necessary. To validate this choice three variants of survivor selection will be compared to ensure the algorithm converges: hybrid percentage, elitism and children only.
+
+The termination strategy for the genetic algorithm will be when it reaches a defined maximum number of generations. This straightforward approach ensures computational traceability while allowing sufficient time for convergence. This parameter will be tuned experimentally to balance solution quality against runtime. However, this approach still risks stopping before convergence or unnecessary computation.
+
+The genetic algorithm will have a significant number of parameters which will need tuning before the results can be ran and analysed, \autoref{table:ga-parameters}. Due to the high computation costs of full grid search across multiple parameters and scenarios, a sequential tuning approach is used instead. Each parameter will be optimised across multiple seeds in the moderate topology, while hold other fixed at those widely used in literature or the tuned value. The moderate topology has been used as it should capture the key congestion dynamics affecting evacuation time without extreme edge cases. The key limitation of this approach is that it assumes parameters independence and could miss important interactions and result in suboptimal performance across other topologies.
+
+\begin{table}[htb]
+  \bigskip
+  \begin{center}
+    \begin{tabular}{| p{3cm} | p{6.5cm} | p{5cm} |}
+      \hline
+      Parameter & Description & Options \\
+      \hline
+      \hline
+      Crossover Threshold & Threshold in which if less than crossover will occur. & [0.4, 0.5, \textbf{0.6, 0.7, 0.8}, 0.9]\\
+
+      Mutation Threshold &  Threshold in which if less than mutation will occur. & [\textbf{0.01, 0.05}, 0.1, 0.2, 0.3, 0.4] \\
+
+      Epsilon & Threshold to decide in an agent should pick a random or greedy node. & [\textbf{0, 0.2}, 0.4, 0.6, 0.8, 1] \\
+
+      Maximum Evolutions & Number of evolutions before the algorithm is terminated. & Maximum 200 and metrics analysed across evolutions. \\
+
+      Population Size & Size of population used. & [5, 10, 20, \textbf{50, 100}, 200]\\
+
+      Number of Agents & Number of agents in the simulation. & [10, 20, 50, 100, 200] \\
+
+      Fitness Function ($\alpha$) & Fitness function aggregation formula for each chromosome. & Max, median, mean and combinations balanced by $\alpha$. \\
+
+      Parent Selection Method & Approach to parent selection. & Elite Percentage, Elite, Children only \\
+
+      Survivor Selection Method & Approach to decide what the next population will be. & Roulette, Tournament (N=3), Tournament (N=5) \\
+
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption[Genetic Algorithm parameters]{Genetic Algorithm parameters, bold highlights are ones which are widely used.}
+  \label{table:ga-parameters}
+\end{table}
+
+\subsection{Shortest Path Baseline}
+For the shortest path baseline, a greedy algorithm will be used to route each agent independently to find the shortest path to any exit from their pre-defined starting node. In the situation where there are multiple shortest paths to different exits, or to the same exit, a random path from the options will be selected. This choice to select from all possible routes, rather than the first found route in the algorithm, reflects real evacuations where evacuees will naturally split across equivalent exits, for example, if there were two stairways out of a stadium for example the population would likely split across the two equally. First-found selection would be unrealistic from the increase in artificial congestion levels from all agents taking the exact same route. Greedy shortest path is the industry standard in evacuation simulation software. So, picking another metaheuristic baseline would test metaheuristic vs metaheuristic rather than the impact of behaviour on the estimates used for evacuation planning.
+
+\section{Experimental Design}
+The parameters found in \autoref{table:ga-parameters} will be tuned and selected ahead of the following experiments. The experiments will be done across all three topologies and 10 different seeds to validate the statistical significance.
+
+The first experiment will compare the performance of the greedy algorithm vs the genetic algorithm with no human behaviours just comparing congestion, dispersion and total evacuation time, directly addressing RQ1 and RQ2. This allows us to understand what the gap looks like before any human behaviours are added. This establishes the baseline performance gap due to selfish and global optimisation.
+
+The second experiment introduces agent walking speed multipliers (x1, x2, x3), addressing RQ3a testing how physical limitations affect both the algorithms performance and if the genetic algorithm adapts routes to priorities slow agents and if congestion hotspots shift dynamically.
+
+The third experiment tests delayed starts (+0, +1, +2) to address RQ3b, to examine how temporal staggering impacts congestion and total evacuation time and if the genetic algorithm learns start-time aware routing patterns.
+
+The fourth experiment varies compliance rates, from 0\% (no compliance) to 100\% (full compliance), addressing RQ3c. This experiment will help to determine the breakdown threshold where selfish behaviour degrades the global optimisation benefits.
+
+The fifth experiment combines all human factors (speed, delays and compliance) to address the final research question (RQ3d), this will quantify the cumulative impact of realistic behaviours on the genetic algorithm and greedy performance gap. This experiment will also be used for the dispersion analysis of agents near start zones over time (RQ2).
+
+\section{Metrics}
+\subsection{Genetic Algorithm Monitoring Metrics}
+The metrics in \autoref{table:ga-monitoring-metrics}, were used to track the performance of the genetic algorithm (GA) over the evolutions.
+
+\begin{table}[htb]
+  \bigskip
+  \begin{center}
+    \begin{tabular}{| p{3cm} | p{5cm} | p{6.5cm} |}
+      \hline
+      Metric & Description & Reasoning \\
+      \hline
+      \hline
+      Best Fitness Value & Lowest value across all chromosomes. & Tracks if the GA is finding better solutions over time. \\
+
+      Mean Fitness Value & Average value across all chromosomes. & Indicates the overall quality of the population. \\
+
+      Worst Fitness Value & Highest value across all chromosomes. & With the above used to understand the spread of the population. \\
+
+      Mean Path Length & Average number of nodes across all agent paths. & Isolates if improvements are from shorter routes or reduced congestion. \\
+
+      Mean Congestion Delay & Average congestion penalty across all agents. & Isolations congestion to see if the GA is successfully distributing agents. \\
+
+      Population Diversity & A measure of how varied the chromosome are. & Indicates premature convergence or if stuck in local optima. \\
+
+      Run Time & Each stage and total run time. & Understand the impact of parameter choices versus performance. \\
+
+      \hline
+    \end{tabular}
+  \end{center}
+\caption{Genetic Algorithm monitoring metrics per evolution}
+\label{table:ga-monitoring-metrics}
+\end{table}
+
+\subsection{Evaluation Metrics}
+The metrics in \autoref{table:experiment-metrics} will be calculated and compared across multiple seeds to assess algorithm performance within each topology. In addition to the metrics listed, research question specific measures are reported in the results section where required.
+
+\begin{table}[htb]
+  \bigskip
+  \begin{center}
+    \begin{tabular}{| p{3.5cm} | p{5.5cm} | p{5.5cm} |}
+      \hline
+      Metric & Description & Reasoning \\
+      \hline
+      \hline
+      Total Evacuation Time & How long to get all agents out (i.e.worst performing agent). & Primary metric for overall performance. \\
+
+      Average Evacuation Time & How long on average for an agent to exit. & Helps to understand the average population. \\
+
+      Mean Congestion Delay & How long on average were agents delayed. & Isolates if performance is drive by cognestion management. \\
+
+      Mean Path Length & On average how long was the path the agents took (i.e. number of nodes). & Isolates the path length other factors e.g. congestion and walking speed. \\
+
+      Route Efficiency & Comparison of the shortest path length versus the actual path length. & Captures how much path deviation was required to reduce congestion (GA only). \\
+
+      Dispersion Rate & Number of agents remaining within a number of nodes (N) from their starting position. & Measures how quickly agents leave the initial danger zone during early evacuations. \\
+
+      \hline
+    \end{tabular}
+  \end{center}
+\caption[Algorithm comparison metrics]{Metrics to compare algortihm performance for the best solution.}
+\label{table:experiment-metrics}
+\end{table}
+
+\section{Assumptions and Limitations}
+The key assumptions have been discussed above, but a summarised version can be found below.
+\begin{itemize}
+  \item Agents are rational route choosers.
+  \item Static Environment with no dynamic hazards.
+  \item All edges have equal weight and all nodes have equal.
+  \item Agents have fixed behavioural throughout a simulation.
+  \item Start and exit locations are fixed across seeds so performance differences come from the routing strategy not the change in setup.
+  \item Paths are loop-free to avoid unrealistic cycling.
+\end{itemize}
+
+\vspace{1em}
+Additionally, a summarised version of the previously discussed limitations is:
+\begin{itemize}
+  \item Human behaviour is simplified into discrete categories so full variability is not captured.
+  \item Behaviour does not evolve over time so simplifies human behaviours.
+  \item Congestion is abstracted through node capacity rather than fine-grained interactions.
+  \item Topology is fictional and idealised, allowing for comparison but limits real world applications.
+  \item Edge weights and node capacities are uniform, so route length and terrain difficulty are not represented.
+  \item Sequential tuning may miss parameter interactions and not transfer perfectly across topologies.
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Implementation and Testing}
+\section{Implementation Overview}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Useful stuff}
@@ -199,72 +439,59 @@ Evacuations occur in a range of different scenarios; evacuation planning needs t
 
 %-------------------------------------------------------------------------------
 \begin{table}[htb]
+  \bigskip
+  \begin{center}
+    \begin{tabular}{|l|l|}
+      \hline
+      Items & Values \\
+      \hline
+      \hline
+      Item 1 & Value 1 \\
+      Item 2 & Value 2 \\
+      \hline
+    \end{tabular}
+  \end{center}
 \caption{An example table}
-\bigskip
-\begin{center}
 \label{Example-Table}
-\begin{tabular}{|l|l|}
-\hline
-Items & Values \\
-\hline
-\hline
-Item 1 & Value 1 \\
-Item 2 & Value 2 \\
-\hline
-\end{tabular}
-\end{center}
 \end{table}
 
 Another section, just for good measure. You can reference a table, figure or equation using \verb|\ref|, just like this reference to Table \ref{Example-Table}.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Example Lists}
 
-\chapter{Design}
+%-------------------------------------------------------------------------------
+\subsection{Enumerated}
 
-This is the chapter in which you review your design decisions at various
-levels and critique the design process.
+\begin{enumerate}
+\item Example enumerated list:
+  \begin{itemize}
+  \item a nested enumerated list item;
+  \item and another one.
+  \end{itemize}
+\item Second item in the list.
+\end{enumerate}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{dissertation_images/moderate-complexity_topology.png}
-    \caption{Your caption here}
-    \label{fig:my-image}
-\end{figure}
+%-------------------------------------------------------------------------------
+\subsection{Itemised}
 
+\begin{itemize}
+\item Example itemised list.
+  \begin{itemize}
+  \item A nested itemised list item.
+  \end{itemize}
+\item Second item in the list.
+\end{itemize}
 
+%-------------------------------------------------------------------------------
+\subsection{Description}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{../../dissertdissertation_images_and_stuff/architecture_diagram_design.png}
-    \caption{Your caption here}
-    \label{fig:my-image2}
-\end{figure}
-
-\autoref{fig:my-image2} 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Implementation and Testing}
-
-This is the chapter in which you review the implementation and testing decisions and issues, and critique these processes.
-
-Code can be output inline using \verb@\lstinline|some code|@.  For example, this code is inline: \lstinline|public static int example = 0;| (we have used the character \verb@|@ as a delimiter, but any non-reserved character not in the code text can be used.)
-
-Code snippets can be output using the \verb|\begin{lstlisting} ... \end{lstlisting}|
-environment with the code given in the environment. For example, consider listing \ref{Example-Code}, below.
-
-\begin{lstlisting}[breaklines,breakatwhitespace,caption={Example code},label=Example-Code]
-public static void main() {
-
-  System.out.println("Hello World");
-
-}
-\end{lstlisting}
-
-Code listings are produced using the package `listings'.  This has many useful options, so have a look at the package documentation for further ideas.
+\begin{description}
+\item[Item 1]First item in the list.
+\item[Item 2]Second item in the list.
+\end{description}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Results}
 

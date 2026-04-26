@@ -1,0 +1,140 @@
+\begin{thebibliography}{22}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{Available from: }
+\providecommand{\urldateprefix}{Accessed }
+\providecommand{\selectlanguage}[1]{\relax}
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Abdelgawad and Abdulhai(2009)}]{ABBELGAWAD_2009}
+\bibinfo{author}{Abdelgawad, H.} and \bibinfo{author}{Abdulhai, B.}, \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Emergency evacuation planning as a network design problem: a critical review}.
+\newblock \emph{\bibinfo{journal}{Transportation letters}} [Online], \bibinfo{volume}{1}(\bibinfo{number}{1}), pp.\bibinfo{pages}{41--58}.
+\newblock \urlprefix\url{https://doi.org/10.3328/tl.2009.01.01.41-58}.
+
+\bibitem[{Albis, Gawad and Radhwi(2015)}]{ALBIS_SHOPPING_CENTERS_2015}
+\bibinfo{author}{Albis, K.A.}, \bibinfo{author}{Gawad, A.F.A.} and \bibinfo{author}{Radhwi, M.N.}, \bibinfo{year}{2015}.
+\newblock \bibinfo{title}{Fire dynamics simulation and evacuation for a large shopping center (mall), part ii, evacuation scenarios}.
+\newblock \emph{\bibinfo{journal}{American journal of energy engineering}} [Online], \bibinfo{volume}{3}(\bibinfo{number}{4}).
+\newblock \urlprefix\url{https://doi.org/10.11648/j.ajee.s.2015030401.15}.
+
+\bibitem[{Aldahlawi, Akbari and Lawson(2024)}]{ALDAHLAWI_2024}
+\bibinfo{author}{Aldahlawi, R.Y.}, \bibinfo{author}{Akbari, V.} and \bibinfo{author}{Lawson, G.}, \bibinfo{year}{2024}.
+\newblock \bibinfo{title}{A systematic review of methodologies for human behavior modelling and routing optimization in large-scale evacuation planning}.
+\newblock \emph{\bibinfo{journal}{International journal of disaster risk reduction}} [Online], \bibinfo{volume}{110}.
+\newblock \bibinfo{note}{Frequent and escalating natural disasters pose an increasing threat to society. Paper reviews}.
+\newblock \urlprefix\url{https://doi.org/10.1016/j.ijdrr.2024.104638}.
+
+\bibitem[{Alsnih and Stopher(2004)}]{ALSNIH_2004}
+\bibinfo{author}{Alsnih, R.} and \bibinfo{author}{Stopher, P.R.}, \bibinfo{year}{2004}.
+\newblock \bibinfo{title}{Review of procedures associated with devising emergency evacuation plans}.
+\newblock \emph{\bibinfo{journal}{Transportation research record: Journal of the transportation research board}} [Online], \bibinfo{volume}{1865}(\bibinfo{number}{1}), pp.\bibinfo{pages}{89--97}.
+\newblock \urlprefix\url{https://doi.org/10.3141/1865-13}.
+
+\bibitem[{Chen et~al.(2023)Chen, Lu, Jiao and Shi}]{CHEN_C_2023}
+\bibinfo{author}{Chen, C.}, \bibinfo{author}{Lu, T.}, \bibinfo{author}{Jiao, W.} and \bibinfo{author}{Shi, C.}, \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{An extended model for crowd evacuation considering crowding and stampede effects under the internal crushing}.
+\newblock \emph{\bibinfo{journal}{Physica a: Statistical mechanics and its applications}} [Online], \bibinfo{volume}{625}(\bibinfo{number}{1}).
+\newblock \urlprefix\url{https://doi.org/10.1016/j.physa.2023.129002}.
+
+\bibitem[{De~Iuliis et~al.(2023)De~Iuliis, Battegazzorre, Domaneschi, Cimellaro and Bottino}]{DE_IULISIS_2023_SELFISH}
+\bibinfo{author}{De~Iuliis, M.}, \bibinfo{author}{Battegazzorre, E.}, \bibinfo{author}{Domaneschi, M.}, \bibinfo{author}{Cimellaro, G.P.} and \bibinfo{author}{Bottino, A.G.}, \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{Large scale simulation of pedestrian seismic evacuation including panic behavior}.
+\newblock \emph{\bibinfo{journal}{Sustainable cities and society}} [Online], \bibinfo{volume}{94}.
+\newblock \urlprefix\url{https://doi.org/10.1016/j.scs.2023.104527}.
+
+\bibitem[{Drury, Cocking and Reicher(2009)}]{COCKING_2009_SELFISH}
+\bibinfo{author}{Drury, J.}, \bibinfo{author}{Cocking, C.} and \bibinfo{author}{Reicher, S.}, \bibinfo{year}{2009}.
+\newblock \bibinfo{title}{Everyone for themselves? a comparative study of crowd solidarity among emergency survivors}.
+\newblock \emph{\bibinfo{journal}{Br j soc psychol}} [Online], \bibinfo{volume}{48}(\bibinfo{number}{Pt 3}), pp.\bibinfo{pages}{487--506}.
+\newblock \urlprefix\url{https://doi.org/10.1348/014466608X357893}.
+
+\bibitem[{Ganjeh and Einollahi(2016)}]{GANJEH_MECCA_2016}
+\bibinfo{author}{Ganjeh, M.} and \bibinfo{author}{Einollahi, B.}, \bibinfo{year}{2016}.
+\newblock \bibinfo{title}{Mass fatalities in hajj in 2015}.
+\newblock \emph{\bibinfo{journal}{Trauma mon}} [Online], \bibinfo{volume}{21}(\bibinfo{number}{5}), p.\bibinfo{pages}{e43253}.
+\newblock \bibinfo{note}{Ganjeh, Mohammad Einollahi, Behzad eng Editorial Iran 2017/02/12 Trauma Mon. 2016 Nov 5;21(5):e43253. doi: 10.5812/traumamon.43253. eCollection 2016 Nov.}
+\newblock \urlprefix\url{https://doi.org/10.5812/traumamon.43253}.
+
+\bibitem[{Kamyabniya et~al.(2024)Kamyabniya, Sauré, Salman, Bénichou and Patrick}]{KAMYABNIYA_2024}
+\bibinfo{author}{Kamyabniya, A.}, \bibinfo{author}{Sauré, A.}, \bibinfo{author}{Salman, F.S.}, \bibinfo{author}{Bénichou, N.} and \bibinfo{author}{Patrick, J.}, \bibinfo{year}{2024}.
+\newblock \bibinfo{title}{Optimization models for disaster response operations: a literature review}.
+\newblock \emph{\bibinfo{journal}{Or spectrum}} [Online], \bibinfo{volume}{46}(\bibinfo{number}{3}), pp.\bibinfo{pages}{737--783}.
+\newblock \urlprefix\url{https://doi.org/10.1007/s00291-024-00750-6}.
+
+\bibitem[{Le~Bon(2024)}]{LE_BON_2024_PANIC}
+\bibinfo{author}{Le~Bon, G.}, \bibinfo{year}{2024}.
+\newblock \emph{\bibinfo{title}{The crowd: A study of the popular mind}} [Online], \bibinfo{type}{book section}~\bibinfo{chapter}{1}, p.\bibinfo{pages}{13}.
+\newblock \urlprefix\url{https://books.google.co.uk/books?hl=en&lr=&id=SPk5EQAAQBAJ&oi=fnd&pg=PA13&ots=wmPIVZaHwE&sig=BahvuvvlvUQRmlmlx5kGH4QD-Wo&redir_esc=y#v=onepage&q&f=false}.
+
+\bibitem[{Lovreglio, Ronchi and Kinsey(2019)}]{LOVREGLIO_2019_SURVEY}
+\bibinfo{author}{Lovreglio, R.}, \bibinfo{author}{Ronchi, E.} and \bibinfo{author}{Kinsey, M.J.}, \bibinfo{year}{2019}.
+\newblock \bibinfo{title}{An online survey of pedestrian evacuation model usage and users}.
+\newblock \emph{\bibinfo{journal}{Fire technology}} [Online], \bibinfo{volume}{56}(\bibinfo{number}{3}), pp.\bibinfo{pages}{1133--1153}.
+\newblock \urlprefix\url{https://doi.org/10.1007/s10694-019-00923-8}.
+
+\bibitem[{Lügering, Tepeli and Sieben(2023)}]{LUGERING_2023_STAMPEDE}
+\bibinfo{author}{Lügering, H.}, \bibinfo{author}{Tepeli, D.} and \bibinfo{author}{Sieben, A.}, \bibinfo{year}{2023}.
+\newblock \bibinfo{title}{It’s (not) just a matter of terminology: Everyday understanding of “mass panic” and alternative terms}.
+\newblock \emph{\bibinfo{journal}{Safety science}} [Online], \bibinfo{volume}{163}.
+\newblock \urlprefix\url{https://doi.org/10.1016/j.ssci.2023.106123}.
+
+\bibitem[{Organisation(2025)}]{WHO_CYCLONE_2026}
+\bibinfo{author}{Organisation, W.H.}, \bibinfo{year}{2025}.
+\newblock \bibinfo{title}{Cyclone ditwah 2025} [Online].
+\newblock \urlprefix\url{https://www.who.int/srilanka/emergencies/cyclone-ditwah-2025}.
+
+\bibitem[{Ritchie and Rosado(2024)}]{RITCHIE_2024}
+\bibinfo{author}{Ritchie, H.} and \bibinfo{author}{Rosado, P.}, \bibinfo{year}{2024}.
+\newblock \bibinfo{title}{Is the number of natural disasters increasing?} [Online].
+\newblock \urlprefix\url{https://ourworldindata.org/disaster-database-limitations}.
+
+\bibitem[{Ronchi and Nilsson(2013)}]{RONCHI_OFFICES_2013}
+\bibinfo{author}{Ronchi, E.} and \bibinfo{author}{Nilsson, D.}, \bibinfo{year}{2013}.
+\newblock \bibinfo{title}{Fire evacuation in high-rise buildings: a review of human behaviour and modelling research}.
+\newblock \emph{\bibinfo{journal}{Fire science reviews}} [Online], \bibinfo{volume}{2}(\bibinfo{number}{1}).
+\newblock \urlprefix\url{https://doi.org/10.1186/2193-0414-2-7}.
+
+\bibitem[{Sahebi et~al.(2021)Sahebi, Jahangiri, Alibabaei and Khorasani-Zavareh}]{SAHEBI_HOSPITALS_2021}
+\bibinfo{author}{Sahebi, A.}, \bibinfo{author}{Jahangiri, K.}, \bibinfo{author}{Alibabaei, A.} and \bibinfo{author}{Khorasani-Zavareh, D.}, \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{Factors influencing hospital emergency evacuation during fire: A systematic literature review}.
+\newblock \emph{\bibinfo{journal}{Int j prev med}} [Online], \bibinfo{volume}{12}, p.\bibinfo{pages}{147}.
+\newblock \urlprefix\url{https://doi.org/10.4103/ijpvm.IJPVM_653_20}.
+
+\bibitem[{Sarma, Sinha and Sinha(2022)}]{SARMA_URBAN_2022}
+\bibinfo{author}{Sarma, S.}, \bibinfo{author}{Sinha, B.} and \bibinfo{author}{Sinha, K.}, \bibinfo{year}{2022}.
+\newblock \bibinfo{title}{Efficient traffic routing in smart cities to minimize evacuation time during disasters} [Online].
+\newblock \urlprefix\url{https://doi.org/https://doi.org/10.1007/978-3-030-94876-4_13}.
+
+\bibitem[{Senanayake et~al.(2024)Senanayake, Kieu, Zou and Dirks}]{SENANAYAKE_2024_PLATFORMS}
+\bibinfo{author}{Senanayake, G.}, \bibinfo{author}{Kieu, M.L.}, \bibinfo{author}{Zou, Y.} and \bibinfo{author}{Dirks, K.N.}, \bibinfo{year}{2024}.
+\newblock \bibinfo{title}{Agent-based simulation for pedestrian evacuation: A systematic literature review}.
+\newblock \emph{\bibinfo{journal}{International journal of disaster risk reduction}} [Online], \bibinfo{volume}{3}.
+\newblock \urlprefix\url{https://doi.org/10.1016/j.ijdrr.2024.104705}.
+
+\bibitem[{Son et~al.(2025)Son, Ham, Jin and Park}]{SON_HALLOWEEN_2025}
+\bibinfo{author}{Son, C.}, \bibinfo{author}{Ham, D.H.}, \bibinfo{author}{Jin, S.} and \bibinfo{author}{Park, T.}, \bibinfo{year}{2025}.
+\newblock \bibinfo{title}{158 deaths at halloween night: An accimap analysis of 2022 itaewon crowd crush in south korea}.
+\newblock \emph{\bibinfo{journal}{Safety science}} [Online], \bibinfo{volume}{184}.
+\newblock \urlprefix\url{https://doi.org/10.1016/j.ssci.2024.106741}.
+
+\bibitem[{Toprakli and Satir(2024)}]{TOPRAKLI_RELIGION_2024}
+\bibinfo{author}{Toprakli, A.Y.} and \bibinfo{author}{Satir, M.S.}, \bibinfo{year}{2024}.
+\newblock \bibinfo{title}{Assessing evacuation risks in prominent historical mosques: An integrated quantitative and qualitative approach via the hm-eri framework}.
+\newblock \emph{\bibinfo{journal}{International journal of disaster risk reduction}} [Online], \bibinfo{volume}{113}.
+\newblock \urlprefix\url{https://doi.org/10.1016/j.ijdrr.2024.104866}.
+
+\bibitem[{Wang, Kyriakidis and Dang(2021)}]{KYRIAKIDIS_2021_CONSIDER}
+\bibinfo{author}{Wang, Y.}, \bibinfo{author}{Kyriakidis, M.} and \bibinfo{author}{Dang, V.N.}, \bibinfo{year}{2021}.
+\newblock \bibinfo{title}{Incorporating human factors in emergency evacuation – an overview of behavioral factors and models}.
+\newblock \emph{\bibinfo{journal}{International journal of disaster risk reduction}} [Online], \bibinfo{volume}{60}.
+\newblock \urlprefix\url{https://doi.org/10.1016/j.ijdrr.2021.102254}.
+
+\bibitem[{Yang, Lin and Kuo(2025)}]{KUO_STADIUMS_2025}
+\bibinfo{author}{Yang, C.H.}, \bibinfo{author}{Lin, C.Y.} and \bibinfo{author}{Kuo, T.W.}, \bibinfo{year}{2025}.
+\newblock \bibinfo{title}{Simulation-based assessment of evacuation efficiency in sports stadiums: Insights from case studies}.
+\newblock \emph{\bibinfo{journal}{Fire}} [Online], \bibinfo{volume}{8}(\bibinfo{number}{6}).
+\newblock \urlprefix\url{https://doi.org/10.3390/fire8060210}.
+
+\end{thebibliography}
