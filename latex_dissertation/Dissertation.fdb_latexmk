@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex Dissertation"] 1777210183 "Dissertation.aux" "Dissertation.bbl" "Dissertation" 1777210317 0
+["bibtex Dissertation"] 1777211542 "Dissertation.aux" "Dissertation.bbl" "Dissertation" 1777211573 0
   "./EndNotesTest.bib" 1777119025 66640 a73097dc20a7c246d80bb5c1478a8dce ""
   "./bathx.bst" 1772294068 49581 be831b8c9da99de90d48d9e06251e392 ""
-  "Dissertation.aux" 1777210317 17412 ddcb0621e3392bab2baf2c6991ab84a3 "pdflatex"
+  "Dissertation.aux" 1777211572 18526 5f389583ec0430f9d1afa0b5ac5114c5 "pdflatex"
   (generated)
   "Dissertation.bbl"
   "Dissertation.blg"
   (rewritten before read)
-["pdflatex"] 1777210314 "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" "Dissertation.pdf" "Dissertation" 1777210317 0
-  "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" 1777210314 79206 a49e766c9d37c5a0180c40de70b0d926 ""
+["pdflatex"] 1777211569 "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" "Dissertation.pdf" "Dissertation" 1777211573 0
+  "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" 1777211566 80100 22895d226203ed8ec5682d8c8b5af28f ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -139,15 +139,20 @@
   "/usr/local/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1699797700 7883460 0273152ab9e22de4369210b63e358595 ""
   "/usr/local/texlive/2023/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
   "Bath-CS-Dissertation.sty" 1772294068 3598 8b299710a2df7a227a574767db9bf804 ""
-  "Dissertation.aux" 1777210317 17412 ddcb0621e3392bab2baf2c6991ab84a3 "pdflatex"
-  "Dissertation.bbl" 1777210183 11135 57c0ac05388a0fc0864e058cd8487782 "bibtex Dissertation"
-  "Dissertation.lof" 1777210317 1606 1c573e0345136f69c38e6dd371ad2465 "pdflatex"
-  "Dissertation.lot" 1777210317 987 71f97e1080ff4e48500663cb9acf4b44 "pdflatex"
-  "Dissertation.out" 1777210317 10922 316e81cb735886fe0d9bb02309d1250a "pdflatex"
-  "Dissertation.tex" 1777210314 79206 a49e766c9d37c5a0180c40de70b0d926 ""
-  "Dissertation.toc" 1777210317 5630 f3079525e2d598adb645f2386d452d0e "pdflatex"
+  "Dissertation.aux" 1777211572 18526 5f389583ec0430f9d1afa0b5ac5114c5 "pdflatex"
+  "Dissertation.bbl" 1777211543 11135 57c0ac05388a0fc0864e058cd8487782 "bibtex Dissertation"
+  "Dissertation.lof" 1777211572 2474 f8ba1c2086e1917ac08310b03e39d487 "pdflatex"
+  "Dissertation.lot" 1777211572 987 71f97e1080ff4e48500663cb9acf4b44 "pdflatex"
+  "Dissertation.out" 1777211572 10922 316e81cb735886fe0d9bb02309d1250a "pdflatex"
+  "Dissertation.tex" 1777211566 80100 22895d226203ed8ec5682d8c8b5af28f ""
+  "Dissertation.toc" 1777211572 5630 34398e43d533a89117fc7715c481326a "pdflatex"
   "dissertation_images/GA_fitness_over_topology.png" 1777206506 234161 75ee4a96a128301f4870055302cea316 ""
   "dissertation_images/agent_characteristics_across_seeds.png" 1777203288 87868 00ce5345d357255075885c6610efb250 ""
+  "dissertation_images/appendix_diagrams/elite_perc_roulette_parent_selection.png" 1777210831 81648 08fb55fc4a6232465d99d57c28d0bbc8 ""
+  "dissertation_images/appendix_diagrams/elite_perc_tournament_3_parent_selection.png" 1777210850 82193 856c195b29caad728900af47e9e2ba75 ""
+  "dissertation_images/appendix_diagrams/elite_perc_tournament_5_parent_selection.png" 1777210861 82310 5e20185a2de1d06bbff61130363d8a54 ""
+  "dissertation_images/appendix_diagrams/survivor_children_tournament_3.png" 1777206246 149933 406f6149088527754a4b6efd7fbda10d ""
+  "dissertation_images/appendix_diagrams/survivor_elite_tournament_3.png" 1777206256 266589 820f7c9aa63c80d71cee5c5fbcdf1d50 ""
   "dissertation_images/architecture_diagram_design.png" 1777195768 42861 83db437cf74f3356f5416b255034ab98 ""
   "dissertation_images/bottleneck-constrained_topology.png" 1777202565 52137 ce20c611226c27144a2ce90c9c81e1d1 ""
   "dissertation_images/bottlneck_topology_ga_num_agents.png" 1777206491 64838 80afbb3f9c2e30b20746a00388d1c898 ""

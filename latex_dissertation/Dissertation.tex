@@ -726,26 +726,49 @@ Number of words until this point, excluding front matter: XXX.
 
 \chapter{Results Diagrams}
 \label{chap:results}
+Additional plots can be found in \texttt{2\_genetic\_algorithm\_hyperparams.ipynb} file in the code repository (\autoref{chap:code}).
 
-The following plots show the different performance of the parent selection and survivor selection tuning:
+The following plots show the different parent selection approaches for Elite Percentage survivor selection.
 
-% appendix_diagrams/parent_selection_performance_metrics_plots.png
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/appendix_diagrams/elite_perc_roulette_parent_selection.png}
+    \caption{Parent Selection Performance Metrics for Roulette Selection}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/appendix_diagrams/elite_perc_tournament_3_parent_selection.png}
+    \caption{Parent Selection Performance Metrics for Tournament Selection (N=3)}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/appendix_diagrams/elite_perc_tournament_5_parent_selection.png}
+    \caption{Parent Selection Performance Metrics for Tournament Selection (N=5)}
+\end{figure}
 
 
+For the survivor selection methods with tournament (N=3) parent selection: 
 
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.9\textwidth]{dissertation_images/selection_methods_tournament_elite_percentage.png}
-%     \caption{TODO}
-%     \label{fig:parent-selection-small-mutation}
-% \end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/appendix_diagrams/survivor_children_tournament_3.png}
+    \caption{Survivor Selection Performance Metrics for Children Only Selection}
+\end{figure}
 
-% \begin{figure}[h]
-%     \centering
-%     \includegraphics[width=0.9\textwidth]{dissertation_images/survivor_elite_perc_tournament_3.png}
-%     \caption[Survivor Selection Fitness Functions]{Elite percentage survivor selection results across 20 seeds, (left) shows the proportion of child, parent and passthrough chromosomes at the end of each evolution and (right) shows the best fitness per generation across the parent and child chromosomes.}
-%     \label{fig:survivor-selection-plot}
-% \end{figure}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/appendix_diagrams/survivor_elite_tournament_3.png}
+    \caption{Survivor Selection Performance Metrics for Elite Selection}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dissertation_images/survivor_elite_perc_tournament_3.png}
+    \caption{Survivor Selection Performance Metrics for Elite Percentage Selection (repeated plot from main text.)}
+\end{figure}
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

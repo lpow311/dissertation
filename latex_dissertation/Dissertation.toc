@@ -60,7 +60,7 @@
 \contentsline {chapter}{References}{30}{chapter*.9}%
 \contentsline {chapter}{\numberline {A}Design Diagrams}{32}{appendix.A}%
 \contentsline {chapter}{\numberline {B}Results Diagrams}{33}{appendix.B}%
-\contentsline {chapter}{\numberline {C}User Documentation}{34}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Raw Results Output}{35}{appendix.D}%
-\contentsline {chapter}{\numberline {E}Code}{36}{appendix.E}%
-\contentsline {section}{\numberline {E.1}File: yourCodeFile.java}{37}{section.E.1}%
+\contentsline {chapter}{\numberline {C}User Documentation}{35}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Raw Results Output}{36}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Code}{37}{appendix.E}%
+\contentsline {section}{\numberline {E.1}File: yourCodeFile.java}{38}{section.E.1}%
