@@ -1,14 +1,15 @@
 # Fdb version 4
-["bibtex Dissertation"] 1777121953 "Dissertation.aux" "Dissertation.bbl" "Dissertation" 1777121955 0
+["bibtex Dissertation"] 1777195689 "Dissertation.aux" "Dissertation.bbl" "Dissertation" 1777195690 2
   "./EndNotesTest.bib" 1777119025 66640 a73097dc20a7c246d80bb5c1478a8dce ""
   "./bathx.bst" 1772294068 49581 be831b8c9da99de90d48d9e06251e392 ""
-  "Dissertation.aux" 1777121955 9160 e67058b347f3c493c89bc16d03873bf1 "pdflatex"
+  "Dissertation.aux" 1777195689 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
   (generated)
   "Dissertation.bbl"
   "Dissertation.blg"
   (rewritten before read)
-["pdflatex"] 1777121953 "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" "Dissertation.pdf" "Dissertation" 1777121955 0
-  "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" 1777121950 31640 e8e077fa7edf27abb3b139c7b0c140d8 ""
+["pdflatex"] 1777195686 "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" "Dissertation.pdf" "Dissertation" 1777195689 2
+  "../../dissertdissertation_images_and_stuff/architecture_diagram_design.png" 0 -1 0 ""
+  "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" 1777195686 32091 8b03e449197b0157b489bbd8c2d2f9a1 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -136,13 +137,14 @@
   "/usr/local/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1699797700 7883460 0273152ab9e22de4369210b63e358595 ""
   "/usr/local/texlive/2023/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
   "Bath-CS-Dissertation.sty" 1772294068 3598 8b299710a2df7a227a574767db9bf804 ""
-  "Dissertation.aux" 1777121955 9160 e67058b347f3c493c89bc16d03873bf1 "pdflatex"
-  "Dissertation.bbl" 1777121953 11135 57c0ac05388a0fc0864e058cd8487782 "bibtex Dissertation"
-  "Dissertation.lof" 1777121955 240 e05ce8f6d55998047d9d56bf4dd44d25 "pdflatex"
-  "Dissertation.lot" 1777121955 328 eae47e1ce7b47fa977beeb3152cba7e5 "pdflatex"
-  "Dissertation.out" 1777121955 6254 9ab39fe9538777e8586616b0c9a1c6d9 "pdflatex"
-  "Dissertation.tex" 1777121950 31640 e8e077fa7edf27abb3b139c7b0c140d8 ""
-  "Dissertation.toc" 1777121955 3140 78ee293fc52f7499ffe7d9eef9fb322e "pdflatex"
+  "Dissertation.aux" 1777195689 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "Dissertation.bbl" 1777195690 0 d41d8cd98f00b204e9800998ecf8427e "bibtex Dissertation"
+  "Dissertation.lof" 0 -1 0 "pdflatex"
+  "Dissertation.lot" 0 -1 0 "pdflatex"
+  "Dissertation.out" 0 -1 0 "pdflatex"
+  "Dissertation.tex" 1777195686 32091 8b03e449197b0157b489bbd8c2d2f9a1 ""
+  "Dissertation.toc" 0 -1 0 "pdflatex"
+  "dissertation_images/moderate-complexity_topology.png" 1777195377 48646 f6be9f1a6e74bf66fe839c2eb6b5c97f ""
   "yourCodeFile.java" 1772294068 137 5f42823a111edc304c299df373b6bc9a ""
   (generated)
   "Dissertation.aux"
