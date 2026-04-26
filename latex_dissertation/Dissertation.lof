@@ -3,6 +3,18 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {3.1}{\ignorespaces Architecture Diagram}}{9}{figure.3.1}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Code Class Structure}}{18}{figure.4.1}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Grid, Moderate and Bottleneck Topologies}}{19}{figure.4.2}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Agent Characteristics across 10 seeds}}{20}{figure.4.3}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Greedy Shortest Path Routing Options}}{21}{figure.4.4}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Tournament (N=3) and Elite Percentage Performance}}{22}{figure.4.5}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Survivor Selection Fitness Functions}}{22}{figure.4.6}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Parent and Survivor Selection with modified mutation}}{23}{figure.4.7}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Analysis number of agents for genetic algorithm}}{23}{figure.4.8}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Analysis number of agents for greeedy algorithm}}{23}{figure.4.9}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Genetic Algorithm fitness over evolutions}}{24}{figure.4.10}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Architecture Diagram}}{26}{figure.5.1}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

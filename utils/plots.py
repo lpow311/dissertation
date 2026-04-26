@@ -176,9 +176,9 @@ def plot_parent_selection_stats(evolution_stats, city_name: str, method: str = "
         ax.legend(fontsize=8)
         ax.spines[["top", "right"]].set_visible(False)
 
-    formatted = city_name.replace("_", " ").capitalize()
+    formatted = city_name.replace("_", " ").title()
     fig.suptitle(
-        f"{method} Suitability for {formatted} — {len(evolution_stats)} Seeds",
+        f"Suitability for {formatted} — {len(evolution_stats)} Seeds",
         fontsize=14,
         fontweight="bold",
     )
@@ -189,11 +189,16 @@ def plot_parent_selection_stats(evolution_stats, city_name: str, method: str = "
 def plot_survivor_selection(evolution_stats, city_name: str):
     parent_count = extract_metric(evolution_stats, "parent_count", "survivor_selection")
     child_count = extract_metric(evolution_stats, "child_count", "survivor_selection")
-    passthrough = extract_metric(
-        evolution_stats, "identical_children", "survivor_selection"
-    )  # passthrough
     parent_fitness = extract_metric(evolution_stats, "parent_fitness", "survivor_selection")
     child_fitness = extract_metric(evolution_stats, "child_fitness", "survivor_selection")
+    try:
+        passthrough = extract_metric(
+            evolution_stats, "identical_children", "survivor_selection"
+        )  # passthrough
+    except KeyError:
+        passthrough = extract_metric(
+            evolution_stats, "passthrough", "survivor_selection"
+        )  # passthrough
 
     evolutions = range(parent_count.shape[1])
 
@@ -238,7 +243,7 @@ def plot_survivor_selection(evolution_stats, city_name: str):
     ax.legend(fontsize=8)
     ax.spines[["top", "right"]].set_visible(False)
 
-    title = f"Survivor Selection Analysis for {city_name.replace('_', ' ').capitalize()}"
+    title = f"Survivor Selection Analysis for {city_name.replace('_', ' ').title()}"
     fig.suptitle(f"{title} — {len(evolution_stats)} Seeds", fontsize=14, fontweight="bold")
     plt.tight_layout()
     plt.show()
