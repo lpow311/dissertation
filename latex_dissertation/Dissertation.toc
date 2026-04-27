@@ -71,6 +71,6 @@
 \contentsline {section}{\numberline {B.1}Implemetation Tuning Results}{47}{section.B.1}%
 \contentsline {section}{\numberline {B.2}Experiment Results}{48}{section.B.2}%
 \contentsline {chapter}{\numberline {C}User Documentation}{50}{appendix.C}%
-\contentsline {chapter}{\numberline {D}Raw Results Output}{51}{appendix.D}%
+\contentsline {chapter}{\numberline {D}Other Links}{51}{appendix.D}%
 \contentsline {chapter}{\numberline {E}Code}{52}{appendix.E}%
 \contentsline {section}{\numberline {E.1}File: yourCodeFile.java}{53}{section.E.1}%

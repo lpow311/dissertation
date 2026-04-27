@@ -41,9 +41,11 @@
 \newpage
 
 \hypersetup{pageanchor=true}
-
+%TC:ignore
 \abstract
-$\langle$The abstract should appear here. An abstract is a short paragraph describing the aims of the project, what was achieved and what contributions it has made.$\rangle$
+The frequency of situations requiring evacuation routing has been increasing creating a growing need for more informed routing guidance which incorporates the variety of human behaviours experienced in evacuation routing. This project looks at how incorporating human behaviours into the fitness function of a genetic algorithm affects evacuation performance in comparison to the widely used shortest path approach across three different fictional topologies. Overall, the GA did not outperform the Greedy shortest path approach, however incorporating human behaviours naturally reduced congestion regardless of algorithm choice, with non-selfish routing having more of an impact on moderately constrained topologies. Additionally, the project found that partial compliance levels around 25-50\% produced better outcomes than full compliance of both algorithms, challenging the assumption in literature that higher compliance levels are preferable. Additional work should be done to replicate the results on real world topologies and further tuning to better understand how compliance and human behaviours affect the total evacuation time and human safety.
+
+
 \newpage
 
 \tableofcontents
@@ -59,17 +61,19 @@ $\langle$The abstract should appear here. An abstract is a short paragraph descr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter*{Acknowledgements}
 
-Add any acknowledgements here.
+Thank you to the Computer Science Faculty at the University of Bath and Andreas Theophilou for his guidance during this dissertation and helping shape the project from the initial proposal to this final submission. I'd also like to thank everyone else who has helped me along this journey.
+
+I acknowledge that this content, analysis and intepretation is my own, however I it is worth noting that I did use Claude (Anthropic, https://claude.ai/) to assist with proof reading final sections and summarising initial notes and investigations.
 
 \newpage
 
 \chapter*{}
-This research has been conducted in line with the University of Bath’s ethics policy and ethical approval has been obtained through Ethics@bath: $\langle$insert ethics@bath project ID here, separate by commas if you have made more than one ethics submission$\rangle$
+This research has been conducted in line with the University of Bath’s ethics policy and ethical approval has been obtained through Ethics@bath: 12399
 
 \newpage
 \setcounter{page}{1}
 \pagenumbering{arabic}
-
+%TC:endignore
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Introduction}
@@ -651,14 +655,14 @@ The below figures show the route usage across the 10 seeds for each of the topol
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{dissertation_images/route_comparison_grid.png}
+    \includegraphics[width=0.8\textwidth]{dissertation_images/route_comparison_grid.png}
     \caption[Route Usages in baseline for grid topology]{Route usage for the greedy and genetic algorithm across the 10 seeds for the grid topology.}
     \label{fig:grid-baseline-routes}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{dissertation_images/route_comparison_moderate.png}
+    \includegraphics[width=0.8\textwidth]{dissertation_images/route_comparison_moderate.png}
     \caption[Route Usages in baseline for bottleneck topology]{Route usage for the greedy and genetic algorithm across the 10 seeds for the moderate topology.}
     \label{fig:moderate-baseline-routes}
 \end{figure}
@@ -666,7 +670,7 @@ The below figures show the route usage across the 10 seeds for each of the topol
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.7\textwidth]{dissertation_images/route_comparison_bottleneck.png}
+    \includegraphics[width=0.8\textwidth]{dissertation_images/route_comparison_bottleneck.png}
     \caption[Route Usages in baseline for bottleneck topology]{Route usage for the greedy and genetic algorithm across the 10 seeds for the balancesottleneck topology.}
     \label{fig:bottleneck-baseline-routes}
 \end{figure}
@@ -717,7 +721,7 @@ The ratio of greedy to GA mean total evacuation time for the grid, moderate and 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{dissertation_images/walking_speed_breakdown.png}
+    \includegraphics[width=1\textwidth]{dissertation_images/walking_speed_breakdown.png}
     \caption[Total Time and Congestion by Walking Speeds]{Total Time and Congestion by walking speed categories across the different topologies and greedy (green) vs GA (blue). The line across the top of the bars shows the $\pm1$ standard deviation across the seeds.}
     \label{fig:walking-speed-split}
 \end{figure}
@@ -726,7 +730,7 @@ The dispersion plot (\autoref{fig:walking-speed-dispersion}), shows a longer amo
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{dissertation_images/walking_speed_dispersion.png}
+    \includegraphics[width=1\textwidth]{dissertation_images/walking_speed_dispersion.png}
     \caption[Dispersion Plot with Walking Speed]{Dispersion Plot with Walking Speed for greedy (green) and GA (blue) across the topologies and seeds for agents within 3 nodes of their starting node.}
     \label{fig:walking-speed-dispersion}
 \end{figure}
@@ -770,7 +774,7 @@ The per delay breakdown in \autoref{fig:delayed-starts-split}, show a slight inc
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{dissertation_images/delay_start_breakdown.png}
+    \includegraphics[width=1\textwidth]{dissertation_images/delay_start_breakdown.png}
     \caption[Total Time and Congestion by Delayed Starts]{Total Time and Congestion by delayed starts categories across the different topologies and greedy (green) vs GA (blue). The line across the top of the bars shows the $\pm1$ standard deviation across the seeds.}
     \label{fig:delayed-starts-split}
 \end{figure}
@@ -847,14 +851,14 @@ The dispersion plots for N=3 (\autoref{fig:full-dispersion-3}) show a similar re
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{dissertation_images/full-behaviour-dispersion-N3.png}
+    \includegraphics[width=1\textwidth]{dissertation_images/full-behaviour-dispersion-N3.png}
     \caption[Dispersion plot for full human behaviours (N=3)]{Dispersion plot for full human behaviours for greedy (green) and GA (blue) for agents 3 steps away from their start node.}
     \label{fig:full-dispersion-3}
 \end{figure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.9\textwidth]{dissertation_images/full-behaviour-dispersion-N5.png}
+    \includegraphics[width=1\textwidth]{dissertation_images/full-behaviour-dispersion-N5.png}
     \caption[Dispersion plot for full human behaviours (N=5)]{Dispersion plot for full human behaviours for greedy (green) and GA (blue) for agents 5 steps away from their start node.}
     \label{fig:full-dispersion-5}
 \end{figure}
@@ -938,7 +942,7 @@ This project contributes to the field by embedding human behaviours directly int
 
 
 \vfill
-Number of words until this point, excluding front matter: XXX.
+Number of words until this point, excluding front matter: 12065.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -946,6 +950,7 @@ Number of words until this point, excluding front matter: XXX.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%TC:ignore
 \appendix
 
 %%
@@ -1051,7 +1056,8 @@ The below plot shows the number of agents across each seed at each starting poin
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Raw Results Output}
+\chapter{Other Links}
+Ethics Form: https://ethics.bath.ac.uk/project/index/13497
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1064,6 +1070,8 @@ The below plot shows the number of agents across each seed at each starting poin
 %%      command in preference to the latex command.  If you do not have
 %%      the pdflatex command, you will need to remove the landscape and
 %%      multicols tags and just make do with single column listing output
+
+%TC:endignore
 
 \begin{landscape}
 \begin{multicols}{2}
