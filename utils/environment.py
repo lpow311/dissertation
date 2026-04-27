@@ -19,9 +19,10 @@ class Environment:
         self.city_name = city_name
 
         self.pickle_obj = self.create_graph(city_name)
-        self.graph = self.pickle_obj["graph"]
+        self.graph = self.pickle_obj["G"]
         self.starts, self.num_starts = self.pickle_obj["starts"], len(self.pickle_obj["starts"])
         self.exits, self.num_exits = self.pickle_obj["exits"], len(self.pickle_obj["exits"])
+        self.pos = self.pickle_obj["pos"]
 
         self.congestion_amount = 5  # TODO: come back and pick something better for this...
 
@@ -33,7 +34,10 @@ class Environment:
         self.bottleneck_score = self.calculate_bottleneck_scores()
 
     def create_graph(self, city_name: str) -> nx.Graph:
-        G = pickle.load(open(f"graphs/{city_name}.pickle", "rb"))
+        try:
+            G = pickle.load(open(f"graphs/{city_name}.pickle", "rb"))
+        except:
+            G = pickle.load(open(f"graphs/{city_name}.pkl", "rb"))
         return G
 
     def extract_node_types(self, node_type: str) -> Tuple[list, int]:

@@ -1,0 +1,76 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Background}{1}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}Evacuation Routing Overview}{1}{subsection.1.1.1}%
+\contentsline {subsubsection}{Cost of uncoordinated behaviour}{1}{section*.8}%
+\contentsline {subsection}{\numberline {1.1.2}Existing Approaches}{2}{subsection.1.1.2}%
+\contentsline {section}{\numberline {1.2}Project Aims and Objectives}{2}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Aims}{2}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Objectives}{2}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}Scope}{3}{subsection.1.2.3}%
+\contentsline {section}{\numberline {1.3}Contribution to Field}{3}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Literature and Technology Survey}{4}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Evacuation Modelling Approaches}{4}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Routing Optimisation}{5}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Shortest Path Approaches}{5}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Price of Anarchy}{5}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Metaheuristic Approaches}{5}{subsection.2.2.3}%
+\contentsline {section}{\numberline {2.3}Genetic Algorithms}{6}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Genetic Algorithm Concepts}{6}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Use in Evacuation Routing}{6}{subsection.2.3.2}%
+\contentsline {section}{\numberline {2.4}Human Behaviour in Evacuations}{7}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Importance of Human Behaviour in Modelling}{7}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Existing research on the impact of human behaviour}{7}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Research Gaps and Opportunities}{8}{subsection.2.4.3}%
+\contentsline {section}{\numberline {2.5}Network Topology and City Structures}{8}{section.2.5}%
+\contentsline {chapter}{\numberline {3}Design}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Research Aims and Design Scope}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Design Framework}{10}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Environments}{10}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Agents}{11}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Routing Algorithms}{12}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Genetic Algorithm}{12}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Shortest Path Baseline}{15}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Experimental Design}{15}{section.3.4}%
+\contentsline {section}{\numberline {3.5}Metrics}{16}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Genetic Algorithm Monitoring Metrics}{16}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Evaluation Metrics}{16}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}Assumptions and Limitations}{17}{section.3.6}%
+\contentsline {chapter}{\numberline {4}Implementation and Testing}{18}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Implementation Overview}{18}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Environment Implmentation}{18}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Agent Implmentation}{20}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Characteristic Assignment}{20}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Reproducibility Validation}{20}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Greedy Algorithm Implementation}{21}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Genetic Algorithm Tuning}{21}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Initial Parameter Tuning}{21}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Operator Selection Methods}{22}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Agent Tuning}{23}{subsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.5.4}Maximum Evolutions}{24}{subsection.4.5.4}%
+\contentsline {section}{\numberline {4.6}Summary of Implementation Decisions}{24}{section.4.6}%
+\contentsline {chapter}{\numberline {5}Results}{25}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Baseline Genetic Algorithm versus Greedy (RQ1 and RQ2)}{25}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Walking Speed (RQ3a)}{27}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Delayed Starts (RQ3b)}{29}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Compliance Rate (RQ3c)}{30}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Combined Human Factors (RQ3d and RQ2)}{31}{section.5.5}%
+\contentsline {chapter}{\numberline {6}Discussion}{34}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Greedy versus Genetic Algorithm}{34}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Human Behaviours}{35}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Compliance}{35}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Contribution}{36}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Limitations}{36}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Static Human Behaviour}{36}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Simplied City Structures and Crowd Dynamics}{36}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}Algorithm Tuning}{37}{subsection.6.5.3}%
+\contentsline {section}{\numberline {6.6}Future Work}{37}{section.6.6}%
+\contentsline {chapter}{\numberline {7}Conclusions}{39}{chapter.7}%
+\contentsline {chapter}{References}{40}{chapter*.9}%
+\contentsline {chapter}{\numberline {A}Seven Methodological Approaches for Crowd Evacuation}{46}{appendix.A}%
+\contentsline {chapter}{\numberline {B}Results Diagrams}{47}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Implemetation Tuning Results}{47}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Experiment Results}{48}{section.B.2}%
+\contentsline {chapter}{\numberline {C}User Documentation}{50}{appendix.C}%
+\contentsline {chapter}{\numberline {D}Other Links}{51}{appendix.D}%
+\contentsline {chapter}{\numberline {E}Code}{52}{appendix.E}%
+\contentsline {section}{\numberline {E.1}File: yourCodeFile.java}{53}{section.E.1}%

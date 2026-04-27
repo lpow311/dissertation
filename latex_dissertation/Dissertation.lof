@@ -1,11 +1,41 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Architecture Diagram}}{9}{figure.3.1}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Code Class Structure}}{18}{figure.4.1}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Grid, Moderate and Bottleneck Topologies}}{19}{figure.4.2}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Agent Characteristics across 10 seeds}}{20}{figure.4.3}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Greedy Shortest Path Routing Options}}{21}{figure.4.4}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Tournament (N=3) and Elite Percentage Performance}}{22}{figure.4.5}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Survivor Selection Fitness Functions}}{22}{figure.4.6}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Parent and Survivor Selection with modified mutation}}{23}{figure.4.7}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Analysis number of agents for genetic algorithm}}{23}{figure.4.8}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Analysis number of agents for greeedy algorithm}}{23}{figure.4.9}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Genetic Algorithm fitness over evolutions}}{24}{figure.4.10}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {5.1}{\ignorespaces Route Usages in baseline for grid topology}}{26}{figure.5.1}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces Route Usages in baseline for bottleneck topology}}{26}{figure.5.2}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Route Usages in baseline for bottleneck topology}}{27}{figure.5.3}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Dispersion plot at N=3}}{27}{figure.5.4}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Total Time and Congestion by Walking Speeds}}{28}{figure.5.5}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Dispersion Plot with Walking Speed}}{29}{figure.5.6}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Total Time and Congestion by Delayed Starts}}{30}{figure.5.7}%
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Varying compliance rate across total time and congestion}}{31}{figure.5.8}%
+\contentsline {figure}{\numberline {5.9}{\ignorespaces Dispersion plot for full human behaviours (N=3)}}{32}{figure.5.9}%
+\contentsline {figure}{\numberline {5.10}{\ignorespaces Dispersion plot for full human behaviours (N=5)}}{33}{figure.5.10}%
+\contentsline {figure}{\numberline {5.11}{\ignorespaces Varying compliance rate for cumulative human behaviours}}{33}{figure.5.11}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\addvspace {10\p@ }
+\contentsline {figure}{\numberline {B.1}{\ignorespaces Parent Selection Performance Metrics for Roulette Selection}}{47}{figure.B.1}%
+\contentsline {figure}{\numberline {B.2}{\ignorespaces Parent Selection Performance Metrics for Tournament Selection (N=3)}}{47}{figure.B.2}%
+\contentsline {figure}{\numberline {B.3}{\ignorespaces Parent Selection Performance Metrics for Tournament Selection (N=5)}}{48}{figure.B.3}%
+\contentsline {figure}{\numberline {B.4}{\ignorespaces Survivor Selection Performance Metrics for Children Only Selection}}{48}{figure.B.4}%
+\contentsline {figure}{\numberline {B.5}{\ignorespaces Survivor Selection Performance Metrics for Elite Selection}}{49}{figure.B.5}%
+\contentsline {figure}{\numberline {B.6}{\ignorespaces Survivor Selectiion Elite Percentage}}{49}{figure.B.6}%
+\contentsline {figure}{\numberline {B.7}{\ignorespaces Agent Start Node Counts across seeds}}{49}{figure.B.7}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

@@ -4,10 +4,19 @@ import networkx as nx
 
 from utils.agent import Chromosome, Agent
 
+hyper_params = {"crossover": 0.8, "mutation": 0.05, "epsilon": 0.2}
+
 
 class GeneticAlgorithm:
 
-    def __init__(self, exit_criteria: dict, pop_size: int, key_manager, num_agents: int) -> None:
+    def __init__(
+        self,
+        exit_criteria: dict,
+        pop_size: int,
+        key_manager,
+        num_agents: int,
+        hyperparams: dict = hyper_params,
+    ) -> None:
 
         self.exit_criteria = exit_criteria
         self.population_size = pop_size
@@ -16,14 +25,15 @@ class GeneticAlgorithm:
         self.key_manager = key_manager
 
         ####
-        self.crossover_probability = 0.8  # 0.6 and 0.9
-        self.mutation_probability = 0.05
-        self.epsilon = 0.2
+        self.crossover_probability = hyperparams["crossover"]
+        self.mutation_probability = hyperparams["mutation"]
+        self.epsilon = hyperparams["epsilon"]
+        self.tournament_size = hyperparams["tournament_size"]
 
     def generate_uniform_probability(self) -> float:
         return random.uniform(key=self.key_manager.next_key(), shape=(), minval=0, maxval=1)
 
-    def __generate_integer(self, max_val: int, min_val: int = 0) -> int:
+    def generate_integer(self, max_val: int, min_val: int = 0) -> int:
         return random.randint(
             key=self.key_manager.next_key(), shape=(), minval=min_val, maxval=max_val
         )
@@ -36,12 +46,39 @@ class GeneticAlgorithm:
 
     ################# PARENT SELECTION #################
 
-    def parent_selection(self, population: list) -> list:
+    def parent_selection(self, population: list, method: str = "roulette") -> list:
         # TODO: currently allows for duplication in parent selection
-        roulette_parents = self.__roulette_selection(population=population)
-        return roulette_parents
+        if method == "roulette":
+            parents = self.roulette_selection(population=population)
+        elif method == "tournament":
+            parents = self.tournament_selection(population=population)
 
-    def __roulette_selection(self, population: list) -> list:
+        return parents
+
+    def tournament_selection(self, population: list) -> list:
+        fitness = [chromosome.fitness for chromosome in population]
+
+        parents = []
+        for _ in range(self.population_size):
+            chromo_idxs = [
+                self.generate_integer(self.population_size) for _ in range(self.tournament_size)
+            ]
+
+            tournament = [fitness[i] for i in chromo_idxs]
+            min_fitness = min(tournament)
+            tied = [i for i, fit in enumerate(tournament) if fit == min_fitness]
+
+            if len(tied) > 1:
+                min_idx = tournament.index(min_fitness)
+            else:
+                tie_idx = self.generate_integer(len(tied))
+                min_idx = tied[tie_idx]
+
+            parents.append(population[chromo_idxs[min_idx]])
+
+        return parents
+
+    def roulette_selection(self, population: list) -> list:
         fitness = [chromosome.fitness for chromosome in population]
 
         inverted_fitness = [1 / f for f in fitness]
@@ -52,14 +89,14 @@ class GeneticAlgorithm:
         for _ in range(len(population)):
             pick_prob = self.generate_uniform_probability()
 
-            parent = self.__extract_cumulative_chromosome(
+            parent = self.extract_cumulative_chromosome(
                 population=population, probabilities=probabilities, prob=pick_prob
             )
             parents.append(parent)
 
         return parents
 
-    def __extract_cumulative_chromosome(self, population: list, probabilities: list, prob: float):
+    def extract_cumulative_chromosome(self, population: list, probabilities: list, prob: float):
         cumulative = 0
         for chromosome, probability in zip(population, probabilities):
             cumulative += probability
@@ -69,7 +106,7 @@ class GeneticAlgorithm:
     ################# CROSSOVER #################
 
     def chromosome_crossover(self, parents: list) -> list:
-        parent_pairs = self.__extract_parent_pairs(parents=parents)
+        parent_pairs = self.extract_parent_pairs(parents=parents)
         params = parents[0].params
 
         children = []
@@ -77,28 +114,40 @@ class GeneticAlgorithm:
             prob = self.generate_uniform_probability()
 
             if prob <= self.crossover_probability:
-                child1_agents, child2_agents = self.__single_point_crossover(
+                child1_agents, child2_agents = self.single_point_crossover(
                     parent1=parents[parent1], parent2=parents[parent2]
                 )
-                children.append(
-                    Chromosome(agents=child1_agents, key_manager=self.key_manager, params=params)
-                )
-                children.append(
-                    Chromosome(agents=child2_agents, key_manager=self.key_manager, params=params)
-                )
             else:
-                children.append(parents[parent1])
-                children.append(parents[parent2])
+                # just copy the parent agents across.
+                child1_agents = parents[parent1].agents
+                child2_agents = parents[parent2].agents
+
+            children.append(
+                Chromosome(
+                    agents=child1_agents,
+                    key_manager=self.key_manager,
+                    params=params,
+                    compliance=parents[parent1].compliance,
+                )
+            )
+            children.append(
+                Chromosome(
+                    agents=child2_agents,
+                    key_manager=self.key_manager,
+                    params=params,
+                    compliance=parents[parent2].compliance,
+                )
+            )
 
         return children
 
-    def __extract_parent_pairs(self, parents: list) -> list:
+    def extract_parent_pairs(self, parents: list) -> list:
         subkey = self.key_manager.next_key()
         shuffled = random.permutation(subkey, jnp.array(range(len(parents))))
         pairs = list(zip(shuffled[0::2], shuffled[1::2]))
         return pairs
 
-    def __single_point_crossover(self, parent1: Chromosome, parent2: Chromosome) -> list:
+    def single_point_crossover(self, parent1: Chromosome, parent2: Chromosome) -> list:
         child1_agents, child2_agents = {}, {}
 
         for agent in range(self.num_agents):
@@ -111,7 +160,7 @@ class GeneticAlgorithm:
             if not overlap:
                 child1_path, child2_path = parent1_path, parent2_path
             else:
-                overlap_node_idx = self.__generate_integer(max_val=len(overlap))
+                overlap_node_idx = self.generate_integer(max_val=len(overlap))
                 overlap_node = list(overlap)[overlap_node_idx]
 
                 idx_parent1 = parent1_path.index(overlap_node)
@@ -121,7 +170,7 @@ class GeneticAlgorithm:
                 child2_path = parent2_path[: idx_parent2 + 1] + parent1_path[idx_parent1 + 1 :]
 
             child1_agents[agent] = parent1.agents[agent].copy_agent(new_path=child1_path)
-            child2_agents[agent] = parent1.agents[agent].copy_agent(new_path=child2_path)
+            child2_agents[agent] = parent2.agents[agent].copy_agent(new_path=child2_path)
 
         return child1_agents, child2_agents
 
@@ -133,21 +182,21 @@ class GeneticAlgorithm:
             for agent_name, agent in chromosome.agents.items():
                 prob = self.generate_uniform_probability()
 
-                if prob <= self.mutation_probability:
-                    mutated_agent = self.__agent_exit_path_mutation(agent=agent)
+                if prob <= self.mutation_probability and agent.compliant:
+                    mutated_agent = self.agent_exit_path_mutation(agent=agent)
                     chromosome.agents[agent_name] = mutated_agent
 
             mutated_children.append(chromosome)
 
         return mutated_children
 
-    def __agent_exit_path_mutation(self, agent: Agent) -> Agent:
+    def agent_exit_path_mutation(self, agent: Agent) -> Agent:
         # Decide which exit the agent will now go to.
-        new_exit = self.__select_exit(agent=agent)
+        new_exit = self.select_exit(agent=agent)
 
         # Pick the point on the path they switch at.
         path = agent.path
-        partial_point = self.__generate_integer(min_val=1, max_val=len(path) - 1)
+        partial_point = self.generate_integer(min_val=1, max_val=len(path) - 1)
         mutation_node = path[partial_point]
 
         end_path = self.epsilon_greedy_path_selection(agent, mutation_node, new_exit)
@@ -156,31 +205,33 @@ class GeneticAlgorithm:
         agent.update_path(new_path)
         return agent
 
-    def __select_exit(self, agent: Agent) -> str:
+    def select_exit(self, agent: Agent) -> str:
         exits = agent.preferred_exits
-        exit_idx = self.__generate_integer(max_val=len(exits))
+        exit_idx = self.generate_integer(max_val=len(exits))
         return exits[exit_idx]
 
     def epsilon_greedy_path_selection(self, agent: Agent, start: str, end: str) -> list:
         path = [start]
         current_node = start
-        visited = {start}
+
+        # Block all exits except the target one
+        visited = {start} | (set(agent.city.exits) - {end})
+
         graph = agent.city.graph
 
-        while current_node not in agent.city.exits:
-            neigbours = list(graph.neighbors(current_node))
+        while current_node != end:  # stop at specified exit only
+            neighbours = list(graph.neighbors(current_node))
+            unvisited = [n for n in neighbours if n not in visited]
 
-            unvisited = [n for n in neigbours if n not in visited]
             if not unvisited:
-                unvisited = neigbours
+                unvisited = neighbours
 
             prob = self.generate_uniform_probability()
             if prob < self.epsilon:
-                # pick greedy neighbour
                 best_node = min(unvisited, key=lambda n: agent.city.distances_to_exits[n][end])
                 current_node = best_node
             else:
-                neighbour_idx = self.__generate_integer(max_val=len(unvisited))
+                neighbour_idx = self.generate_integer(max_val=len(unvisited))
                 current_node = unvisited[neighbour_idx]
 
             path.append(current_node)
@@ -190,20 +241,51 @@ class GeneticAlgorithm:
 
     ################# SELECTION #################
 
-    def survivor_selection(self, children: list, old_population: list, keep_best: bool) -> list:
+    def survivor_selection(self, children: list, old_population: list, method: str) -> list:
         [c.calculate_fitness() for c in children]
 
-        if keep_best:
+        if method == "elite_percentage":
             # [c.calculate_fitness() for c in old_population]
             sorted_old = sorted(old_population, key=lambda c: c.fitness)
-            n_elite = max(1, int(0.05 * len(old_population)))
+            n_elite = max(10, int(0.1 * len(old_population)))
             elite = sorted_old[:n_elite]
 
             sorted_children = sorted(children, key=lambda c: c.fitness)
             remaining_slots = len(old_population) - n_elite
 
             new_population = elite + sorted_children[:remaining_slots]
-        else:
+
+        elif method == "elite":
+            both_populations = old_population + children
+            sorted_all = sorted(both_populations, key=lambda c: c.fitness)
+            new_population = sorted_all[: self.population_size]
+
+        elif method == "children":
             new_population = [c for c in children]
 
+        else:
+            raise ValueError(f"{method} is not valid please pick another one..")
+
         return new_population
+
+    def paths_match(self, c1: Chromosome, c2: Chromosome) -> bool:
+        return all(c1.agents[a].path == c2.agents[a].path for a in c1.agents)
+
+    def is_clone_of_any(self, c: Chromosome, population: list) -> bool:
+        return any(self.paths_match(c, p) for p in population)
+
+    def analyse_survivor_selection(self, parent: list, child: list, new: list) -> dict:
+        best_parent = sorted(parent, key=lambda c: c.fitness)[0]
+        best_child = sorted(child, key=lambda c: c.fitness)[0]
+
+        parent_count = sum(1 for c in new if self.is_clone_of_any(c, parent))
+        identical_children = sum(1 for c in child if self.is_clone_of_any(c, parent))
+        child_count = len(new) - parent_count
+
+        return {
+            "parent_count": parent_count,
+            "parent_fitness": best_parent.fitness,
+            "child_count": child_count,
+            "child_fitness": best_child.fitness,
+            "identical_children": identical_children,
+        }
