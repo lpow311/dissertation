@@ -10,6 +10,10 @@ from utils.environment import Environment
 
 
 class Agent:
+    """
+    Agent class which is used to define the agent characteristics and
+    keep track of the current path and shortest path.
+    """
 
     def __init__(
         self,
@@ -48,6 +52,10 @@ class Agent:
             self.preferred_exits = preferred_exits
 
     def generate_random_path(self) -> list:
+        """
+        Generate a random path for an agent from the pre-defined
+        starting node.
+        """
         current_location = self.start_point
         path = [current_location]
 
@@ -68,10 +76,20 @@ class Agent:
         return path
 
     def update_path(self, path: list) -> None:
+        """
+        Function for use outside the class to update the
+        path paramter whilst also removing any loops.
+        """
         self.path = self.remove_loops_from_path(path=path)
 
     @staticmethod
     def remove_loops_from_path(path: list) -> list:
+        """
+        Removes loops from agent paths - if an agent visits a node
+        twice then the nodes between those two points are removed.
+        e.g. A-B-C-A-D-E becomes A-D-E.
+        """
+
         seen = {}
         cleaned = []
         for node in path:
@@ -86,6 +104,12 @@ class Agent:
         return cleaned
 
     def copy_agent(self, new_path: list | None):
+        """
+        Create a new agent which copies all the same agent characteristics
+        either with the same path (when new_path is None [default]) or with
+        a new path (for new paths the loops are also removed).
+        """
+
         if new_path is None:
             new_path = self.path
         else:
@@ -104,6 +128,10 @@ class Agent:
 
 
 class Chromosome:
+    """
+    Chromosome class to keep track of the agents for each
+    solution alongside the experiement conditions.
+    """
 
     def __init__(
         self,
@@ -130,6 +158,9 @@ class Chromosome:
         self.agent_time_paths = {}
 
     def deep_copy_agents(self, agents: dict, initialisation: bool) -> dict:
+        """
+        Copy all agents in a chromosome to create a new chromosome.
+        """
         agents_copy = {}
         for agent_num, agent in agents.items():
             new_agent = agent.copy_agent(new_path=None)
@@ -168,6 +199,14 @@ class Chromosome:
         self.fitness = self.calculate_chromosome_fitness(self.path_time)
 
     def get_timesteps(self) -> dict:
+        """
+        For all agents take their route and calculate the timesteps across
+        the simulation considering congestion, walking speed and delayed
+        starts.
+        -> When the congestion parameter is turned off then the
+            nodes have capacity of number of agents + 10.
+        """
+
         city_nodes = self.agents[0].city.graph.nodes
         capacity = (
             self.agents[0].city.congestion_amount
@@ -278,6 +317,9 @@ class Chromosome:
         return times, congestion
 
     def setup_timesteps(self) -> tuple:
+        """
+        Create the storing options for the timestep calculations
+        """
         times, delays, current, walking, congestion, start_delays = {}, {}, {}, {}, {}, {}
         for a in self.agents:
             times[a] = []
@@ -291,10 +333,17 @@ class Chromosome:
 
     @staticmethod
     def sample_without_replacement(key, items: list, num_samples: int) -> list:
+        """
+        Randomly selecti `num_samples` from a list of items without replacement.
+        """
         indices = random.choice(key, a=len(items), shape=(num_samples,), replace=False)
         return [items[i] for i in indices]
 
     def get_agent_positions(self, city_nodes: list, current: dict) -> dict:
+        """
+        Identify the current position of each agent and update each node
+        accordingly. This allows us to calculate congestion delays.
+        """
         nodes = {n: [] for n in city_nodes}
         for a, pos in current.items():
             if pos < len(self.agents[a].path):
@@ -304,6 +353,10 @@ class Chromosome:
         return nodes
 
     def calculate_chromosome_fitness(self, fitnesses: list) -> float:
+        """
+        Calculate the chromosome fitness.
+        """
+
         vals = {
             "mean": float(np.mean(fitnesses)),
             "median": float(np.median(fitnesses)),
@@ -320,6 +373,9 @@ class Chromosome:
             return vals[self.fitness_calc]
 
     def calculate_average_path(self) -> float:
+        """
+        Calaculate the average agent path length for the chromosome.
+        """
         lengths = []
         for agent in self.agents.values():
             path = agent.path
@@ -329,6 +385,9 @@ class Chromosome:
 
 
 class PopulationCreation:
+    """
+    Population creation class for each genetic algorithm run.
+    """
 
     def __init__(
         self,
@@ -397,7 +456,10 @@ class PopulationCreation:
         return agents
 
     def agent_shortest_paths(self, city: Environment, start_node: str, pick_first: bool):
+        """
+        Calculates an agents shortest path - should match that seen in the agent class.
         # TODO: if change this add it greedy class as well.
+        """
         # Find minimum distance across all exits
         min_length = float("inf")
 
@@ -434,6 +496,11 @@ def generate_agent_options(
     default: float = 0,
     weights: list | None = None,
 ) -> list:
+    """
+    Generate a list of characteristics for each agent. If this characteristic is
+    not turned `on` then the `default` value is used, otherwise the options are
+    randomly selected according to the weights provided.
+    """
     if not on:
         return [default] * num_agents
     rng = np.random.default_rng(seed)
