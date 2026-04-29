@@ -268,11 +268,6 @@
 \newblock \bibinfo{institution}{National Institute of Standards and Technology}.
 \newblock \urlprefix\url{https://firedoc.nist.gov/article/YncyXYQBWEcjUZEYSWuL}.
 
-\bibitem[{Organisation(2025)}]{WHO_CYCLONE_2026}
-\bibinfo{author}{Organisation, W.H.}, \bibinfo{year}{2025}.
-\newblock \bibinfo{title}{Cyclone ditwah 2025} [Online].
-\newblock \urlprefix\url{https://www.who.int/srilanka/emergencies/cyclone-ditwah-2025}.
-
 \bibitem[{Papadimitriou(2001)}]{PAPADIMITRIOU_2001_POA}
 \bibinfo{author}{Papadimitriou, C.}, \bibinfo{year}{2001}.
 \newblock \bibinfo{title}{Algorithms, games, and the internet} [Online].
@@ -383,6 +378,11 @@
 \newblock \bibinfo{title}{Incorporating human factors in emergency evacuation – an overview of behavioral factors and models}.
 \newblock \emph{\bibinfo{journal}{International journal of disaster risk reduction}} [Online], \bibinfo{volume}{60}.
 \newblock \urlprefix\url{https://doi.org/10.1016/j.ijdrr.2021.102254}.
+
+\bibitem[{{World Health Organisation}(2025)}]{WHO_CYCLONE_2026}
+\bibinfo{author}{{World Health Organisation}}, \bibinfo{year}{2025}.
+\newblock \bibinfo{title}{Cyclone ditwah 2025} [Online].
+\newblock \urlprefix\url{https://www.who.int/srilanka/emergencies/cyclone-ditwah-2025}.
 
 \bibitem[{Yang, Lin and Kuo(2025)}]{KUO_STADIUMS_2025}
 \bibinfo{author}{Yang, C.H.}, \bibinfo{author}{Lin, C.Y.} and \bibinfo{author}{Kuo, T.W.}, \bibinfo{year}{2025}.
