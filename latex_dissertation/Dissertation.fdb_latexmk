@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex Dissertation"] 1777493999 "Dissertation.aux" "Dissertation.bbl" "Dissertation" 1777495395 0
+["bibtex Dissertation"] 1777587272 "Dissertation.aux" "Dissertation.bbl" "Dissertation" 1777587420 0
   "./EndNotesTest.bib" 1777491482 67458 857be7e828750ec15650bdcdcf0a507e ""
   "./bathx.bst" 1772294068 49581 be831b8c9da99de90d48d9e06251e392 ""
-  "Dissertation.aux" 1777495394 29474 25ddceb52f0f64d743e7cb1d2d0cce7d "pdflatex"
+  "Dissertation.aux" 1777587420 29474 25ddceb52f0f64d743e7cb1d2d0cce7d "pdflatex"
   (generated)
   "Dissertation.bbl"
   "Dissertation.blg"
   (rewritten before read)
-["pdflatex"] 1777495389 "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" "Dissertation.pdf" "Dissertation" 1777495395 0
-  "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" 1777495389 122414 e5c15e9e4bcf7ad9c31424bac2bea7f3 ""
+["pdflatex"] 1777587415 "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" "Dissertation.pdf" "Dissertation" 1777587420 0
+  "/Users/laurapowell/Documents/Masters/dissertation/latex_dissertation/Dissertation.tex" 1777587415 122357 b285b80a197c8afa2d6ef9618bd02de6 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2023/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -143,13 +143,13 @@
   "/usr/local/texlive/2023/texmf-var/web2c/pdftex/pdflatex.fmt" 1699797700 7883460 0273152ab9e22de4369210b63e358595 ""
   "/usr/local/texlive/2023/texmf.cnf" 1678822455 577 1b2b1af17af2508fb20dd85783af4050 ""
   "Bath-CS-Dissertation.sty" 1772294068 3598 8b299710a2df7a227a574767db9bf804 ""
-  "Dissertation.aux" 1777495394 29474 25ddceb52f0f64d743e7cb1d2d0cce7d "pdflatex"
-  "Dissertation.bbl" 1777493999 34643 96a0ed08869be720f368bea39a6587dc "bibtex Dissertation"
-  "Dissertation.lof" 1777495394 3699 89aac730ea917d01ee5bc5395a62f93d "pdflatex"
-  "Dissertation.lot" 1777495394 1567 79dde8418baa5c71f06e174f4eae726a "pdflatex"
-  "Dissertation.out" 1777495394 12508 545a6bb9830cf362c585b697e7ced70f "pdflatex"
-  "Dissertation.tex" 1777495389 122414 e5c15e9e4bcf7ad9c31424bac2bea7f3 ""
-  "Dissertation.toc" 1777495394 6333 11227f446f6084a97f8f1120dd31e386 "pdflatex"
+  "Dissertation.aux" 1777587420 29474 25ddceb52f0f64d743e7cb1d2d0cce7d "pdflatex"
+  "Dissertation.bbl" 1777587272 34643 96a0ed08869be720f368bea39a6587dc "bibtex Dissertation"
+  "Dissertation.lof" 1777587420 3699 89aac730ea917d01ee5bc5395a62f93d "pdflatex"
+  "Dissertation.lot" 1777587420 1567 79dde8418baa5c71f06e174f4eae726a "pdflatex"
+  "Dissertation.out" 1777587420 12508 545a6bb9830cf362c585b697e7ced70f "pdflatex"
+  "Dissertation.tex" 1777587415 122357 b285b80a197c8afa2d6ef9618bd02de6 ""
+  "Dissertation.toc" 1777587420 6333 11227f446f6084a97f8f1120dd31e386 "pdflatex"
   "dissertation_images/GA_fitness_over_topology.png" 1777310176 234161 75ee4a96a128301f4870055302cea316 ""
   "dissertation_images/agent_characteristics_across_seeds.png" 1777310176 87868 00ce5345d357255075885c6610efb250 ""
   "dissertation_images/appendix_diagrams/agent_starting_point_distributions.png" 1777310176 92834 26de5ba0d97b558e86d4be25c1da556b ""
